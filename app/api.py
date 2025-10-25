@@ -20,6 +20,7 @@ import asyncio
 from app.services.tts_service import TTSService
 from app.services.stt_service import STTService
 from app.services.media_service import MediaService
+from app.nllb_translator import NLLBTranslator
 
 # Import security & monitoring
 import sys
@@ -57,6 +58,7 @@ app.add_middleware(
 tts_service = TTSService()
 stt_service = STTService()
 media_service = MediaService()
+nllb_translator = NLLBTranslator()
 
 # Initialize file validator
 if MONITORING_ENABLED:
@@ -426,57 +428,75 @@ async def url_to_text(
 @app.post("/api/translate")
 async def translate_text(
     text: str = Form(...),
+    source_lang: str = Form("auto"),
     target_lang: str = Form("ht"),
     use_cache: bool = Form(True)
 ):
     """
-    🌍 Tradwi tèks (ak kachaj pou pèfòmans)
+    🌍 Tradwi tèks ak NLLB (Modèl pwofesyonèl pou Kreyòl)
     
     **Paramèt:**
     - text: Tèks pou tradwi
+    - source_lang: Lang sous (auto, en, fr, es)
     - target_lang: Lang sib (ht=Kreyòl, en=Angle, fr=Franse)
     - use_cache: Itilize kachaj oswa non (default: True)
+    
+    **NLLB**: Meilleur modèle pour la traduction créole!
     """
     try:
-        # Import translation service and cache
-        from traduire_texte import traduire_avec_progress
-        from app.cache import translation_cache
-        
         # Track translation
         if MONITORING_ENABLED:
             track_translation(target_lang, len(text))
         
         # Check cache if enabled
         if use_cache:
-            cache_key = translation_cache._get_cache_key(f"auto:{target_lang}:{text}")
-            cached_result = translation_cache.get(cache_key)
-            
-            if cached_result:
-                return JSONResponse({
-                    "status": "siksè",
-                    "message": "Tradiksyon soti nan kachaj! 💾✅",
-                    "original": text,
-                    "translated": cached_result,
-                    "target_language": target_lang,
-                    "char_count": len(cached_result),
-                    "cached": True
-                })
+            try:
+                from app.cache import translation_cache
+                cache_key = translation_cache._get_cache_key(f"{source_lang}:{target_lang}:{text}")
+                cached_result = translation_cache.get(cache_key)
+                
+                if cached_result:
+                    return JSONResponse({
+                        "status": "siksè",
+                        "message": "Tradiksyon soti nan kachaj! 💾✅",
+                        "original": text,
+                        "translated": cached_result,
+                        "source_language": source_lang,
+                        "target_language": target_lang,
+                        "char_count": len(cached_result),
+                        "model": "NLLB (cached)",
+                        "cached": True
+                    })
+            except:
+                pass  # Cache not available, continue
         
-        # Translate
-        translated = traduire_avec_progress(text, langue_cible=target_lang)
+        # Translate with NLLB
+        result = await nllb_translator.translate_async(text, source_lang, target_lang)
+        
+        if not result.get("success"):
+            raise HTTPException(status_code=500, detail=result.get("error", "Translation failed"))
+        
+        translated_text = result["translated_text"]
         
         # Save to cache
         if use_cache:
-            cache_key = translation_cache._get_cache_key(f"auto:{target_lang}:{text}")
-            translation_cache.set(cache_key, translated)
+            try:
+                from app.cache import translation_cache
+                cache_key = translation_cache._get_cache_key(f"{source_lang}:{target_lang}:{text}")
+                translation_cache.set(cache_key, translated_text)
+            except:
+                pass  # Cache not available
         
         return JSONResponse({
             "status": "siksè",
-            "message": "Tradiksyon konplete! 🌍✅",
+            "message": "Tradiksyon konplete ak NLLB! 🌍✅",
             "original": text,
-            "translated": translated,
+            "translated": translated_text,
+            "source_language": result.get("source_lang", source_lang),
             "target_language": target_lang,
-            "char_count": len(translated),
+            "char_count": len(translated_text),
+            "model": result.get("model", "NLLB"),
+            "method": result.get("method", "API"),
             "cached": False
         })
     except Exception as e:

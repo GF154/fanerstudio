@@ -17,9 +17,13 @@ from app.services.media_service import (
     correct_voiceover,
     generate_soundtrack_for_video,
 )
+from app.nllb_translator import NLLBTranslator
 import os
 import asyncio
 from pathlib import Path
+
+# Initialize NLLB translator
+nllb_translator = NLLBTranslator()
 
 # ============================================================
 # AUDIO WORKFLOWS
