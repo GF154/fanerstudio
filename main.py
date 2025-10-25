@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Kreyòl IA - Ultra-Minimal API
+Faner Studio - Ultra-Minimal API
 GUARANTEED to work on Render free tier
 """
 
@@ -10,11 +10,11 @@ from fastapi.responses import JSONResponse
 import httpx
 import os
 
-app = FastAPI(title="Kreyòl IA API", version="1.0")
+app = FastAPI(title="Faner Studio API", version="1.0")
 
 @app.get("/")
 def root():
-    return {"status": "live", "message": "Kreyòl IA fonksyone!"}
+    return {"status": "live", "message": "Faner Studio fonksyone!"}
 
 @app.get("/health")
 def health():

@@ -1,5 +1,5 @@
 # 🚀 GUIDE DE DÉPLOIEMENT MANUEL - RENDER.COM
-# Guide Complet en Kreyòl Ayisyen
+# Faner Studio - Guide Complet en Kreyòl Ayisyen
 
 ## 📋 PRÉREQUIS
 
@@ -20,8 +20,8 @@
 1. Allez sur: https://github.com/new
 
 2. Remplissez les informations:
-   - **Repository name:** `kreyol-ia-deploy`
-   - **Description:** "Kreyòl IA - Translation & TTS Platform"
+   - **Repository name:** `faner-studio`
+   - **Description:** "Faner Studio - Translation & TTS Platform"
    - **Visibility:** Public ✅
    - **Ne pas** initialiser avec README
 
@@ -31,7 +31,7 @@
 
 Vous verrez une URL comme:
 ```
-https://github.com/VOTRE_USERNAME/kreyol-ia-deploy.git
+https://github.com/VOTRE_USERNAME/faner-studio.git
 ```
 
 **Notez cette URL!** Vous en aurez besoin.
@@ -45,8 +45,8 @@ https://github.com/VOTRE_USERNAME/kreyol-ia-deploy.git
 ```powershell
 # Windows PowerShell
 cd Documents
-mkdir kreyol-ia-deploy
-cd kreyol-ia-deploy
+mkdir faner-studio
+cd faner-studio
 ```
 
 ### B. Créer les fichiers essentiels
@@ -71,7 +71,7 @@ Créez un fichier nommé `main.py` avec ce contenu:
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Kreyòl IA - Ultra-Minimal API
+Faner Studio - Ultra-Minimal API
 """
 
 from fastapi import FastAPI
@@ -79,11 +79,11 @@ from fastapi.responses import JSONResponse
 import httpx
 import os
 
-app = FastAPI(title="Kreyòl IA API", version="1.0")
+app = FastAPI(title="Faner Studio API", version="1.0")
 
 @app.get("/")
 def root():
-    return {"status": "live", "message": "Kreyòl IA fonksyone!"}
+    return {"status": "live", "message": "Faner Studio fonksyone!"}
 
 @app.get("/health")
 def health():
@@ -145,7 +145,7 @@ python-3.11.0
 ```powershell
 git init
 git add .
-git commit -m "Initial commit: Kreyòl IA minimal setup"
+git commit -m "Initial commit: Faner Studio minimal setup"
 ```
 
 ### B. Connecter au repository GitHub
@@ -153,7 +153,7 @@ git commit -m "Initial commit: Kreyòl IA minimal setup"
 Remplacez `VOTRE_USERNAME` par votre nom d'utilisateur GitHub:
 
 ```powershell
-git remote add origin https://github.com/VOTRE_USERNAME/kreyol-ia-deploy.git
+git remote add origin https://github.com/VOTRE_USERNAME/faner-studio.git
 git branch -M main
 git push -u origin main
 ```
@@ -189,11 +189,11 @@ Utilisez ce token comme mot de passe lors du push.
 2. Connectez votre repository GitHub:
    - Cliquez: **"Connect account"** (si pas déjà fait)
    - Autorisez Render à accéder à GitHub
-   - Sélectionnez votre repository: `kreyol-ia-deploy`
+   - Sélectionnez votre repository: `faner-studio`
 
 3. Configurez le service:
 
-   **Name:** `kreyol-ia`
+   **Name:** `faner-studio`
    
    **Region:** Oregon (US West) ou le plus proche
    
@@ -249,27 +249,27 @@ Vous verrez:
 
 Render vous donnera une URL comme:
 ```
-https://kreyol-ia.onrender.com
+https://faner-studio.onrender.com
 ```
 
 ### B. Tester les endpoints
 
 **1. Root endpoint:**
 ```
-GET https://kreyol-ia.onrender.com/
+GET https://faner-studio.onrender.com/
 ```
 
 Réponse attendue:
 ```json
 {
   "status": "live",
-  "message": "Kreyòl IA fonksyone!"
+  "message": "Faner Studio fonksyone!"
 }
 ```
 
 **2. Health check:**
 ```
-GET https://kreyol-ia.onrender.com/health
+GET https://faner-studio.onrender.com/health
 ```
 
 Réponse attendue:
@@ -281,7 +281,7 @@ Réponse attendue:
 
 **3. Documentation API:**
 ```
-https://kreyol-ia.onrender.com/docs
+https://faner-studio.onrender.com/docs
 ```
 
 Vous verrez l'interface Swagger UI complète!
@@ -417,7 +417,7 @@ Render redéploiera automatiquement!
 
 ## 🎉 FÉLICITATIONS!
 
-Votre API Kreyòl IA est maintenant déployée et accessible au monde entier!
+Votre API Faner Studio est maintenant déployée et accessible au monde entier!
 
 **URL:** https://votre-service.onrender.com
 
