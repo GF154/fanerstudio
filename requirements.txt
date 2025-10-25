@@ -17,7 +17,7 @@ pydantic==2.5.3
 gtts==2.5.0
 
 # Translation - 100% NLLB via REST API
-# NO extra packages needed - uses httpx from uvicorn[standard]
+httpx==0.26.0
 
 # PDF Processing
 pypdf==3.17.4
