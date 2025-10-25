@@ -1,0 +1,119 @@
+╔═══════════════════════════════════════════════════════════════════╗
+║                                                                   ║
+║  🇭🇹  NLLB KONFIGIRE AK SIKSÈ - POU KÒMANSE RAPID  🇭🇹         ║
+║                                                                   ║
+╚═══════════════════════════════════════════════════════════════════╝
+
+BYENVINI! 🎉
+
+NLLB (No Language Left Behind) konfigire nan pwojè a. Modèl sa a 
+bay pi bon kalite tradiksyon pou Kreyòl Ayisyen.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📋 KISA KI ENSTALE:
+
+   ✅ traduire_nllb.py       - Script tradiksyon NLLB
+   ✅ test_nllb_quick.py      - Script tès rapid
+   ✅ TRADUIRE_NLLB.bat       - Batch file pou tradwi
+   ✅ TEST_NLLB.bat           - Batch file pou teste
+   ✅ NLLB_GUIDE.md           - Gid konplè
+   ✅ data/test_nllb.txt      - Fichye egzanp
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 POU KÒMANSE (3 ETAP SENP):
+
+┌─────────────────────────────────────────────────────────────────┐
+│ ETAP 1: TESTE ENSTALASYON                                        │
+└─────────────────────────────────────────────────────────────────┘
+
+   Double-cliquer sur:  TEST_NLLB.bat
+
+   Ou nan terminal:
+   
+   python test_nllb_quick.py
+
+   ⏳ ATANSYON: Premye fwa, modèl la ap telechaje (~2.5GB)
+               Sa ka pran 5-15 minit.
+
+┌─────────────────────────────────────────────────────────────────┐
+│ ETAP 2: TRADWI FICHYE EGZANP                                     │
+└─────────────────────────────────────────────────────────────────┘
+
+   Double-cliquer sur:  TRADUIRE_NLLB.bat
+
+   Epi tape:  data\test_nllb.txt
+
+   Ou simp glise-depoze fichye .txt la sou TRADUIRE_NLLB.bat
+
+┌─────────────────────────────────────────────────────────────────┐
+│ ETAP 3: TRADWI PWÒP FICHYE OU                                    │
+└─────────────────────────────────────────────────────────────────┘
+
+   Glise-depoze fichye .txt ou sou:  TRADUIRE_NLLB.bat
+
+   Ou nan terminal:
+   
+   python traduire_nllb.py mon_fichier.txt
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 ASTUCES RAPID:
+
+   🎯 Modèl distilled (pa défaut) - Rapid e bon kalite
+   
+   📚 Pou pi bon kalite, itilize modèl medium:
+      TRADUIRE_NLLB.bat mon_fichier.txt medium
+   
+   🔒 Apre premye telechajman, tout fonksyone SAN Entènèt!
+   
+   ⚡ Si ou gen GPU, tradiksyon ap 5-10x pi rapid
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 DOKUMENTASYON:
+
+   Pou tout detay, li fichye sa yo:
+
+   📖 NLLB_GUIDE.md              - Gid konplè ak egzanp
+   ✅ NLLB_SETUP_COMPLETE.md     - Enfòmasyon enstalasyon
+   📘 README.md                   - Enfòmasyon jeneral pwojè
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎊 KISA NLLB BAY OU:
+
+   ✅ Tradiksyon ki pi presi pou Kreyòl Ayisyen
+   ✅ Gramè ak vokabilè pi bon
+   ✅ Respè pou idyòm ak espresyon kiltirèl
+   ✅ Fonksyone san Entènèt (apre telechajman)
+   ✅ Gratis e san limit itilizasyon
+   ✅ 3 modèl disponib (rapid, mwayen, ekselan)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❓ KESYON?
+
+   • Pwoblèm teknik? → Gade seksyon "Depanaj" nan NLLB_GUIDE.md
+   • Bezwen èd? → Li NLLB_SETUP_COMPLETE.md
+   • Konparezon Google vs NLLB? → Gade NLLB_GUIDE.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 KÒMANSE KOUNYE A!
+
+   1. Double-cliquer:  TEST_NLLB.bat
+   
+   2. Tann telechajman modèl la (premye fwa sèlman)
+   
+   3. Tradwi:  TRADUIRE_NLLB.bat mon_fichier.txt
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+BON TRADIKSYON! 🇭🇹✨
+
+Pwojè: Kreyòl IA - Creative Platform
+Modèl: Meta NLLB-200 (No Language Left Behind)
+Dat: 2025-10-21
+

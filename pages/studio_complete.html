@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Studio Konplè - Kreyòl IA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #121212;
+            --bg-tertiary: #1a1a1a;
+            --bg-card: #1e1e1e;
+            --bg-hover: #2a2a2a;
+            --border: #2d2d2d;
+            --text-primary: #ffffff;
+            --text-secondary: #b4b4b4;
+            --text-muted: #6b6b6b;
+            --accent-blue: #3b82f6;
+            --accent-purple: #8b5cf6;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --accent-orange: #f97316;
+            --accent-cyan: #06b6d4;
+            --accent-pink: #ec4899;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            height: 100vh;
+            padding-top: 50px;
+        }
+
+        /* Navigation Header */
+        .top-nav-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(18, 18, 18, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            z-index: 9999;
+        }
+
+        .top-nav-buttons {
+            display: flex;
+            gap: 0;
+        }
+
+        .top-nav-btn {
+            padding: 15px 30px;
+            background: transparent;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+            text-decoration: none;
+            display: block;
+        }
+
+        .top-nav-btn:hover {
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+
+        .top-nav-btn.active {
+            color: white;
+            background: rgba(59, 130, 246, 0.2);
+        }
+
+        .top-nav-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--accent-blue);
+        }
+
+        /* ========================================
+           LAYOUT
+        ======================================== */
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* ========================================
+           SIDEBAR
+        ======================================== */
+        .sidebar {
+            width: 220px;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            background: var(--bg-card);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logo:hover {
+            background: var(--bg-hover);
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .logo-text {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            padding: 8px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 12px 8px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 13px;
+            margin-bottom: 2px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .nav-item.active {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        .nav-icon {
+            font-size: 16px;
+        }
+
+        .badge-new {
+            margin-left: auto;
+            padding: 2px 6px;
+            background: var(--accent-green);
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* ========================================
+           MAIN CONTENT
+        ======================================== */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+        }
+
+        .content-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn-header {
+            padding: 10px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            font-size: 13px;
+        }
+
+        .btn-header:hover {
+            background: var(--bg-hover);
+        }
+
+        .btn-header.primary {
+            background: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .btn-header.primary:hover {
+            background: #2563eb;
+        }
+
+        .content-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        /* ========================================
+           PAGES
+        ======================================== */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========================================
+           CARDS
+        ======================================== */
+        .card-section {
+            margin-bottom: 40px;
+        }
+
+        .section-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .feature-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card:hover {
+            background: var(--bg-hover);
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .card-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .card-blue .card-icon { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+        .card-purple .card-icon { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
+        .card-cyan .card-icon { background: rgba(6, 182, 212, 0.15); color: #06b6d4; }
+        .card-orange .card-icon { background: rgba(249, 115, 22, 0.15); color: #f97316; }
+        .card-pink .card-icon { background: rgba(236, 72, 153, 0.15); color: #ec4899; }
+
+        /* ========================================
+           SEARCH BOX
+        ======================================== */
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .search-icon {
+            font-size: 18px;
+            color: var(--text-muted);
+        }
+
+        .search-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+        }
+
+        /* ========================================
+           EMPTY STATE
+        ======================================== */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* ========================================
+           MODALS
+        ======================================== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            animation: modalSlide 0.3s;
+        }
+
+        @keyframes modalSlide {
+            from {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .upload-zone {
+            border: 2px dashed var(--border);
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .upload-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .upload-hint {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-modal {
+            padding: 10px 20px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-modal-cancel {
+            background: transparent;
+            color: var(--text-secondary);
+        }
+
+        .btn-modal-cancel:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+
+        .btn-modal-primary {
+            background: var(--accent-blue);
+            color: white;
+            border-color: var(--accent-blue);
+        }
+
+        .btn-modal-primary:hover {
+            background: #2563eb;
+        }
+
+        /* ========================================
+           PROGRESS OVERLAY
+        ======================================== */
+        .progress-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .progress-overlay.active {
+            display: flex;
+        }
+
+        .progress-content {
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .progress-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border);
+            border-top-color: var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .progress-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .progress-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* ========================================
+           RESULT DISPLAY
+        ======================================== */
+        .result-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 20px;
+        }
+
+        .result-card h3 {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .result-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+
+        .result-link:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-blue);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+        }
+
+        .stat-card {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ========================================
+           SCROLLBAR
+        ======================================== */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-hover);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border);
+        }
+
+        /* ========================================
+           RESPONSIVE
+        ======================================== */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+            }
+
+            .logo-text,
+            .nav-item span:not(.nav-icon) {
+                display: none;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navigation Header -->
+    <nav class="top-nav-header">
+        <div class="top-nav-buttons">
+            <a href="/" class="top-nav-btn">Akèy</a>
+            <a href="/pages/features.html" class="top-nav-btn">Fonksyonalite</a>
+            <a href="/pages/studio_complete.html" class="top-nav-btn active">Studio</a>
+        </div>
+    </nav>
+
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">🇭🇹</div>
+                    <span class="logo-text">Kreyòl IA</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Prensipal</div>
+                <div class="nav-item active" data-page="home">
+                    <span class="nav-icon">🏠</span>
+                    <span>Akèy</span>
+                </div>
+                <div class="nav-item" data-page="voices">
+                    <span class="nav-icon">🎤</span>
+                    <span>Vwa</span>
+                </div>
+                <div class="nav-item" data-page="text-to-speech">
+                    <span class="nav-icon">💬</span>
+                    <span>Tèks an Paròl</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Edite</div>
+                <div class="nav-item" data-page="voice-changer">
+                    <span class="nav-icon">🎭</span>
+                    <span>Chanje Vwa</span>
+                </div>
+                <div class="nav-item" data-page="sound-effects">
+                    <span class="nav-icon">🔊</span>
+                    <span>Efè Son</span>
+                </div>
+                <div class="nav-item" data-page="voice-isolator">
+                    <span class="nav-icon">🎯</span>
+                    <span>Izole Vwa</span>
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="section-title">Pwodui</div>
+                <div class="nav-item" data-page="music">
+                    <span class="nav-icon">🎵</span>
+                    <span>Mizik</span>
+                </div>
+                <div class="nav-item" data-page="dubbing">
+                    <span class="nav-icon">🌍</span>
+                    <span>Doublaj</span>
+                </div>
+                <div class="nav-item" data-page="speech-to-text">
+                    <span class="nav-icon">📝</span>
+                    <span>Paròl an Tèks</span>
+                </div>
+                <div class="nav-item" data-page="audio-native">
+                    <span class="nav-icon">🎧</span>
+                    <span>Odyo Natif</span>
+                    <span class="badge-new">Nouvo</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <h1 id="pageTitle">Estidyo Konplè</h1>
+                <div class="header-actions">
+                    <button class="btn-header" onclick="openUploadModal()">
+                        <span>📤</span>
+                        <span>Telechaje</span>
+                    </button>
+                    <button class="btn-header primary" onclick="openNewProjectModal()">
+                        <span>+</span>
+                        <span>Nouvo Pwojè</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="content-body">
+                <!-- Page: Home/Studio -->
+                <div class="page active" id="page-home">
+                    <!-- Audio Section -->
+                    <div class="card-section">
+                        <div class="section-label">Odyo</div>
+                        <div class="card-grid">
+                            <div class="feature-card card-blue" onclick="openModal('audiobook')">
+                                <div class="card-icon">📚</div>
+                                <div class="card-title">Nouvo Liv Odyo</div>
+                                <div class="card-desc">Kòmanse de zewo oswa enpòte fichye</div>
+                            </div>
+                            <div class="feature-card card-purple" onclick="openModal('podcast')">
+                                <div class="card-icon">🎙️</div>
+                                <div class="card-title">Kreye Yon Podcast</div>
+                                <div class="card-desc">Jenere otomatikman podcast soti nan dokiman</div>
+                            </div>
+                            <div class="feature-card card-cyan" onclick="openModal('url-audio')">
+                                <div class="card-icon">🔗</div>
+                                <div class="card-title">URL an Odyo</div>
+                                <div class="card-desc">Kreye vwadeyò soti nan nenpòt paj wèb</div>
+                            </div>
+                            <div class="feature-card card-orange" onclick="openModal('ai-script')">
+                                <div class="card-icon">✨</div>
+                                <div class="card-title">Jeneratè Skrip IA</div>
+                                <div class="card-desc">Jenere yon skrip soti nan yon pwonp</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video Section -->
+                    <div class="card-section">
+                        <div class="section-label">Videyo</div>
+                        <div class="card-grid">
+                            <div class="feature-card card-pink" onclick="openModal('video-voiceover')">
+                                <div class="card-icon">🎥</div>
+                                <div class="card-title">Nouvo Vwadeyò Videyo</div>
+                                <div class="card-desc">Ajoute paròl nan videyo ou yo</div>
+                            </div>
+                            <div class="feature-card card-purple" onclick="openModal('sfx-music')">
+                                <div class="card-icon">🎵</div>
+                                <div class="card-title">Ajoute Efè Son ak Mizik</div>
+                                <div class="card-desc">Ajoute vwadeyò, mizik, ak efè son</div>
+                            </div>
+                            <div class="feature-card card-pink" onclick="openModal('captions')">
+                                <div class="card-icon">📝</div>
+                                <div class="card-title">Ajoute Soutit</div>
+                                <div class="card-desc">Soutit otomatik pou videyo ou</div>
+                            </div>
+                            <div class="feature-card card-purple" onclick="openModal('remove-noise')">
+                                <div class="card-icon">🔇</div>
+                                <div class="card-title">Retire Bri Background</div>
+                                <div class="card-desc">Netwaye videyo ki gen bri</div>
+                            </div>
+                            <div class="feature-card card-pink" onclick="openModal('fix-voiceover')">
+                                <div class="card-icon">🔧</div>
+                                <div class="card-title">Korije Erè Vwadeyò</div>
+                                <div class="card-desc">Korije erè ak kòreksyon paròl</div>
+                            </div>
+                            <div class="feature-card card-purple" onclick="openModal('soundtrack')">
+                                <div class="card-icon">🎼</div>
+                                <div class="card-title">Jeneratè Mizik IA</div>
+                                <div class="card-desc">Jenere mizik pou videyo ou otomatikman</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Projects -->
+                    <div class="card-section">
+                        <div class="section-label">Pwojè Resan</div>
+                        <div class="search-box">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" class="search-input" placeholder="Chèche pwojè...">
+                        </div>
+                        <div class="empty-state">
+                            <div class="empty-icon">📁</div>
+                            <div class="empty-text">Poko gen pwojè. Kreye premye pwojè w anwo a!</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Page: Voices -->
+                <div class="page" id="page-voices">
+                    <h2>🎤 Vwa</h2>
+                    <p style="color: var(--text-secondary); margin-top: 12px;">Bibliyotèk vwa ap vini byento...</p>
+                </div>
+
+                <!-- Page: Text to Speech -->
+                <div class="page" id="page-text-to-speech">
+                    <div class="form-group">
+                        <label class="form-label">Antre tèks pou konvèti an paròl</label>
+                        <textarea id="tts-input" class="form-textarea" placeholder="Antre tèks ou an kreyòl oswa nan nenpòt lòt lang...
+
+Egzanp:
+Bonjou! Byenveni nan Kreyòl IA. Nou la pou ede w kreye kontni an kreyòl ayisyen." style="min-height: 200px;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Chwazi Vwa</label>
+                        <select id="tts-voice" class="form-select">
+                            <option value="creole-native">🇭🇹 Vwa Natif Kreyòl (Premium)</option>
+                            <option value="creole-fem">👩 Vwa Fanm</option>
+                            <option value="creole-male">👨 Vwa Gason</option>
+                        </select>
+                    </div>
+
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn-header primary" onclick="generateTTS()">
+                            <span>🎵</span>
+                            <span>Jenere Audio</span>
+                        </button>
+                        <button class="btn-header" onclick="clearTTS()">
+                            <span>🗑️</span>
+                            <span>Efase</span>
+                        </button>
+                    </div>
+
+                    <div id="tts-result"></div>
+                </div>
+
+                <!-- Page: Voice Changer -->
+                <div class="page" id="page-voice-changer">
+                    <h2>🎭 Chanje Vwa</h2>
+                    <p style="color: var(--text-secondary); margin-top: 12px;">Fonksyon chanje vwa ap vini byento...</p>
+                </div>
+
+                <!-- Page: Sound Effects -->
+                <div class="page" id="page-sound-effects">
+                    <h2>🔊 Efè Son</h2>
+                    <p style="color: var(--text-secondary); margin-top: 12px;">Bibliyotèk efè son ap vini byento...</p>
+                </div>
+
+                <!-- Page: Voice Isolator -->
+                <div class="page" id="page-voice-isolator">
+                    <h2>🎯 Izole Vwa</h2>
+                    <p style="color: var(--text-secondary); margin-top: 12px;">Fonksyon izolasyon vwa ap vini byento...</p>
+                </div>
+
+                <!-- Page: Music -->
+                <div class="page" id="page-music">
+                    <h2>🎵 Mizik</h2>
+                    <p style="color: var(--text-secondary); margin-top: 12px;">Jeneratè mizik IA ap vini byento...</p>
+                </div>
+
+                <!-- Page: Dubbing -->
+                <div class="page" id="page-dubbing">
+                    <h2>🌍 Doublaj</h2>
+                    <p style="color: var(--text-secondary); margin-top: 12px;">Fonksyon doublaj ap vini byento...</p>
+                </div>
+
+                <!-- Page: Speech to Text -->
+                <div class="page" id="page-speech-to-text">
+                    <h2>📝 Paròl an Tèks</h2>
+                    <p style="color: var(--text-secondary); margin-top: 12px;">Transkripsyon otomatik ap vini byento...</p>
+                </div>
+
+                <!-- Page: Audio Native -->
+                <div class="page" id="page-audio-native">
+                    <h2>🎧 Odyo Natif</h2>
+                    <p style="color: var(--text-secondary); margin-top: 12px;">Fonksyon odyo natif ap vini byento...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODALS -->
+    
+    <!-- Modal: Audiobook -->
+    <div class="modal-overlay" id="modal-audiobook">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">📚 Nouvo Liv Odyo</div>
+                <button class="modal-close" onclick="closeModal('audiobook')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Telechaje Dokiman</label>
+                    <div class="upload-zone" onclick="document.getElementById('audiobook-file').click()">
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-text">Klike pou chwazi fichye</div>
+                        <div class="upload-hint">PDF, TXT, DOCX, EPUB</div>
+                    </div>
+                    <input type="file" id="audiobook-file" style="display: none;" accept=".pdf,.txt,.docx,.epub">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Chwazi Vwa</label>
+                    <select class="form-select" id="audiobook-voice">
+                        <option value="creole-native">🇭🇹 Vwa Natif Kreyòl</option>
+                        <option value="creole-fem">👩 Vwa Fanm</option>
+                        <option value="creole-male">👨 Vwa Gason</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('audiobook')">Anile</button>
+                <button class="btn-modal btn-modal-primary" onclick="createAudiobook()">Kreye Audiobook</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Podcast -->
+    <div class="modal-overlay" id="modal-podcast">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">🎙️ Kreye Podcast</div>
+                <button class="modal-close" onclick="closeModal('podcast')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Ekri Skrip Podcast</label>
+                    <textarea id="podcast-script" class="form-textarea" placeholder="Antre skrip podcast ou..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('podcast')">Anile</button>
+                <button class="btn-modal btn-modal-primary" onclick="createPodcast()">Kreye Podcast</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: URL to Audio -->
+    <div class="modal-overlay" id="modal-url-audio">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">🔗 URL an Odyo</div>
+                <button class="modal-close" onclick="closeModal('url-audio')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">URL Paj Wèb</label>
+                    <input type="url" class="form-input" placeholder="https://example.com">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('url-audio')">Anile</button>
+                <button class="btn-modal btn-modal-primary" onclick="convertURL()">Konvèti</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: AI Script Generator -->
+    <div class="modal-overlay" id="modal-ai-script">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">✨ Jeneratè Skrip IA</div>
+                <button class="modal-close" onclick="closeModal('ai-script')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Antre Pwonp</label>
+                    <textarea class="form-textarea" placeholder="Dekri sa ou vle jenere..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('ai-script')">Anile</button>
+                <button class="btn-modal btn-modal-primary" onclick="generateScript()">Jenere</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Video Voiceover -->
+    <div class="modal-overlay" id="modal-video-voiceover">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">🎥 Nouvo Vwadeyò Videyo</div>
+                <button class="modal-close" onclick="closeModal('video-voiceover')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Telechaje Videyo</label>
+                    <div class="upload-zone">
+                        <div class="upload-icon">🎬</div>
+                        <div class="upload-text">Klike pou chwazi videyo</div>
+                        <div class="upload-hint">MP4, AVI, MOV</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('video-voiceover')">Anile</button>
+                <button class="btn-modal btn-modal-primary">Ajoute Vwadeyò</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: SFX & Music -->
+    <div class="modal-overlay" id="modal-sfx-music">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">🎵 Ajoute Efè Son ak Mizik</div>
+                <button class="modal-close" onclick="closeModal('sfx-music')">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary);">Fonksyon sa a ap vini byento...</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('sfx-music')">Fèmen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Captions -->
+    <div class="modal-overlay" id="modal-captions">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">📝 Ajoute Soutit</div>
+                <button class="modal-close" onclick="closeModal('captions')">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary);">Fonksyon sa a ap vini byento...</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('captions')">Fèmen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Remove Noise -->
+    <div class="modal-overlay" id="modal-remove-noise">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">🔇 Retire Bri Background</div>
+                <button class="modal-close" onclick="closeModal('remove-noise')">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary);">Fonksyon sa a ap vini byento...</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('remove-noise')">Fèmen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Fix Voiceover -->
+    <div class="modal-overlay" id="modal-fix-voiceover">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">🔧 Korije Erè Vwadeyò</div>
+                <button class="modal-close" onclick="closeModal('fix-voiceover')">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary);">Fonksyon sa a ap vini byento...</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('fix-voiceover')">Fèmen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: AI Soundtrack Generator -->
+    <div class="modal-overlay" id="modal-soundtrack">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">🎼 Jeneratè Mizik IA</div>
+                <button class="modal-close" onclick="closeModal('soundtrack')">×</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: var(--text-secondary);">Fonksyon sa a ap vini byento...</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('soundtrack')">Fèmen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Upload -->
+    <div class="modal-overlay" id="modal-upload">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">📤 Telechaje Fichye</div>
+                <button class="modal-close" onclick="closeModal('upload')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-zone">
+                    <div class="upload-icon">📁</div>
+                    <div class="upload-text">Klike oswa trennen fichye isit</div>
+                    <div class="upload-hint">Tout tip fichye sipòte</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('upload')">Anile</button>
+                <button class="btn-modal btn-modal-primary">Telechaje</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: New Project -->
+    <div class="modal-overlay" id="modal-new-project">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">+ Nouvo Pwojè</div>
+                <button class="modal-close" onclick="closeModal('new-project')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Non Pwojè</label>
+                    <input type="text" class="form-input" placeholder="Antre non pwojè...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tip Pwojè</label>
+                    <div class="card-grid">
+                        <div class="feature-card card-blue" style="cursor: pointer;">
+                            <div class="card-icon">📖</div>
+                            <div class="card-title">Audiobook</div>
+                        </div>
+                        <div class="feature-card card-purple" style="cursor: pointer;">
+                            <div class="card-icon">🎙️</div>
+                            <div class="card-title">Podcast</div>
+                        </div>
+                        <div class="feature-card card-cyan" style="cursor: pointer;">
+                            <div class="card-icon">🎥</div>
+                            <div class="card-title">Videyo</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('new-project')">Anile</button>
+                <button class="btn-modal btn-modal-primary">Kreye</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Progress Overlay -->
+    <div class="progress-overlay" id="progress-overlay">
+        <div class="progress-content">
+            <div class="progress-spinner"></div>
+            <div class="progress-title" id="progress-title">Ap Trete...</div>
+            <div class="progress-subtitle" id="progress-subtitle">Tanpri tann...</div>
+        </div>
+    </div>
+
+    <script>
+        // ========================================
+        // NAVIGATION
+        // ========================================
+        document.querySelectorAll('.nav-item').forEach(item => {
+            item.addEventListener('click', function() {
+                const pageName = this.getAttribute('data-page');
+                switchPage(pageName);
+                
+                // Update active state
+                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        function switchPage(pageName) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(page => {
+                page.classList.remove('active');
+            });
+            
+            // Show selected page
+            const selectedPage = document.getElementById('page-' + pageName);
+            if (selectedPage) {
+                selectedPage.classList.add('active');
+            }
+            
+            // Update title
+            const titles = {
+                'home': 'Estidyo Konplè',
+                'voices': 'Vwa',
+                'text-to-speech': 'Tèks an Paròl',
+                'voice-changer': 'Chanje Vwa',
+                'sound-effects': 'Efè Son',
+                'voice-isolator': 'Izole Vwa',
+                'music': 'Mizik',
+                'dubbing': 'Doublaj',
+                'speech-to-text': 'Paròl an Tèks',
+                'audio-native': 'Odyo Natif'
+            };
+            
+            document.getElementById('pageTitle').textContent = titles[pageName] || 'Estidyo';
+        }
+
+        // ========================================
+        // MODALS
+        // ========================================
+        function openModal(modalName) {
+            const modal = document.getElementById('modal-' + modalName);
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function closeModal(modalName) {
+            const modal = document.getElementById('modal-' + modalName);
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        function openUploadModal() {
+            openModal('upload');
+        }
+
+        function openNewProjectModal() {
+            openModal('new-project');
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // ========================================
+        // PROGRESS
+        // ========================================
+        function showProgress(title, subtitle) {
+            document.getElementById('progress-title').textContent = title;
+            document.getElementById('progress-subtitle').textContent = subtitle;
+            document.getElementById('progress-overlay').classList.add('active');
+        }
+
+        function hideProgress() {
+            document.getElementById('progress-overlay').classList.remove('active');
+        }
+
+        // ========================================
+        // AUDIOBOOK CREATION
+        // ========================================
+        async function createAudiobook() {
+            const fileInput = document.getElementById('audiobook-file');
+            const voice = document.getElementById('audiobook-voice').value;
+            
+            if (!fileInput.files || fileInput.files.length === 0) {
+                alert('❌ Tanpri chwazi yon fichye');
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            
+            showProgress('Ap Kreye Audiobook...', 'Ap ekstrè tèks epi jenere audio...');
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('voice', voice);
+            
+            try {
+                const response = await fetch('/api/audiobook', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) throw new Error('Erè sèvè');
+                
+                const result = await response.json();
+                
+                hideProgress();
+                closeModal('audiobook');
+                
+                const wordCount = result.stats?.translated_words || result.stats?.word_count || 'N/A';
+                alert(`🎉 Audiobook kreye!
+
+📄 Tradiksyon: ${result.files.translation || 'N/A'}
+🎧 Audio: ${result.files.audio}
+
+Mo: ${wordCount}`);
+                
+            } catch (error) {
+                hideProgress();
+                alert('❌ Erè: ' + error.message);
+            }
+        }
+
+        // ========================================
+        // PODCAST CREATION
+        // ========================================
+        async function createPodcast() {
+            const script = document.getElementById('podcast-script').value;
+            
+            if (!script.trim()) {
+                alert('❌ Tanpri ekri yon skrip');
+                return;
+            }
+            
+            showProgress('Ap Kreye Podcast...', 'Ap jenere vwa...');
+            
+            const formData = new FormData();
+            formData.append('script', script);
+            
+            try {
+                const response = await fetch('/api/podcast', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) throw new Error('Erè sèvè');
+                
+                const result = await response.json();
+                hideProgress();
+                closeModal('podcast');
+                
+                alert(`🎉 Podcast kreye!
+
+🎙️ Audio: ${result.files.audio}
+Segman: ${result.stats.segments}`);
+                
+            } catch (error) {
+                hideProgress();
+                alert('❌ Erè: ' + error.message);
+            }
+        }
+
+        // ========================================
+        // TEXT TO SPEECH
+        // ========================================
+        async function generateTTS() {
+            const text = document.getElementById('tts-input').value;
+            
+            if (!text.trim()) {
+                alert('❌ Tanpri antre tèks');
+                return;
+            }
+            
+            if (text.trim().length < 10) {
+                alert('❌ Tèks tro kout! Antre omwen 10 karaktè.');
+                return;
+            }
+            
+            showProgress('Ap Jenere Paròl...', 'Ap konvèti tèks an audio...');
+            
+            const formData = new FormData();
+            formData.append('text', text);
+            formData.append('target_lang', 'ht');
+            
+            try {
+                // First translate if needed
+                const translateResponse = await fetch('/api/translate', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!translateResponse.ok) throw new Error('Erè tradiksyon');
+                
+                const translateResult = await translateResponse.json();
+                
+                // Then generate audio
+                const audioFormData = new FormData();
+                const textBlob = new Blob([translateResult.translation], { type: 'text/plain' });
+                audioFormData.append('file', textBlob, 'tts_text.txt');
+                audioFormData.append('voice', document.getElementById('tts-voice').value);
+                
+                const audioResponse = await fetch('/api/audiobook', {
+                    method: 'POST',
+                    body: audioFormData
+                });
+                
+                if (!audioResponse.ok) throw new Error('Erè jenere audio');
+                
+                const audioResult = await audioResponse.json();
+                
+                hideProgress();
+                
+                // Show result
+                const resultDiv = document.getElementById('tts-result');
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <h3>🎧 Paròl Jenere!</h3>
+                        <a href="${audioResult.files.audio}" class="result-link" download>
+                            <span>🎵</span>
+                            <span>Telechaje Audio (MP3)</span>
+                        </a>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">${audioResult.stats?.translated_words || audioResult.stats?.word_count || '0'}</div>
+                                <div class="stat-label">Mo</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">${audioResult.stats?.translated_chars || audioResult.stats?.text_length || '0'}</div>
+                                <div class="stat-label">Karaktè</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                hideProgress();
+                alert('❌ Erè: ' + error.message);
+            }
+        }
+
+        function clearTTS() {
+            document.getElementById('tts-input').value = '';
+            document.getElementById('tts-result').innerHTML = '';
+        }
+
+        // ========================================
+        // PLACEHOLDER FUNCTIONS
+        // ========================================
+        function convertURL() {
+            alert('🚧 Fonksyon URL an Odyo ap vini byento!');
+        }
+
+        function generateScript() {
+            alert('🚧 Jeneratè Skrip IA ap vini byento!');
+        }
+
+        // ========================================
+        // INITIALIZATION
+        // ========================================
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🇭🇹 Kreyòl IA Studio Konplè - Ready!');
+        });
+    </script>
+</body>
+</html>

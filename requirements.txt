@@ -1,0 +1,111 @@
+# Pou trete PDF / For PDF processing
+pypdf==6.1.1
+
+# Pou NLP ak tradiksyon / For NLP and translation
+# Sipòte NLLB (No Language Left Behind) pou tradiksyon Kreyòl Ayisyen
+transformers==4.57.0
+torch>=2.6.0
+sentencepiece==0.2.1
+langdetect==1.0.9
+
+# Pou konvèti tèks an paròl / For text-to-speech
+gtts==2.5.4
+
+# Pou tradiksyon alternatif / For alternative translation
+deep-translator==1.11.4
+
+# Pou pwosesis odyo / For audio processing
+# pydub==0.25.1  # Note: Not compatible with Python 3.13 (requires audioop module)
+
+# Itil / Utilities
+tqdm==4.67.1
+python-dotenv==1.1.1
+requests==2.32.5
+
+# Development / Tests (optional)
+pytest==8.3.4
+pytest-cov==6.0.0
+
+# GUI / Interface (Phase 3)
+streamlit==1.40.2
+
+# Additional formats (Phase 3)
+python-docx==1.1.2
+
+# API & Scale (Phase 4)
+fastapi==0.115.5
+uvicorn[standard]==0.34.0
+pydantic==2.10.3
+aiofiles==24.1.0
+
+# Security & Auth (Phase 5)
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.12
+
+# Redis Cache (Phase 5 - optional)
+redis==5.2.1
+# hiredis==3.0.0  # Optional C extension - requires Visual C++ Build Tools
+
+# Cloud Storage
+google-cloud-storage==2.18.2
+boto3==1.35.73
+
+# Production V2 Features (added 2025-10-21)
+# File validation
+python-magic-bin==0.4.14  # Windows MIME type detection
+
+# Monitoring
+prometheus-client==0.21.0
+
+# Configuration
+pydantic[dotenv]==2.10.3
+
+# ============================================================
+# VERSION 4.0 - ADVANCED FEATURES (2025-10-24)
+# ============================================================
+
+# Background Jobs & Task Queue
+celery==5.4.0
+kombu==5.4.2  # Celery message transport
+
+# Rate Limiting
+slowapi==0.1.9
+
+# WebSocket Support
+websockets==13.1
+
+# Audio Processing (for streaming TTS)
+# pydub==0.25.1  # Commented out for Python 3.13 compatibility
+# Use ffmpeg directly instead
+
+# Additional async utilities
+asyncio-mqtt==0.16.2  # Optional for MQTT support
+
+# ============================================================
+# VIDEO & AUDIO PROCESSING (Version 4.1)
+# ============================================================
+
+# Video processing
+# ffmpeg-python==0.2.0  # Python wrapper for ffmpeg (requires ffmpeg binary)
+# moviepy==1.0.3  # Video editing (has dependency issues with Python 3.13)
+
+# Audio noise reduction
+# noisereduce==3.0.0  # Audio denoising (requires librosa)
+# librosa==0.10.1  # Audio analysis (large dependency)
+
+# Whisper for STT (local)
+# openai-whisper==20231117  # Local Whisper (requires torch)
+
+# Note: For Python 3.13 compatibility, use ffmpeg binary directly
+# Install ffmpeg: https://ffmpeg.org/download.html
+
+# AI APIs (Optional - set API keys in .env)
+# openai==1.12.0  # OpenAI GPT for script generation
+# anthropic==0.18.0  # Claude for script generation
+
+# ============================================================
+# PRODUCTION SERVER
+# ============================================================
+gunicorn==21.2.0  # Production WSGI server
+

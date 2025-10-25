@@ -1,0 +1,95 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║            🚀 KÒMANSE RAPID - KREYÒL IA v4.1.0                ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+📋 3 FASON POU LANCE PLATFÒM LAN:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1️⃣  PI RAPID (REKÒMANDE POU PREMYE FWA):
+
+    Double-click:  START.bat
+    
+    Oswa:          KÒMANSE_ICI.bat
+    
+    Apre sa chwazi opsyon ou vle!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+2️⃣  RAPID SAN DOCKER/REDIS (SENP):
+
+    Double-click:  START_ALL_SIMPLE.bat
+    
+    ✅ Avantaj:
+       • Pa bezwen Docker
+       • Pa bezwen Redis
+       • Lance imedyatman
+       • Tout fonksyonalite yo mache
+    
+    ⚠️  Limit:
+       • Timeout 60s pou gwo fichye
+       • Pa gen background jobs
+       • Cache an memwa (pa distribiye)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+3️⃣  KONPLÈ AK TOUT POUVWA (BEZWEN DOCKER):
+
+    Double-click:  START_ALL.bat
+    
+    ✅ Avantaj:
+       • PA GEN TIMEOUT!
+       • Background jobs
+       • Redis cache (100x pi rapid)
+       • WebSocket real-time
+       • 10,000+ paj PDF
+    
+    ⚠️  Bezwen:
+       • Docker Desktop (oswa Redis enstale)
+       • Download: https://www.docker.com/get-started
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 REKÒMANDASYON:
+
+   Premye fwa:      START_ALL_SIMPLE.bat  (pi fasil)
+   
+   Production:      START_ALL.bat  (pi pwisan)
+   
+   Pa sèten:        START.bat  (ou chwazi apre)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌐 APRE LANCE:
+
+   Navigatè ap ouvri otomatikman nan:
+   
+   http://localhost:8000
+   
+   API Docs:  http://localhost:8000/docs
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+❓ PWOBLÈM?
+
+   1. Python pa enstale?
+      → https://www.python.org/downloads/
+   
+   2. Dependencies manke?
+      → pip install -r requirements.txt
+   
+   3. Pò 8000 okipe?
+      → Rete lòt aplikasyon ki ap itilize pò 8000
+   
+   4. Docker pa mache?
+      → Itilize START_ALL_SIMPLE.bat
+   
+   5. Lòt pwoblèm?
+      → Gade docs/VERSION_4.0_COMPLETE.md
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🇭🇹 FÈT AK FYÈTE NAN AYITI! ✨
+

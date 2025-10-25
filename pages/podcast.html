@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎙️ Kreye Podcast - Kreyòl IA</title>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">🇭🇹 Kreyòl IA</div>
+        <div class="nav-links">
+            <a href="../index.html">Akèy</a>
+            <a href="features.html">Fonksyonalite</a>
+            <a href="../app_studio_dark.html">Studio</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>🎙️ Kreye Podcast</h1>
+            <p>Jenere podcast otomatikman soti nan dokiman oswa URL</p>
+        </div>
+
+        <div class="source-selection">
+            <h2>📂 Chwazi Sous</h2>
+            <div class="source-buttons">
+                <button class="source-btn active" onclick="selectSource('file')">
+                    📄 Fichye
+                </button>
+                <button class="source-btn" onclick="selectSource('url')">
+                    🔗 URL
+                </button>
+            </div>
+        </div>
+
+        <div class="upload-section" id="fileSource">
+            <div class="upload-box" onclick="document.getElementById('fileInput').click()">
+                <div class="upload-icon">📄</div>
+                <h3>Chwazi yon dokiman</h3>
+                <p>PDF, DOCX, TXT</p>
+                <input type="file" id="fileInput" accept=".pdf,.docx,.txt" style="display:none">
+            </div>
+        </div>
+
+        <div class="url-section" id="urlSource" style="display:none">
+            <div class="form-group">
+                <label>🔗 URL Paj Wèb</label>
+                <input type="url" id="urlInput" class="form-control" placeholder="https://example.com/article">
+                <button class="btn-primary" style="margin-top:15px" onclick="fetchURL()">
+                    Chaje Kontni
+                </button>
+            </div>
+        </div>
+
+        <div class="options-section" id="optionsSection" style="display:none">
+            <h2>⚙️ Konfigirasyon Podcast</h2>
+            
+            <div class="form-group">
+                <label>🎬 Tit Podcast</label>
+                <input type="text" id="podcastTitle" class="form-control" placeholder="Tit podcast ou">
+            </div>
+
+            <div class="form-group">
+                <label>🗣️ Vwa Oratè</label>
+                <select id="speakerVoice" class="form-control">
+                    <option value="creole-native">🇭🇹 Kreyòl Natif</option>
+                    <option value="openai-nova">OpenAI Nova (Fi)</option>
+                    <option value="openai-onyx">OpenAI Onyx (Gason)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>📊 Fòma</label>
+                <select id="format" class="form-control">
+                    <option value="narrative">Naratif (1 vwa)</option>
+                    <option value="interview">Entèvyou (2 vwa)</option>
+                    <option value="discussion">Diskisyon (plizyè vwa)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>🎵 Ajoute Mizik Entwodiksyon?</label>
+                <input type="checkbox" id="addIntro" checked> Wi
+            </div>
+
+            <button class="btn-success btn-large" onclick="createPodcast()">
+                ✨ Kreye Podcast
+            </button>
+        </div>
+
+        <div class="progress-section" id="progressSection" style="display:none">
+            <h2>⏳ Pwosesis...</h2>
+            <div class="progress-bar">
+                <div class="progress-fill"></div>
+            </div>
+            <p id="progressText">Pwosesis dokiman...</p>
+        </div>
+
+        <div class="results-section" id="resultsSection" style="display:none">
+            <h2>✅ Podcast Prè!</h2>
+            <div class="result-card">
+                <div class="result-icon">🎙️</div>
+                <h3 id="resultTitle"></h3>
+                <audio id="audioPlayer" controls style="width:100%; margin:20px 0"></audio>
+                <div class="podcast-info">
+                    <p><strong>Dire:</strong> <span id="duration">--:--</span></p>
+                    <p><strong>Gwosè:</strong> <span id="fileSize">-- MB</span></p>
+                </div>
+                <button class="btn-primary btn-large" onclick="downloadPodcast()">
+                    ⬇️ Telechaje Podcast
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let uploadedFile = null;
+        let sourceType = 'file';
+
+        function selectSource(type) {
+            sourceType = type;
+            document.querySelectorAll('.source-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (type === 'file') {
+                document.getElementById('fileSource').style.display = 'block';
+                document.getElementById('urlSource').style.display = 'none';
+            } else {
+                document.getElementById('fileSource').style.display = 'none';
+                document.getElementById('urlSource').style.display = 'block';
+            }
+        }
+
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            uploadedFile = e.target.files[0];
+            if (uploadedFile) {
+                document.getElementById('optionsSection').style.display = 'block';
+                document.querySelector('.upload-box h3').textContent = `✅ ${uploadedFile.name}`;
+            }
+        });
+
+        function fetchURL() {
+            const url = document.getElementById('urlInput').value;
+            if (!url) return alert('Tanpri antre yon URL!');
+            document.getElementById('optionsSection').style.display = 'block';
+            alert('URL chaje! (Feature disponib byento)');
+        }
+
+        async function createPodcast() {
+            if (!uploadedFile && !document.getElementById('urlInput').value) {
+                return alert('Tanpri chwazi yon fichye oswa URL!');
+            }
+
+            document.getElementById('optionsSection').style.display = 'none';
+            document.getElementById('progressSection').style.display = 'block';
+
+            // Simulate processing
+            setTimeout(() => {
+                document.getElementById('progressSection').style.display = 'none';
+                document.getElementById('resultsSection').style.display = 'block';
+                document.getElementById('resultTitle').textContent = document.getElementById('podcastTitle').value || 'Mon Podcast';
+                alert('Feature disponib byento! Backend pral implemente sa.');
+            }, 3000);
+        }
+
+        function downloadPodcast() {
+            alert('Telechaje disponib byento!');
+        }
+    </script>
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 20px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand { font-size: 1.5rem; font-weight: bold; }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 30px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .page-header h1 {
+            font-size: 2.5rem;
+            color: #2a5298;
+            margin-bottom: 10px;
+        }
+
+        .source-selection {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .source-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .source-btn {
+            padding: 15px 40px;
+            border: 2px solid #2a5298;
+            background: white;
+            color: #2a5298;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .source-btn.active {
+            background: #2a5298;
+            color: white;
+        }
+
+        .upload-box {
+            background: white;
+            border: 3px dashed #2a5298;
+            border-radius: 15px;
+            padding: 60px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-box:hover {
+            background: #f8f9fa;
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .url-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+        }
+
+        .options-section, .results-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            margin-top: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .btn-primary, .btn-success {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #2a5298;
+            color: white;
+        }
+
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .btn-large {
+            width: 100%;
+            margin-top: 20px;
+            padding: 18px;
+        }
+
+        .progress-section {
+            background: white;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #e0e0e0;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #2a5298, #4CAF50);
+            animation: progress 3s ease-in-out infinite;
+        }
+
+        @keyframes progress {
+            0%, 100% { width: 0%; }
+            50% { width: 70%; }
+        }
+
+        .result-card {
+            text-align: center;
+        }
+
+        .result-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+        }
+
+        .podcast-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+    </style>
+</body>
+</html>
+

@@ -1,0 +1,23 @@
+# Additional Dependencies for V2 Production Features
+
+# Add these to requirements.txt:
+
+# File validation (MIME type detection)
+python-magic-bin==0.4.14  # Windows
+# python-magic==0.4.27  # Linux/Mac (uncomment if needed)
+
+# Prometheus metrics
+prometheus-client==0.21.0
+
+# Pydantic for configuration
+pydantic[dotenv]==2.10.3
+
+# Redis for caching (optional)
+redis==5.2.1
+
+# Complete list to add:
+# python-magic-bin==0.4.14
+# prometheus-client==0.21.0
+# pydantic[dotenv]==2.10.3
+# redis==5.2.1
+

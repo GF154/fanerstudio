@@ -1,0 +1,27 @@
+{
+  "books": [
+    {
+      "name": "liv1",
+      "input_pdf": "input/liv1.pdf",
+      "metadata": {
+        "title": "Premye Liv",
+        "author": "Otè 1",
+        "language": "fr",
+        "year": 2024,
+        "description": "Deskripsyon premye liv la"
+      }
+    },
+    {
+      "name": "liv2",
+      "input_pdf": "input/liv2.pdf",
+      "metadata": {
+        "title": "Dezyèm Liv",
+        "author": "Otè 2",
+        "language": "fr",
+        "year": 2024,
+        "description": "Deskripsyon dezyèm liv la"
+      }
+    }
+  ]
+}
+

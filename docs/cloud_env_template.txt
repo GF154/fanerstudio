@@ -1,0 +1,19 @@
+# Google Cloud Storage Configuration
+GCS_BUCKET_NAME=your-bucket-name
+
+# Google Cloud Authentication
+# Set path to your service account key file
+# GOOGLE_APPLICATION_CREDENTIALS=/path/to/your-service-account-key.json
+
+# AWS S3 Configuration (optional, if using boto3)
+# AWS_ACCESS_KEY_ID=your-access-key
+# AWS_SECRET_ACCESS_KEY=your-secret-key
+# AWS_DEFAULT_REGION=us-east-1
+
+# Email Notifications (optional)
+# SENDER_EMAIL=your-email@gmail.com
+# SENDER_PASSWORD=your-app-password
+# RECIPIENT_EMAIL=recipient@email.com
+# SMTP_SERVER=smtp.gmail.com
+# SMTP_PORT=587
+

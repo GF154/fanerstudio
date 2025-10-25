@@ -1,0 +1,201 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    🇭🇹 PWOJÈ KREYÒL IA 🇭🇹                                ║
+║              HAITIAN CREOLE AI AUDIOBOOK PROJECT                         ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ SA PWOJÈ SA FÈ / WHAT THIS PROJECT DOES                                 │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  PDF (nenpòt lang)  →  Tèks Kreyòl  →  Liv Odyo MP3
+  PDF (any language) →  Creole Text  →  MP3 Audiobook
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ FICHYE YO / FILES                                                        │
+└──────────────────────────────────────────────────────────────────────────┘
+
+📁 projet_kreyol_IA/
+├── 🚀 main.py                 ← Script prensipal / Main script
+├── 📝 example.py              ← Egzanp / Examples
+├── 📦 requirements.txt        ← Depandans / Dependencies
+├── 📖 README.md               ← Dokimantasyon konplè / Full docs
+├── ⚡ QUICKSTART.md           ← Gid rapid / Quick guide
+├── 🔧 INSTALL.md              ← Gid enstalasyon / Install guide
+├── ℹ️  ABOUT.md               ← Enfòmasyon detaye / Detailed info
+├── 📊 OVERVIEW.txt            ← Fichye sa a / This file
+├── ⚙️  env_template.txt       ← Tanplat konfigirasyon / Config
+├── 🚫 .gitignore              ← Fichye pou ignore / Ignore file
+├── 📂 data/                   ← Dosye antre / Input folder
+│   ├── input.pdf             ← ⭐ METE PDF W LA / PUT YOUR PDF HERE
+│   └── output_text.txt       ← Tèks ekstrè / Extracted text
+└── 📂 output/                 ← Dosye sòti / Output folder
+    ├── traduction.txt        ← Tradiksyon Kreyòl / Creole translation
+    └── audiobook.mp3         ← ⭐ LIV ODYO / AUDIOBOOK OUTPUT
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ 3 ETAP POU KÒMANSE / 3 STEPS TO START                                   │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  1️⃣  pip install -r requirements.txt
+       ↓
+  2️⃣  Mete PDF nan data/input.pdf / Place PDF in data/input.pdf
+       ↓
+  3️⃣  python main.py
+       ↓
+  ✅  Rezilta nan output/ / Results in output/
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ TEKNOLOJI / TECHNOLOGY                                                   │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  📄 pypdf            → Ekstrè tèks PDF / Extract PDF text
+  🧠 transformers     → AI pou tradiksyon / AI for translation
+  🔥 torch            → PyTorch backend
+  🔊 gtts             → Text-to-Speech Kreyòl / Creole TTS
+  🌍 langdetect       → Detekte lang / Detect language
+  📊 tqdm             → Ba pwogrè / Progress bars
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ REKIZISYON SISTEM / SYSTEM REQUIREMENTS                                 │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  🐍 Python:        3.8 oswa pli wo / 3.8 or higher
+  💾 RAM:           4GB minimum, 8GB rekòmande / recommended
+  💿 Espas Disk:    3GB pou modèl / for models
+  🌐 Entènèt:       Sèlman pou enstalasyon / Only for installation
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ TAN EGZEKISYON / EXECUTION TIME                                          │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  📖 Ekstraksyon PDF:              30 segonn - 2 minit
+  🧠 Tradiksyon an Kreyòl:         5 - 20 minit
+  🎧 Kreyasyon liv odyo:           1 - 5 minit
+  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ⏱️  TOTAL:                       ~6 - 27 minit
+
+  ⚠️  Premye fwa: +10 minit pou telechaje modèl (~1.5GB)
+     First time: +10 minutes to download model (~1.5GB)
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ KI DOKIMAN GID LA / WHICH GUIDE TO READ                                 │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  ⚡ W prese?              → Li QUICKSTART.md
+     In a hurry?
+
+  🔧 Pwoblèm enstalasyon?  → Li INSTALL.md
+     Installation issues?
+
+  📖 Vle tout detay?       → Li README.md
+     Want all details?
+
+  ℹ️  Vle konprann plis?   → Li ABOUT.md
+     Want to understand more?
+
+  💻 Vle wè egzanp kòd?    → Li example.py
+     Want code examples?
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ SI W GEN PWOBLÈM / IF YOU HAVE PROBLEMS                                 │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  ❌ ModuleNotFoundError
+     → pip install -r requirements.txt
+
+  ❌ Pa jwenn PDF / PDF not found
+     → Verifye ke ou gen: data/input.pdf
+       Check that you have: data/input.pdf
+
+  ❌ Erè memwa / Memory error
+     → Fèmen lòt aplikasyon / Close other applications
+     → Bezwen omwen 4GB RAM / Need at least 4GB RAM
+
+  ❌ Modèl ap telechaje / Model downloading
+     → Sa nòmal premye fwa! Tann kèk minit
+       This is normal first time! Wait a few minutes
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ LANG KI SIPÒTE / SUPPORTED LANGUAGES (SOURCE)                           │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  ✅ Franse / French          ✅ Angle / English
+  ✅ Panyòl / Spanish         ✅ Pòtigè / Portuguese
+  ✅ Alman / German           ✅ Italyen / Italian
+  ✅ Chinwa / Chinese         ✅ Japonè / Japanese
+  ✅ Arab / Arabic            ✅ Ris / Russian
+  ... ak 90+ lòt lang / and 90+ other languages
+
+  🎯 TOUT LANG YO TRADUI AN KREYÒL AYISYEN
+     ALL LANGUAGES TRANSLATE TO HAITIAN CREOLE
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ EGZANP ITILIZASYON / USAGE EXAMPLE                                      │
+└──────────────────────────────────────────────────────────────────────────┐
+
+  C:\> cd projet_kreyol_IA
+  C:\projet_kreyol_IA> python main.py
+
+  ═══════════════════════════════════════════════════════════
+  🇭🇹 PWOJÈ KREYÒL IA / HAITIAN CREOLE AI PROJECT
+  ═══════════════════════════════════════════════════════════
+
+  ⏳ ETAP 1: Ekstraksyon tèks nan PDF...
+  Extraction PDF: 100%|████████████| 45/45 [00:12<00:00]
+  ✅ Tèks ekstrè sove nan: data/output_text.txt
+
+  🧠 ETAP 2: Tradiksyon an kreyòl ayisyen...
+  🌍 Lang orijinal detekte: fr
+  Tradiksyon: 100%|████████████| 125/125 [05:23<00:00]
+  ✅ Tradiksyon sove nan: output/traduction.txt
+
+  🎧 ETAP 3: Kreye liv odyo kreyòl...
+  ✅ Liv odyo sove nan: output/audiobook.mp3
+
+  ═══════════════════════════════════════════════════════════
+  ✅ LIV ODYO AN KREYÒL PARE!
+  ═══════════════════════════════════════════════════════════
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ PWOCHEN ETAP / NEXT STEPS                                                │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  1. Enstale depandans yo / Install dependencies
+     → pip install -r requirements.txt
+
+  2. Teste ak yon ti PDF / Test with a small PDF
+     → Kòmanse ak 5-10 paj / Start with 5-10 pages
+
+  3. Verifye rezilta yo / Check results
+     → Gade dosye output/ / Check output/ folder
+
+  4. Si ou satisfè, itilize gwo dokiman!
+     If satisfied, use large documents!
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ KONTRIBISYON / CONTRIBUTION                                              │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  Pwojè sa a se Open Source! Si ou vle ede:
+  This project is Open Source! If you want to help:
+
+  - Rapòte erè / Report bugs
+  - Amelyore tradiksyon / Improve translations
+  - Ajoute fonksyonalite / Add features
+  - Pataje ak lòt moun / Share with others
+
+┌──────────────────────────────────────────────────────────────────────────┐
+│ MISYON / MISSION                                                         │
+└──────────────────────────────────────────────────────────────────────────┘
+
+  Fè teknoloji pi aksesib pou tout moun ki pale Kreyòl Ayisyen,
+  atravè zouti tradiksyon ak liv odyo gratis ak open-source.
+
+  Make technology more accessible for all Haitian Creole speakers,
+  through free and open-source translation and audiobook tools.
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║        Fèt ak ❤️  pou kominote Kreyòl Ayisyen                            ║
+║        Made with ❤️  for the Haitian Creole community                    ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
