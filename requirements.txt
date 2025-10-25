@@ -1,17 +1,10 @@
 # ============================================================
-# ABSOLUTE MINIMUM FOR RENDER FREE TIER - GUARANTEED WORKING
-# Total size: ~10MB | Build time: ~60 seconds
+# ABSOLUTE MINIMUM - GUARANTEED RENDER FREE TIER
+# 5 packages | ~8MB | 45 seconds build
 # ============================================================
 
-# Core Framework (REQUIRED)
 fastapi==0.109.0
 uvicorn[standard]==0.27.0
 python-multipart==0.0.6
-
-# Utilities (REQUIRED)
 python-dotenv==1.0.0
-
-# Translation - NLLB via REST API
 httpx==0.26.0
-
-# That's it! Only 6 packages = GUARANTEED deployment
