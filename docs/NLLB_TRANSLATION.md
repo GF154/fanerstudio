@@ -30,7 +30,7 @@ response = httpx.post(api_url, json=payload, headers=headers)
 - ✅ Aucun package supplémentaire
 - ✅ API REST standard (fonctionne toujours)
 - ✅ Compatible avec tous les plans (gratuit inclus)
-- ✅ Fallback automatique sur Google Translate
+- ✅ 100% NLLB - Pas de fallback Google Translate
 
 ---
 
@@ -39,11 +39,12 @@ response = httpx.post(api_url, json=payload, headers=headers)
 ### **Dépendances Requises:**
 ```txt
 httpx==0.26.0        # HTTP client (déjà inclus dans uvicorn[standard])
-deep-translator==1.11.4  # Fallback
 langdetect==1.0.9    # Auto-détection de langue
 ```
 
-**Total:** ~5MB (vs 50MB+ avant!)
+**Total:** ~0MB (httpx déjà inclus dans uvicorn!)
+
+**Note:** Pas de `deep-translator` - 100% NLLB seulement! ✅
 
 ---
 
@@ -125,19 +126,24 @@ print(text_ht)  # "Bonjou mond"
 
 ---
 
-## 🔄 **Fallback System**
+## 🔄 **Gestion des Erreurs**
 
-Si l'API NLLB échoue (réseau, limite, etc.), le système bascule **automatiquement** sur Google Translate:
+Si l'API NLLB échoue (réseau, limite, etc.), le système retourne une erreur claire:
 
 ```python
 result = translator.translate("Hello", "en", "ht")
 
-if result["method"] == "Fallback":
-    print("⚠️  NLLB API failed, used Google Translate")
-    print(f"Reason: {result['note']}")
+if not result["success"]:
+    print(f"❌ Translation failed: {result['error']}")
+    print(f"Note: {result['note']}")
+    # Use original text or retry later
 ```
 
-**Garantie:** Votre application ne crashera JAMAIS à cause de la traduction!
+**Important:** 
+- ⚠️  Pas de fallback automatique (100% NLLB)
+- ✅ Messages d'erreur clairs
+- ✅ Recommandations pour résoudre le problème
+- ✅ Texte original retourné en cas d'échec
 
 ---
 
@@ -185,7 +191,8 @@ POST https://api-inference.huggingface.co/models/facebook/nllb-200-distilled-600
 | **Response Time** | 1-3 seconds (with API key) |
 | **Response Time** | 5-20 seconds (without API key, cold start) |
 | **Quality** | ⭐⭐⭐⭐⭐ Excellent for Creole |
-| **Reliability** | ⭐⭐⭐⭐⭐ Fallback garantit 100% uptime |
+| **Reliability** | ⭐⭐⭐⭐ Good (depends on API availability) |
+| **Fallback** | ❌ None - Pure NLLB only |
 
 ---
 
@@ -206,7 +213,12 @@ POST https://api-inference.huggingface.co/models/facebook/nllb-200-distilled-600
 **Solution:** Ajouter une clé API pour augmenter les limites.
 
 ### **Erreur: "Connection timeout"**
-**Solution:** Le fallback Google Translate prendra le relais automatiquement.
+**Solution:** 
+- Vérifier votre connexion internet
+- Réessayer après quelques secondes
+- Ajouter une clé API pour meilleure stabilité
+
+**Note:** Pas de fallback Google Translate - NLLB exclusivement!
 
 ---
 
@@ -214,7 +226,7 @@ POST https://api-inference.huggingface.co/models/facebook/nllb-200-distilled-600
 
 1. **Pas de package lourd** → Build rapide (<3 min)
 2. **API REST pure** → Pas de dépendances système
-3. **Fallback inclus** → Toujours fonctionnel
+3. **100% NLLB** → Pas de dépendances inutiles (deep-translator)
 4. **0 configuration requise** → Marche dès le déploiement
 
 ---
@@ -233,5 +245,5 @@ POST https://api-inference.huggingface.co/models/facebook/nllb-200-distilled-600
 - ✅ Déployable sur Render Free Tier
 - ✅ Compatible avec tous les environnements
 - ✅ Pas de dépendances lourdes
-- ✅ Fallback automatique
+- ✅ 100% NLLB - Pas de fallback
 - ✅ Production-ready

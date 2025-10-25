@@ -88,29 +88,17 @@ class NLLBTranslator:
                     raise Exception(f"API returned status {response.status_code}: {response.text}")
             
         except Exception as e:
-            # Fallback to deep-translator if NLLB API fails
-            from deep_translator import GoogleTranslator
-            
-            try:
-                translator = GoogleTranslator(source='auto', target='ht')
-                translated = translator.translate(text)
-                
-                return {
-                    "success": True,
-                    "translated_text": translated,
-                    "source_lang": source_lang,
-                    "target_lang": target_lang,
-                    "model": "Google Translate",
-                    "method": "Fallback",
-                    "note": f"NLLB API failed: {str(e)}"
-                }
-            except Exception as fallback_error:
-                return {
-                    "success": False,
-                    "error": str(fallback_error),
-                    "translated_text": text,
-                    "note": "Both NLLB and Google Translate failed"
-                }
+            # NO FALLBACK - Pure NLLB only!
+            return {
+                "success": False,
+                "error": f"NLLB API failed: {str(e)}",
+                "translated_text": text,
+                "source_lang": source_lang,
+                "target_lang": target_lang,
+                "model": "NLLB",
+                "method": "Failed",
+                "note": "Please check your HUGGINGFACE_API_KEY or try again later"
+            }
     
     async def translate_async(
         self,

@@ -16,9 +16,9 @@ pydantic==2.5.3
 # Text-to-Speech (lightweight)
 gtts==2.5.0
 
-# Translation (lightweight)
-deep-translator==1.11.4
+# Translation - 100% NLLB (NO Google Translate!)
 # NLLB via REST API - NO huggingface-hub needed! ✅
+# Uses httpx for direct API calls
 
 # PDF Processing
 pypdf==3.17.4
