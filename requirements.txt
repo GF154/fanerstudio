@@ -111,5 +111,6 @@ asyncio-mqtt==0.16.2  # Optional for MQTT support
 # ============================================================
 # PRODUCTION SERVER
 # ============================================================
-gunicorn==21.2.0  # Production WSGI server
+# Using uvicorn directly (lighter than gunicorn for free tier)
+# gunicorn==21.2.0  # Commented out - not needed with uvicorn alone
 
