@@ -3,9 +3,11 @@ pypdf==6.1.1
 
 # Pou NLP ak tradiksyon / For NLP and translation
 # Sipòte NLLB (No Language Left Behind) pou tradiksyon Kreyòl Ayisyen
-transformers==4.57.0
-torch>=2.6.0
-sentencepiece==0.2.1
+# NOTE: Commented out for Render free tier (too heavy ~2GB)
+# Uncomment if using paid plan or local deployment
+# transformers==4.57.0
+# torch>=2.6.0
+# sentencepiece==0.2.1
 langdetect==1.0.9
 
 # Pou konvèti tèks an paròl / For text-to-speech
@@ -66,8 +68,10 @@ pydantic[dotenv]==2.10.3
 # ============================================================
 
 # Background Jobs & Task Queue
-celery==5.4.0
-kombu==5.4.2  # Celery message transport
+# NOTE: Commented out for Render free tier
+# Uncomment if using Redis addon
+# celery==5.4.0
+# kombu==5.4.2  # Celery message transport
 
 # Rate Limiting
 slowapi==0.1.9
