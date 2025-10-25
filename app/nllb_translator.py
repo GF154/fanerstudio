@@ -1,18 +1,18 @@
 """
-NLLB Translation Service via Hugging Face API
-Lightweight alternative to running NLLB locally
+NLLB Translation Service via Hugging Face REST API
+Lightweight - no huggingface-hub needed!
+Ultra-compatible with Render free tier
 """
 import os
-from huggingface_hub import InferenceClient
+import httpx
 from typing import Optional
 
 class NLLBTranslator:
-    """NLLB translator using Hugging Face Inference API (no torch needed!)"""
+    """NLLB translator using Hugging Face REST API (ultra-lightweight!)"""
     
     def __init__(self):
         self.api_key = os.getenv("HUGGINGFACE_API_KEY")  # Optional but recommended
-        self.client = InferenceClient(token=self.api_key)
-        self.model = "facebook/nllb-200-distilled-600M"
+        self.api_url = "https://api-inference.huggingface.co/models/facebook/nllb-200-distilled-600M"
         
         # Language codes for NLLB
         self.lang_codes = {
@@ -31,7 +31,7 @@ class NLLBTranslator:
         target_lang: str = "ht"
     ) -> dict:
         """
-        Translate text using NLLB via Hugging Face API
+        Translate text using NLLB via Hugging Face REST API
         
         Args:
             text: Text to translate
@@ -50,22 +50,42 @@ class NLLBTranslator:
             src_code = self.lang_codes.get(source_lang.lower(), "fra_Latn")
             tgt_code = self.lang_codes.get(target_lang.lower(), "hat_Latn")
             
-            # Use Hugging Face Inference API
-            result = self.client.translation(
-                text,
-                model=self.model,
-                src_lang=src_code,
-                tgt_lang=tgt_code
-            )
+            # Prepare headers
+            headers = {}
+            if self.api_key:
+                headers["Authorization"] = f"Bearer {self.api_key}"
             
-            return {
-                "success": True,
-                "translated_text": result.get("translation_text", ""),
-                "source_lang": source_lang,
-                "target_lang": target_lang,
-                "model": "NLLB-200-distilled-600M",
-                "method": "Hugging Face API"
+            # Make request to Hugging Face Inference API
+            payload = {
+                "inputs": text,
+                "parameters": {
+                    "src_lang": src_code,
+                    "tgt_lang": tgt_code
+                }
             }
+            
+            with httpx.Client(timeout=30.0) as client:
+                response = client.post(self.api_url, json=payload, headers=headers)
+                
+                if response.status_code == 200:
+                    result = response.json()
+                    
+                    # Handle different response formats
+                    if isinstance(result, list) and len(result) > 0:
+                        translated = result[0].get("translation_text", text)
+                    else:
+                        translated = result.get("translation_text", text)
+                    
+                    return {
+                        "success": True,
+                        "translated_text": translated,
+                        "source_lang": source_lang,
+                        "target_lang": target_lang,
+                        "model": "NLLB-200-distilled-600M",
+                        "method": "Hugging Face REST API"
+                    }
+                else:
+                    raise Exception(f"API returned status {response.status_code}: {response.text}")
             
         except Exception as e:
             # Fallback to deep-translator if NLLB API fails
