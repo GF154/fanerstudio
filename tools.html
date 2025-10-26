@@ -285,6 +285,68 @@
             transform: none;
         }
 
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 48px 24px;
+            text-align: center;
+            background: #f7fafc;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-zone:hover {
+            border-color: #3b6ba8;
+            background: #edf2f7;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            font-size: 1em;
+            color: #2d3748;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .upload-formats {
+            font-size: 0.85em;
+            color: #a0aec0;
+        }
+
+        /* Voice Select */
+        .voice-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            color: #2d3748;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .voice-select:focus {
+            outline: none;
+            border-color: #3b6ba8;
+            background: white;
+        }
+
+        /* Create Button */
+        .btn-create {
+            background: #2d3748;
+            margin-top: 24px;
+        }
+
+        .btn-create:hover {
+            background: #1a202c;
+        }
+
         /* Responsive Design */
         
         /* Large Desktop (1920px+) */
@@ -672,21 +734,40 @@
     <script>
         const tools = {
             'audiobook': {
-                title: '📚 Kreye Audiobook',
+                title: 'Create an audiobook',
                 form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">If you already have a document, upload it below.</p>
+                    
                     <div class="form-group">
-                        <label>Upload Dokiman (PDF, DOCX, TXT)</label>
-                        <input type="file" accept=".pdf,.docx,.txt">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Upload a document (optional)</label>
+                        <div class="upload-zone" onclick="document.getElementById('audiobook-file').click()">
+                            <div class="upload-icon">📤</div>
+                            <div class="upload-text">Click to upload, or drag and drop</div>
+                            <div class="upload-formats">.epub, .pdf, .txt, .html, .docx</div>
+                            <input type="file" id="audiobook-file" accept=".epub,.pdf,.txt,.html,.docx" style="display: none;">
+                        </div>
                     </div>
+                    
                     <div class="form-group">
-                        <label>Vwa</label>
-                        <select>
-                            <option>Kreyòl Natif Natal</option>
-                            <option>OpenAI TTS</option>
-                            <option>ElevenLabs</option>
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Default voice</label>
+                        <select class="voice-select">
+                            <option value="le-glacial">🎭 Le Glacial</option>
+                            <option value="kreyol-natif">🇭🇹 Kreyòl Natif Natal</option>
+                            <option value="openai">🤖 OpenAI TTS</option>
+                            <option value="elevenlabs">🎙️ ElevenLabs</option>
                         </select>
                     </div>
-                    <button class="btn-primary" onclick="alert('Fonksyon pral konekte ak API')">Kreye Audiobook</button>
+                    
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="auto-assign" style="width: auto; cursor: pointer;">
+                            <span>Auto-assign voices</span>
+                            <span style="background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600; color: #4a5568;">Alpha</span>
+                        </label>
+                        <p style="color: #a0aec0; font-size: 0.85em; margin-top: 8px; margin-left: 28px;">Automatically detect characters in the project and assign matching voices to them. This process can take significant time for longer content.</p>
+                    </div>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Kreye audiobook...')">Create project</button>
                 `
             },
             'podcast': {
