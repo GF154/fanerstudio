@@ -2,9 +2,8 @@
 <html lang="ht">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
-    <title>🇭🇹 Kreyòl IA - Platfòm Kreyatif</title>
-    <meta name="description" content="Platfòm pwofesyonèl pou kreye kontni an Kreyòl Ayisyen">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faner Studio - Tradiksyon Kreyòl Ayisyen</title>
     <style>
         * {
             margin: 0;
@@ -13,374 +12,347 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
             padding: 20px;
         }
 
         .container {
-            max-width: 1400px;
-            width: 95%;
-            margin: 0 auto;
-        }
-
-        .hero {
-            text-align: center;
-            color: white;
-            margin-bottom: 60px;
-        }
-
-        .hero h1 {
-            font-size: clamp(2rem, 5vw, 4rem);
-            margin-bottom: 20px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-
-        .hero p {
-            font-size: clamp(1rem, 2vw, 1.5rem);
-            opacity: 0.9;
-            margin-bottom: 30px;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .option-card {
             background: white;
             border-radius: 20px;
-            padding: clamp(30px, 4vw, 50px);
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-            min-height: 400px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .option-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-        }
-
-        .option-icon {
-            font-size: clamp(3rem, 6vw, 5rem);
-            margin-bottom: 25px;
-        }
-
-        .option-title {
-            font-size: clamp(1.5rem, 3vw, 2.2rem);
-            font-weight: bold;
-            color: #2a5298;
-            margin-bottom: 20px;
-        }
-
-        .option-desc {
-            color: #666;
-            font-size: clamp(1rem, 2vw, 1.3rem);
-            line-height: 1.7;
-        }
-
-        .features {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             padding: 40px;
-            color: white;
-            margin-top: 40px;
+            max-width: 800px;
+            width: 100%;
         }
 
-        .features h2 {
+        .header {
             text-align: center;
             margin-bottom: 30px;
-            font-size: 2rem;
         }
 
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .feature-item {
-            background: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-        }
-
-        .feature-item .icon {
-            font-size: 2.5rem;
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
             margin-bottom: 10px;
         }
 
-        .feature-item h3 {
+        .header .flag {
+            font-size: 3em;
             margin-bottom: 10px;
         }
 
-        /* Zoom controls */
-        .zoom-controls {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(255,255,255,0.95);
-            border-radius: 50px;
-            padding: 10px 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            z-index: 1000;
+        .header p {
+            color: #666;
+            font-size: 1.1em;
         }
 
-        .zoom-btn {
-            width: 40px;
-            height: 40px;
-            border: none;
-            background: #2a5298;
-            color: white;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+        .translation-box {
+            margin-bottom: 20px;
         }
 
-        .zoom-btn:hover {
-            background: #1e3c72;
-            transform: scale(1.1);
-        }
-
-        .zoom-level {
-            color: #2a5298;
+        .translation-box label {
+            display: block;
             font-weight: bold;
-            min-width: 50px;
-            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
         }
 
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2rem;
-            }
-
-            .hero p {
-                font-size: 1rem;
-            }
-
-            .options-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .zoom-controls {
-                bottom: 10px;
-                right: 10px;
-                padding: 8px 12px;
-            }
-
-            .zoom-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 1rem;
-            }
+        .translation-box textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
         }
-        /* Navigation Header */
-        .nav-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(30, 60, 114, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 0;
+
+        .translation-box textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .controls {
             display: flex;
-            justify-content: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-            z-index: 999;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
         }
 
-        .nav-buttons {
-            display: flex;
-            gap: 0;
-        }
-
-        .nav-btn {
-            padding: 15px 30px;
-            background: transparent;
-            border: none;
-            color: rgba(255,255,255,0.8);
+        .controls select {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
             cursor: pointer;
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s;
-            position: relative;
-            text-decoration: none;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .result {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result.show {
             display: block;
         }
 
-        .nav-btn:hover {
-            background: rgba(255,255,255,0.1);
-            color: white;
+        .result h3 {
+            color: #667eea;
+            margin-bottom: 10px;
         }
 
-        .nav-btn.active {
-            color: white;
-            background: rgba(255,255,255,0.15);
+        .result p {
+            color: #333;
+            font-size: 1.1em;
+            line-height: 1.6;
         }
 
-        .nav-btn.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: white;
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.2em;
+            display: none;
         }
 
-        body {
-            padding-top: 50px;
+        .loading.show {
+            display: block;
+        }
+
+        .error {
+            background: #fee;
+            border-left: 4px solid #f44;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item .number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-item .label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Navigation Header -->
-    <nav class="nav-header">
-        <div class="nav-buttons">
-            <a href="/" class="nav-btn active">Akèy</a>
-            <a href="/pages/features.html" class="nav-btn">Fonksyonalite</a>
-            <a href="/pages/studio_complete.html" class="nav-btn">Studio</a>
-        </div>
-    </nav>
-
     <div class="container">
-        <div class="hero">
-            <h1>🇭🇹 Kreyòl IA</h1>
-            <p>Platfòm Pwofesyonèl pou Kreye Kontni an Kreyòl Ayisyen</p>
-            <p style="font-size: 1.2rem; opacity: 0.9;">Chwazi yon zouti pou kòmanse kreye kontni!</p>
+        <div class="header">
+            <div class="flag">🇭🇹</div>
+            <h1>Faner Studio</h1>
+            <p>Tradiksyon Pwofesyonèl ak NLLB</p>
         </div>
 
-        <div class="options-grid" style="max-width: 500px; margin: 0 auto;">
-            <a href="pages/features.html" class="option-card">
-                <div class="option-icon">📋</div>
-                <div class="option-title">Tout Fonksyonalite</div>
-                <div class="option-desc">
-                    Tout zouti yo òganize pa kategori. 
-                    Chwazi egzakteman sa ou bezwen.
-                    <br><br>
-                    <strong style="color: #10b981; font-size: 1.2rem;">✅ Klike pou kòmanse!</strong>
-                </div>
-            </a>
+        <div class="translation-box">
+            <label for="sourceText">📝 Tèks pou tradwi:</label>
+            <textarea id="sourceText" rows="6" placeholder="Ekri oswa kole tèks ou a isit la..."></textarea>
         </div>
 
-        <div class="features">
-            <h2>✨ Fonksyonalite Disponib</h2>
-            <div class="features-grid">
-                <div class="feature-item">
-                    <div class="icon">🗣️</div>
-                    <h3>Text-to-Speech</h3>
-                    <p>3 engines: Natif, OpenAI, ElevenLabs</p>
+        <div class="controls">
+            <select id="sourceLang">
+                <option value="auto">🌐 Detekte Otomatik</option>
+                <option value="fr">🇫🇷 Franse</option>
+                <option value="en">🇺🇸 Anglè</option>
+                <option value="es">🇪🇸 Panyòl</option>
+            </select>
+
+            <select id="targetLang">
+                <option value="ht">🇭🇹 Kreyòl Ayisyen</option>
+                <option value="fr">🇫🇷 Franse</option>
+                <option value="en">🇺🇸 Anglè</option>
+            </select>
+        </div>
+
+        <button class="btn" id="translateBtn">
+            🔄 Tradwi Kounye a
+        </button>
+
+        <div class="loading" id="loading">
+            ⏳ Tradiksyon ap fèt...
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+            <h3>✅ Rezilta:</h3>
+            <p id="translatedText"></p>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="number" id="charCount">0</div>
+                    <div class="label">Karaktè</div>
                 </div>
-                <div class="feature-item">
-                    <div class="icon">📝</div>
-                    <h3>Speech-to-Text</h3>
-                    <p>Whisper, OpenAI, AssemblyAI</p>
-                </div>
-                <div class="feature-item">
-                    <div class="icon">📚</div>
-                    <h3>Audiobook</h3>
-                    <p>PDF/DOCX → Odyo Kreyòl</p>
-                </div>
-                <div class="feature-item">
-                    <div class="icon">🎙️</div>
-                    <h3>Podcast</h3>
-                    <p>Soti nan URL oswa dokiman</p>
-                </div>
-                <div class="feature-item">
-                    <div class="icon">🌍</div>
-                    <h3>Tradiksyon</h3>
-                    <p>NLLB pou Kreyòl siperyè</p>
-                </div>
-                <div class="feature-item">
-                    <div class="icon">🎬</div>
-                    <h3>Videyo</h3>
-                    <p>Vwadeyò, soutit, denoising</p>
+                <div class="stat-item">
+                    <div class="number" id="wordCount">0</div>
+                    <div class="label">Mo</div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <!-- Zoom Controls -->
-    <div class="zoom-controls">
-        <button class="zoom-btn" onclick="zoomOut()" title="Diminye">➖</button>
-        <span class="zoom-level" id="zoom-level">100%</span>
-        <button class="zoom-btn" onclick="zoomIn()" title="Ogmante">➕</button>
-        <button class="zoom-btn" onclick="resetZoom()" title="Reset">↺</button>
+        <div class="footer">
+            <p>Pwofesyonèl ak 💜 pou kominote Kreyòl Ayisyen</p>
+            <p><a href="/docs" target="_blank">📖 API Documentation</a></p>
+        </div>
     </div>
 
     <script>
-        let currentZoom = 100;
+        // Auto-detect API URL (works both locally and on Render)
+        const API_URL = window.location.origin;
 
-        function zoomIn() {
-            if (currentZoom < 200) {
-                currentZoom += 10;
-                applyZoom();
+        const sourceText = document.getElementById('sourceText');
+        const targetLang = document.getElementById('targetLang');
+        const translateBtn = document.getElementById('translateBtn');
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+        const translatedText = document.getElementById('translatedText');
+        const errorBox = document.getElementById('error');
+        const charCount = document.getElementById('charCount');
+        const wordCount = document.getElementById('wordCount');
+
+        translateBtn.addEventListener('click', async () => {
+            const text = sourceText.value.trim();
+            
+            if (!text) {
+                showError('Tanpri ekri yon tèks pou tradwi!');
+                return;
             }
-        }
 
-        function zoomOut() {
-            if (currentZoom > 50) {
-                currentZoom -= 10;
-                applyZoom();
-            }
-        }
+            // Hide previous results
+            result.classList.remove('show');
+            errorBox.classList.remove('show');
+            loading.classList.add('show');
+            translateBtn.disabled = true;
 
-        function resetZoom() {
-            currentZoom = 100;
-            applyZoom();
-        }
+            try {
+                const formData = new FormData();
+                formData.append('text', text);
+                formData.append('target', targetLang.value);
 
-        function applyZoom() {
-            document.body.style.zoom = currentZoom + '%';
-            document.getElementById('zoom-level').textContent = currentZoom + '%';
-            localStorage.setItem('kreyol-ia-zoom', currentZoom);
-        }
+                const response = await fetch(`${API_URL}/translate`, {
+                    method: 'POST',
+                    body: formData
+                });
 
-        // Load saved zoom level
-        window.addEventListener('DOMContentLoaded', function() {
-            const savedZoom = localStorage.getItem('kreyol-ia-zoom');
-            if (savedZoom) {
-                currentZoom = parseInt(savedZoom);
-                applyZoom();
+                if (!response.ok) {
+                    throw new Error(`Erè: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    translatedText.textContent = data.translated;
+                    charCount.textContent = data.translated.length;
+                    wordCount.textContent = data.translated.split(/\s+/).length;
+                    result.classList.add('show');
+                } else {
+                    throw new Error(data.error || 'Tradiksyon pa mache');
+                }
+
+            } catch (error) {
+                showError(`Erè: ${error.message}`);
+            } finally {
+                loading.classList.remove('show');
+                translateBtn.disabled = false;
             }
         });
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            if (e.ctrlKey || e.metaKey) {
-                if (e.key === '+' || e.key === '=') {
-                    e.preventDefault();
-                    zoomIn();
-                } else if (e.key === '-') {
-                    e.preventDefault();
-                    zoomOut();
-                } else if (e.key === '0') {
-                    e.preventDefault();
-                    resetZoom();
-                }
+        function showError(message) {
+            errorBox.textContent = message;
+            errorBox.classList.add('show');
+            setTimeout(() => {
+                errorBox.classList.remove('show');
+            }, 5000);
+        }
+
+        // Allow Enter key to translate (Ctrl+Enter)
+        sourceText.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                translateBtn.click();
             }
         });
     </script>

@@ -6,7 +6,7 @@ GUARANTEED to work on Render free tier
 """
 
 from fastapi import FastAPI
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 import httpx
 import os
 
@@ -14,7 +14,12 @@ app = FastAPI(title="Faner Studio API", version="1.0")
 
 @app.get("/")
 def root():
-    return {"status": "live", "message": "Faner Studio fonksyone!"}
+    """Serve the HTML interface if available, otherwise return JSON"""
+    html_path = os.path.join(os.path.dirname(__file__), "index.html")
+    if os.path.exists(html_path):
+        return FileResponse(html_path)
+    else:
+        return {"status": "live", "message": "Faner Studio fonksyone!"}
 
 @app.get("/health")
 def health():
