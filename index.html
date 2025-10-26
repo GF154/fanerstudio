@@ -222,27 +222,105 @@
             opacity: 0.9;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
+        /* Responsive Design */
+        
+        /* Large Desktop (1920px+) */
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1200px;
+            }
+            
+            h1 {
+                font-size: 4em;
+            }
+            
+            .subtitle {
+                font-size: 1.8em;
+            }
+        }
+
+        /* Desktop (1024px - 1919px) */
+        @media (min-width: 1024px) and (max-width: 1919px) {
+            .container {
+                max-width: 1000px;
+            }
+        }
+
+        /* Laptop (768px - 1023px) */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .container {
+                max-width: 750px;
+                padding: 0 30px;
+            }
+
+            h1 {
+                font-size: 3em;
+            }
+
+            .subtitle {
+                font-size: 1.3em;
+            }
+
+            .logo {
+                font-size: 4em;
+            }
+
+            .features {
+                gap: 20px;
+            }
+
+            .feature {
+                min-width: 180px;
+                padding: 18px 25px;
+            }
+
+            .cta-button {
+                padding: 18px 50px;
+                font-size: 1.2em;
+            }
+        }
+
+        /* Tablet (481px - 767px) */
+        @media (min-width: 481px) and (max-width: 767px) {
+            body {
+                padding: 15px;
+            }
+
+            .logo {
+                font-size: 3.5em;
+            }
+
             h1 {
                 font-size: 2.5em;
             }
 
             .subtitle {
                 font-size: 1.2em;
+                margin-bottom: 30px;
             }
 
             .features {
                 gap: 15px;
+                flex-direction: row;
+                flex-wrap: wrap;
             }
 
             .feature {
                 min-width: 150px;
+                flex: 1 1 calc(50% - 15px);
                 padding: 15px 20px;
             }
 
+            .feature-icon {
+                font-size: 2em;
+            }
+
+            .feature-text {
+                font-size: 1em;
+            }
+
             .cta-button {
-                padding: 18px 40px;
+                padding: 16px 40px;
                 font-size: 1.1em;
             }
 
@@ -252,6 +330,85 @@
 
             .stat-number {
                 font-size: 2em;
+            }
+        }
+
+        /* Mobile (320px - 480px) */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .logo {
+                font-size: 3em;
+                margin-bottom: 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+                margin-bottom: 15px;
+            }
+
+            .subtitle {
+                font-size: 1em;
+                margin-bottom: 25px;
+                line-height: 1.5;
+            }
+
+            .features {
+                gap: 12px;
+                flex-direction: column;
+                margin-bottom: 35px;
+            }
+
+            .feature {
+                width: 100%;
+                min-width: unset;
+                padding: 15px;
+            }
+
+            .feature-icon {
+                font-size: 2em;
+                margin-bottom: 8px;
+            }
+
+            .feature-text {
+                font-size: 0.95em;
+            }
+
+            .cta-button {
+                padding: 15px 35px;
+                font-size: 1em;
+                width: 100%;
+            }
+
+            .stats {
+                gap: 25px;
+                margin-top: 40px;
+                flex-direction: column;
+            }
+
+            .stat-number {
+                font-size: 1.8em;
+            }
+
+            .stat-label {
+                font-size: 0.9em;
+            }
+        }
+
+        /* Extra Small Mobile (< 320px) */
+        @media (max-width: 319px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            .logo {
+                font-size: 2.5em;
             }
         }
     </style>

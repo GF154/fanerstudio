@@ -285,18 +285,274 @@
             transform: none;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
+        /* Responsive Design */
+        
+        /* Large Desktop (1920px+) */
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1400px;
+            }
+            
+            .section-title {
+                font-size: 2em;
+            }
+            
+            .tools-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Desktop (1200px - 1919px) */
+        @media (min-width: 1200px) and (max-width: 1919px) {
+            .tools-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Laptop (1024px - 1199px) */
+        @media (min-width: 1024px) and (max-width: 1199px) {
+            .container {
+                max-width: 1000px;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+
+            .section {
+                padding: 35px;
+            }
+        }
+
+        /* Tablet Landscape (768px - 1023px) */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+
+            .container {
+                max-width: 750px;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .section {
+                padding: 30px;
+            }
+
+            .tool-card h3 {
+                font-size: 1.2em;
+            }
+        }
+
+        /* Tablet Portrait (481px - 767px) */
+        @media (min-width: 481px) and (max-width: 767px) {
+            .header {
+                padding: 50px 20px;
+            }
+
             .header h1 {
                 font-size: 2em;
             }
 
-            .tools-grid {
-                grid-template-columns: 1fr;
+            .header p {
+                font-size: 1em;
+                margin-bottom: 20px;
+            }
+
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+
+            .container {
+                margin: -40px auto 40px;
             }
 
             .section {
+                padding: 25px;
+                margin-bottom: 30px;
+            }
+
+            .section-title {
+                font-size: 1.5em;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .tool-card {
+                padding: 20px;
+            }
+
+            .tool-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 28px;
+            }
+
+            .tool-card h3 {
+                font-size: 1.1em;
+            }
+
+            .tool-card p {
+                font-size: 0.9em;
+            }
+
+            .modal-content {
                 padding: 24px;
+            }
+        }
+
+        /* Mobile (320px - 480px) */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 40px 15px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 0.95em;
+                margin-bottom: 20px;
+            }
+
+            .back-btn {
+                padding: 8px 14px;
+                font-size: 0.85em;
+            }
+
+            .container {
+                margin: -30px auto 30px;
+                padding: 0 10px;
+            }
+
+            .section {
+                padding: 20px;
+                margin-bottom: 25px;
+                border-radius: 12px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+
+            .section-icon {
+                font-size: 24px;
+            }
+
+            .section-title {
+                font-size: 1.4em;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .tool-card {
+                padding: 18px;
+            }
+
+            .tool-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 26px;
+                margin-bottom: 12px;
+            }
+
+            .tool-card h3 {
+                font-size: 1.1em;
+                margin-bottom: 6px;
+            }
+
+            .tool-card p {
+                font-size: 0.88em;
+                margin-bottom: 12px;
+                line-height: 1.5;
+            }
+
+            .badge {
+                padding: 4px 10px;
+                font-size: 0.75em;
+            }
+
+            .modal {
+                padding: 15px;
+            }
+
+            .modal-content {
+                padding: 20px;
+                border-radius: 12px;
+            }
+
+            .modal-header h2 {
+                font-size: 1.4em;
+            }
+
+            .close-btn {
+                font-size: 28px;
+                width: 36px;
+                height: 36px;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            .form-group label {
+                font-size: 0.9em;
+                margin-bottom: 6px;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                padding: 10px 12px;
+                font-size: 0.95em;
+            }
+
+            .btn-primary {
+                padding: 12px 20px;
+                font-size: 0.95em;
+            }
+        }
+
+        /* Extra Small Mobile (< 320px) */
+        @media (max-width: 319px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .section-title {
+                font-size: 1.2em;
+            }
+
+            .tool-card h3 {
+                font-size: 1em;
+            }
+
+            .tool-card p {
+                font-size: 0.85em;
             }
         }
     </style>
