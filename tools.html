@@ -725,7 +725,7 @@
                     <div class="tool-icon">💬</div>
                     <h3>Ajoute Soutit</h3>
                     <p>Soutit otomatik pou videyo ou. Tradiksyon plizyè lang.</p>
-                    <span class="badge dev">Dev</span>
+                    <span class="badge ready">Ready</span>
                 </div>
 
                 <div class="tool-card" onclick="openModal('video-denoise')">
@@ -1032,8 +1032,90 @@
                 `
             },
             'video-captions': {
-                title: '💬 Ajoute Soutit',
-                form: `<button class="btn-primary" disabled>Pral Disponib Byento</button>`
+                title: 'Ajoute Soutit',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Kreye soutit otomatik pou videyo ou. Sipòte tradiksyon nan plizyè lang.</p>
+                    
+                    <!-- Upload Video -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Telechaje videyo</label>
+                        <div class="upload-zone" onclick="document.getElementById('captions-video').click()">
+                            <div class="upload-icon">🎬</div>
+                            <div class="upload-text">Klike pou telechaje videyo, oswa trennen epi lage</div>
+                            <div class="upload-formats">.mp4, .mov, .avi, .mkv, .webm</div>
+                            <input type="file" id="captions-video" accept="video/*" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <!-- Source Language -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Lang videyo a</label>
+                        <select class="voice-select">
+                            <option value="auto">🔍 Detekte otomatikman</option>
+                            <option value="ht">🇭🇹 Kreyòl Ayisyen</option>
+                            <option value="fr">🇫🇷 Fransè</option>
+                            <option value="en">🇺🇸 Anglè</option>
+                            <option value="es">🇪🇸 Panyòl</option>
+                            <option value="pt">🇧🇷 Pòtigè</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Target Languages (Multiple) -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Lang soutit yo</label>
+                        <div style="background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                                <input type="checkbox" id="lang-ht" style="width: auto; cursor: pointer;" checked>
+                                <span>🇭🇹 Kreyòl Ayisyen</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                                <input type="checkbox" id="lang-fr" style="width: auto; cursor: pointer;">
+                                <span>🇫🇷 Fransè</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                                <input type="checkbox" id="lang-en" style="width: auto; cursor: pointer;">
+                                <span>🇺🇸 Anglè</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                                <input type="checkbox" id="lang-es" style="width: auto; cursor: pointer;">
+                                <span>🇪🇸 Panyòl</span>
+                            </label>
+                        </div>
+                        <p style="color: #a0aec0; font-size: 0.85em; margin-top: 8px;">Chwazi youn oswa plizyè lang pou soutit yo.</p>
+                    </div>
+                    
+                    <!-- Caption Style -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Stil soutit</label>
+                        <select class="voice-select">
+                            <option value="bottom">Anba ekran (default)</option>
+                            <option value="top">Anlè ekran</option>
+                            <option value="burned">Entegre nan videyo (burned-in)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Caption Options -->
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Opsyon soutit</label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="auto-sync" style="width: auto; cursor: pointer;" checked>
+                            <span>Senkwonize otomatik ak paròl yo</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="highlight-words" style="width: auto; cursor: pointer;">
+                            <span>Highlight mo k ap pale a</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="export-srt" style="width: auto; cursor: pointer;" checked>
+                            <span>Eksplòte fichye .srt</span>
+                        </label>
+                    </div>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Kreye soutit...')">Kreye soutit</button>
+                `
             },
             'video-denoise': {
                 title: '🔇 Retire Bri Background',
