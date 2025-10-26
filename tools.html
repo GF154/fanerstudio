@@ -738,8 +738,8 @@
                 <div class="tool-card" onclick="openModal('video-correct')">
                     <div class="tool-icon">🔧</div>
                     <h3>Korije Erè Vwadeyò</h3>
-                    <p>Korije erè ak kòreksyon paròl nan videyo.</p>
-                    <span class="badge dev">Dev</span>
+                    <p>Korije erè ak pwoblèm nan vwadeyò videyo ou.</p>
+                    <span class="badge ready">Ready</span>
                 </div>
 
                 <div class="tool-card" onclick="openModal('music-ai')">
@@ -1178,8 +1178,95 @@
                 `
             },
             'video-correct': {
-                title: '🔧 Korije Erè Vwadeyò',
-                form: `<button class="btn-primary" disabled>Pral Disponib Byento</button>`
+                title: 'Korije Erè Vwadeyò',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Korije erè ak pwoblèm nan vwadeyò videyo ou. Reyenrejistre seksyon ki gen pwoblèm yo.</p>
+                    
+                    <!-- Upload Video -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Telechaje videyo ak vwadeyò</label>
+                        <div class="upload-zone" onclick="document.getElementById('correct-video').click()">
+                            <div class="upload-icon">🎬</div>
+                            <div class="upload-text">Klike pou telechaje videyo, oswa trennen epi lage</div>
+                            <div class="upload-formats">.mp4, .mov, .avi, .mkv, .webm</div>
+                            <input type="file" id="correct-video" accept="video/*" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <!-- Detection Method -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Metòd deteksyon erè</label>
+                        <select class="voice-select">
+                            <option value="auto">🔍 Otomatik (IA detekte erè)</option>
+                            <option value="manual">✏️ Manyèl (ou chwazi seksyon yo)</option>
+                            <option value="transcript">📝 Konpare ak transkripsyon</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Error Types to Detect -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Tip erè pou detekte</label>
+                        <div style="background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                                <input type="checkbox" id="error-pronunciation" style="width: auto; cursor: pointer;" checked>
+                                <span>Pwononsyasyon move</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                                <input type="checkbox" id="error-timing" style="width: auto; cursor: pointer;" checked>
+                                <span>Pwoblèm timing (desenkwonizasyon)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                                <input type="checkbox" id="error-words" style="width: auto; cursor: pointer;" checked>
+                                <span>Mo ki pa kòrèk</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                                <input type="checkbox" id="error-audio" style="width: auto; cursor: pointer;">
+                                <span>Kalite odyo ki move</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Correction Voice -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Vwa pou kòreksyon yo</label>
+                        <select class="voice-select">
+                            <option value="original">🔄 Menm vwa orijinal la</option>
+                            <option value="kreyol-natif">🇭🇹 Kreyòl Natif Natal</option>
+                            <option value="le-glacial">🎭 Le Glacial</option>
+                            <option value="custom">🎙️ Anrejistre nouvo vwa</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Correction Options -->
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Opsyon kòreksyon</label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="smooth-transitions" style="width: auto; cursor: pointer;" checked>
+                            <span>Tranzisyon smooth ant seksyon yo</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="match-tone" style="width: auto; cursor: pointer;" checked>
+                            <span>Adapte ton ak vwadeyò orijinal la</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="keep-original" style="width: auto; cursor: pointer;" checked>
+                            <span>Kenbe kopi videyo orijinal la</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Preview Before Apply -->
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="preview-corrections" style="width: auto; cursor: pointer;" checked>
+                            <span>Preview kòreksyon yo anvan aplike</span>
+                        </label>
+                    </div>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Detekte ak korije erè...')">Detekte erè</button>
+                `
             },
             'music-ai': {
                 title: '🎼 Jeneratè Mizik IA',
