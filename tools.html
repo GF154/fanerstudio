@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faner Studio - Tout Fonksyonalite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2c5282 0%, #3b6ba8 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: -50px auto 50px;
+            padding: 0 20px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .section-icon {
+            font-size: 28px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        /* Tool Card */
+        .tool-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            border-color: #cbd5e0;
+        }
+
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .tool-card h3 {
+            font-size: 1.3em;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .tool-card p {
+            color: #718096;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .badge.ready {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge.dev {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8em;
+            color: #2d3748;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 32px;
+            color: #a0aec0;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            color: #2d3748;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3b6ba8;
+            background: white;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2c5282 0%, #3b6ba8 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(43, 82, 130, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>HT Tout Fonksyonalite</h1>
+        <p>Chwazi yon zouti pou kòmanse</p>
+        <a href="/" class="back-btn">← Retounen Akèy</a>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- ODYO Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🎵</span>
+                <h2 class="section-title">Zouti Odyo</h2>
+            </div>
+
+            <div class="tools-grid">
+                <div class="tool-card" onclick="openModal('audiobook')">
+                    <div class="tool-icon">📚</div>
+                    <h3>Kreye Audiobook</h3>
+                    <p>Konvèti PDF, DOCX, oswa TXT an audiobook Kreyòl. Tradiksyon otomatik ak NLLB.</p>
+                    <span class="badge ready">Ready</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('podcast')">
+                    <div class="tool-icon">🎙️</div>
+                    <h3>Jenere Podcast</h3>
+                    <p>Kreye podcast soti nan URL oswa dokiman. Multi-speaker sipòte.</p>
+                    <span class="badge ready">Ready</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('url-audio')">
+                    <div class="tool-icon">🔗</div>
+                    <h3>URL → Odyo</h3>
+                    <p>Konvèti nenpòt paj wèb an odyo Kreyòl. Rapid ak fasil.</p>
+                    <span class="badge ready">Ready</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('script-ai')">
+                    <div class="tool-icon">✨</div>
+                    <h3>Jeneratè Skrip IA</h3>
+                    <p>Kreye skrip ak AI. Bay yon pwonp epi resevwa kontni kreyatif.</p>
+                    <span class="badge dev">Dev</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIDEYO Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🎬</span>
+                <h2 class="section-title">Zouti Videyo</h2>
+            </div>
+
+            <div class="tools-grid">
+                <div class="tool-card" onclick="openModal('video-voiceover')">
+                    <div class="tool-icon">🎬</div>
+                    <h3>Nouvo Vwadeyò Videyo</h3>
+                    <p>Ajoute paròl nan videyo ou yo. Tradiksyon otomatik sipòte.</p>
+                    <span class="badge dev">Dev</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('video-sfx')">
+                    <div class="tool-icon">🎵</div>
+                    <h3>Ajoute Efè Son ak Mizik</h3>
+                    <p>Ajoute vwadeyò, mizik, ak efè son nan videyo ou.</p>
+                    <span class="badge dev">Dev</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('video-captions')">
+                    <div class="tool-icon">💬</div>
+                    <h3>Ajoute Soutit</h3>
+                    <p>Soutit otomatik pou videyo ou. Tradiksyon plizyè lang.</p>
+                    <span class="badge dev">Dev</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('video-denoise')">
+                    <div class="tool-icon">🔇</div>
+                    <h3>Retire Bri Background</h3>
+                    <p>Netwaye odyo a li gen bri. Amelyore kalite son.</p>
+                    <span class="badge dev">Dev</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('video-correct')">
+                    <div class="tool-icon">🔧</div>
+                    <h3>Korije Erè Vwadeyò</h3>
+                    <p>Korije erè ak kòreksyon paròl nan videyo.</p>
+                    <span class="badge dev">Dev</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('music-ai')">
+                    <div class="tool-icon">🎼</div>
+                    <h3>Jeneratè Mizik IA</h3>
+                    <p>Jenere mizik pou videyo ou otomatikman ak IA.</p>
+                    <span class="badge dev">Dev</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Tool Name</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const tools = {
+            'audiobook': {
+                title: '📚 Kreye Audiobook',
+                form: `
+                    <div class="form-group">
+                        <label>Upload Dokiman (PDF, DOCX, TXT)</label>
+                        <input type="file" accept=".pdf,.docx,.txt">
+                    </div>
+                    <div class="form-group">
+                        <label>Vwa</label>
+                        <select>
+                            <option>Kreyòl Natif Natal</option>
+                            <option>OpenAI TTS</option>
+                            <option>ElevenLabs</option>
+                        </select>
+                    </div>
+                    <button class="btn-primary" onclick="alert('Fonksyon pral konekte ak API')">Kreye Audiobook</button>
+                `
+            },
+            'podcast': {
+                title: '🎙️ Jenere Podcast',
+                form: `
+                    <div class="form-group">
+                        <label>Sous (URL oswa upload fichye)</label>
+                        <input type="text" placeholder="https://...">
+                    </div>
+                    <div class="form-group">
+                        <label>Tit Podcast</label>
+                        <input type="text" placeholder="Tit podcast ou...">
+                    </div>
+                    <button class="btn-primary" onclick="alert('Fonksyon pral konekte ak API')">Kreye Podcast</button>
+                `
+            },
+            'url-audio': {
+                title: '🔗 URL → Odyo',
+                form: `
+                    <div class="form-group">
+                        <label>URL Paj Wèb</label>
+                        <input type="text" placeholder="https://...">
+                    </div>
+                    <button class="btn-primary" onclick="alert('Fonksyon pral konekte ak API')">Konvèti an Odyo</button>
+                `
+            },
+            'script-ai': {
+                title: '✨ Jeneratè Skrip IA',
+                form: `
+                    <div class="form-group">
+                        <label>Pwonp (Bay IA yon pwonp)</label>
+                        <textarea placeholder="Ekri pwonp ou a isit la..."></textarea>
+                    </div>
+                    <button class="btn-primary" disabled>Pral Disponib Byento</button>
+                `
+            },
+            'video-voiceover': {
+                title: '🎬 Nouvo Vwadeyò Videyo',
+                form: `
+                    <div class="form-group">
+                        <label>Upload Videyo</label>
+                        <input type="file" accept="video/*">
+                    </div>
+                    <button class="btn-primary" disabled>Pral Disponib Byento</button>
+                `
+            },
+            'video-sfx': {
+                title: '🎵 Ajoute Efè Son ak Mizik',
+                form: `<button class="btn-primary" disabled>Pral Disponib Byento</button>`
+            },
+            'video-captions': {
+                title: '💬 Ajoute Soutit',
+                form: `<button class="btn-primary" disabled>Pral Disponib Byento</button>`
+            },
+            'video-denoise': {
+                title: '🔇 Retire Bri Background',
+                form: `<button class="btn-primary" disabled>Pral Disponib Byento</button>`
+            },
+            'video-correct': {
+                title: '🔧 Korije Erè Vwadeyò',
+                form: `<button class="btn-primary" disabled>Pral Disponib Byento</button>`
+            },
+            'music-ai': {
+                title: '🎼 Jeneratè Mizik IA',
+                form: `<button class="btn-primary" disabled>Pral Disponib Byento</button>`
+            }
+        };
+
+        function openModal(toolId) {
+            const tool = tools[toolId];
+            document.getElementById('modal-title').textContent = tool.title;
+            document.getElementById('modal-body').innerHTML = tool.form;
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+        }
+
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+</body>
+</html>
+

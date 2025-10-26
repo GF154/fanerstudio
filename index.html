@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faner Studio - Tout Fonksyonalite</title>
+    <title>Faner Studio - Platfòm Kreyasyon Kontan Kreyòl</title>
     <style>
         * {
             margin: 0;
@@ -13,573 +13,317 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f5f7fa;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #2c5282 0%, #3b6ba8 100%);
-            color: white;
-            padding: 60px 20px;
-            text-align: center;
-        }
-
-        .header h1 {
-            font-size: 2.5em;
-            font-weight: 700;
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            font-size: 1.1em;
-            opacity: 0.9;
-            margin-bottom: 30px;
-        }
-
-        .back-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 1em;
-            transition: background 0.3s;
-        }
-
-        .back-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-
-        /* Container */
-        .container {
-            max-width: 1200px;
-            margin: -50px auto 50px;
-            padding: 0 20px;
-        }
-
-        /* Section */
-        .section {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-            margin-bottom: 40px;
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 30px;
-        }
-
-        .section-icon {
-            font-size: 28px;
-        }
-
-        .section-title {
-            font-size: 1.8em;
-            font-weight: 700;
-            color: #2d3748;
-        }
-
-        /* Tools Grid */
-        .tools-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 24px;
-        }
-
-        /* Tool Card */
-        .tool-card {
-            background: #f7fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 24px;
-            cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-        }
-
-        .tool-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            border-color: #cbd5e0;
-        }
-
-        .tool-icon {
-            width: 60px;
-            height: 60px;
-            background: white;
-            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 32px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
         }
 
-        .tool-card h3 {
-            font-size: 1.3em;
-            color: #2d3748;
-            margin-bottom: 8px;
-            font-weight: 600;
-        }
-
-        .tool-card p {
-            color: #718096;
-            font-size: 0.95em;
-            line-height: 1.6;
-            margin-bottom: 16px;
-        }
-
-        /* Badge */
-        .badge {
-            display: inline-block;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.8em;
-            font-weight: 600;
-            text-transform: capitalize;
-        }
-
-        .badge.ready {
-            background: #c6f6d5;
-            color: #22543d;
-        }
-
-        .badge.dev {
-            background: #fed7d7;
-            color: #742a2a;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
+        /* Animated Background */
+        .bg-animation {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
-            z-index: 1000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
+            overflow: hidden;
+            z-index: 0;
         }
 
-        .modal.show {
-            display: flex;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 600px;
-            width: 100%;
-            max-height: 85vh;
-            overflow-y: auto;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .modal-header h2 {
-            font-size: 1.8em;
-            color: #2d3748;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            font-size: 32px;
-            color: #a0aec0;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
-
-        .close-btn:hover {
-            background: #f7fafc;
-            color: #2d3748;
-        }
-
-        /* Form */
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
+        .bg-animation span {
+            position: absolute;
             display: block;
-            margin-bottom: 8px;
-            color: #4a5568;
-            font-weight: 600;
-            font-size: 0.95em;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 25s infinite;
+            border-radius: 50%;
         }
 
-        .form-group input,
-        .form-group textarea,
-        .form-group select {
+        .bg-animation span:nth-child(1) { left: 25%; animation-delay: 0s; }
+        .bg-animation span:nth-child(2) { left: 10%; animation-delay: 2s; animation-duration: 20s; }
+        .bg-animation span:nth-child(3) { left: 70%; animation-delay: 4s; }
+        .bg-animation span:nth-child(4) { left: 40%; animation-delay: 0s; animation-duration: 30s; }
+        .bg-animation span:nth-child(5) { left: 65%; animation-delay: 0s; }
+        .bg-animation span:nth-child(6) { left: 75%; animation-delay: 3s; }
+        .bg-animation span:nth-child(7) { left: 35%; animation-delay: 7s; }
+        .bg-animation span:nth-child(8) { left: 50%; animation-delay: 15s; animation-duration: 35s; }
+        .bg-animation span:nth-child(9) { left: 20%; animation-delay: 2s; animation-duration: 25s; }
+        .bg-animation span:nth-child(10) { left: 85%; animation-delay: 0s; animation-duration: 30s; }
+
+        @keyframes float {
+            0% {
+                bottom: -150px;
+                opacity: 0;
+            }
+            25% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            75% {
+                opacity: 1;
+            }
+            100% {
+                bottom: 100%;
+                opacity: 0;
+            }
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
             width: 100%;
-            padding: 12px 16px;
-            background: #f7fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            color: #2d3748;
-            font-size: 1em;
-            transition: all 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group textarea:focus,
-        .form-group select:focus {
-            outline: none;
-            border-color: #3b6ba8;
-            background: white;
-        }
-
-        .form-group textarea {
-            resize: vertical;
-            min-height: 120px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #2c5282 0%, #3b6ba8 100%);
+            text-align: center;
             color: white;
-            border: none;
-            padding: 14px 24px;
-            border-radius: 8px;
-            font-size: 1em;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
+        }
+
+        /* Logo/Icon */
+        .logo {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Title */
+        h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            animation: fadeInDown 1s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Subtitle */
+        .subtitle {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            animation: fadeInUp 1s ease 0.3s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Features */
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.6s backwards;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px 30px;
+            min-width: 200px;
             transition: all 0.3s;
         }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(43, 82, 130, 0.3);
+        .feature:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
         }
 
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .feature-text {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 20px 60px;
+            font-size: 1.3em;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeInUp 1s ease 0.9s backwards;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .cta-button:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        /* Stats */
+        .stats {
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 1.2s backwards;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 1em;
+            opacity: 0.9;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            .header h1 {
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .subtitle {
+                font-size: 1.2em;
+            }
+
+            .features {
+                gap: 15px;
+            }
+
+            .feature {
+                min-width: 150px;
+                padding: 15px 20px;
+            }
+
+            .cta-button {
+                padding: 18px 40px;
+                font-size: 1.1em;
+            }
+
+            .stats {
+                gap: 30px;
+            }
+
+            .stat-number {
                 font-size: 2em;
-            }
-
-            .tools-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .section {
-                padding: 24px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
-    <div class="header">
-        <h1>HT Tout Fonksyonalite</h1>
-        <p>Chwazi yon zouti pou kòmanse</p>
-        <button class="back-btn" onclick="window.location.href='/'">← Retounen Akèy</button>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
     </div>
 
-    <!-- Container -->
+    <!-- Main Container -->
     <div class="container">
-        <!-- ODYO Section -->
-        <div class="section">
-            <div class="section-header">
-                <span class="section-icon">🎵</span>
-                <h2 class="section-title">Zouti Odyo</h2>
+        <div class="logo">🇭🇹</div>
+        
+        <h1>Faner Studio</h1>
+        
+        <p class="subtitle">
+            Platfòm #1 pou kreye kontni an Kreyòl Ayisyen<br>
+            ak teknoloji IA pwofesyonèl
+        </p>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🎵</div>
+                <div class="feature-text">Audiobook & Podcast</div>
             </div>
-
-            <div class="tools-grid">
-                <!-- Audiobook -->
-                <div class="tool-card" onclick="openModal('audiobook')">
-                    <div class="tool-icon">📚</div>
-                    <h3>Kreye Audiobook</h3>
-                    <p>Konvèti PDF, DOCX, oswa TXT an audiobook Kreyòl. Tradiksyon otomatik ak NLLB.</p>
-                    <span class="badge ready">Ready</span>
-                </div>
-
-                <!-- Podcast -->
-                <div class="tool-card" onclick="openModal('podcast')">
-                    <div class="tool-icon">🎙️</div>
-                    <h3>Jenere Podcast</h3>
-                    <p>Kreye podcast soti nan URL oswa dokiman. Multi-speaker sipòte.</p>
-                    <span class="badge ready">Ready</span>
-                </div>
-
-                <!-- URL to Audio -->
-                <div class="tool-card" onclick="openModal('url-audio')">
-                    <div class="tool-icon">🔗</div>
-                    <h3>URL → Odyo</h3>
-                    <p>Konvèti nenpòt paj wèb an odyo Kreyòl. Rapid ak fasil.</p>
-                    <span class="badge ready">Ready</span>
-                </div>
-
-                <!-- AI Script -->
-                <div class="tool-card" onclick="openModal('script-ai')">
-                    <div class="tool-icon">✨</div>
-                    <h3>Jeneratè Skrip IA</h3>
-                    <p>Kreye skrip ak AI. Bay yon pwonp epi resevwa kontni kreyatif.</p>
-                    <span class="badge dev">Dev</span>
-                </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🎬</div>
+                <div class="feature-text">Zouti Videyo</div>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🌍</div>
+                <div class="feature-text">Tradiksyon NLLB</div>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">✨</div>
+                <div class="feature-text">IA Kreyatif</div>
             </div>
         </div>
 
-        <!-- VIDEYO Section -->
-        <div class="section">
-            <div class="section-header">
-                <span class="section-icon">🎬</span>
-                <h2 class="section-title">Zouti Videyo</h2>
+        <a href="/tools.html" class="cta-button">
+            Kòmanse Kounye a →
+        </a>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">10+</div>
+                <div class="stat-label">Zouti Disponib</div>
             </div>
-
-            <div class="tools-grid">
-                <!-- Video Voiceover -->
-                <div class="tool-card" onclick="openModal('video-voiceover')">
-                    <div class="tool-icon">🎬</div>
-                    <h3>Nouvo Vwadeyò Videyo</h3>
-                    <p>Ajoute paròl nan videyo ou yo. Tradiksyon otomatik sipòte.</p>
-                    <span class="badge dev">Dev</span>
-                </div>
-
-                <!-- SFX & Music -->
-                <div class="tool-card" onclick="openModal('video-sfx')">
-                    <div class="tool-icon">🎵</div>
-                    <h3>Ajoute Efè Son ak Mizik</h3>
-                    <p>Ajoute vwadeyò, mizik, ak efè son nan videyo ou.</p>
-                    <span class="badge dev">Dev</span>
-                </div>
-
-                <!-- Captions -->
-                <div class="tool-card" onclick="openModal('video-captions')">
-                    <div class="tool-icon">💬</div>
-                    <h3>Ajoute Soutit</h3>
-                    <p>Soutit otomatik pou videyo ou. Tradiksyon plizyè lang.</p>
-                    <span class="badge dev">Dev</span>
-                </div>
-
-                <!-- Denoise -->
-                <div class="tool-card" onclick="openModal('video-denoise')">
-                    <div class="tool-icon">🔇</div>
-                    <h3>Retire Bri Background</h3>
-                    <p>Netwaye odyo a li gen bri. Amelyore kalite son.</p>
-                    <span class="badge dev">Dev</span>
-                </div>
-
-                <!-- Correct -->
-                <div class="tool-card" onclick="openModal('video-correct')">
-                    <div class="tool-icon">🔧</div>
-                    <h3>Korije Erè Vwadeyò</h3>
-                    <p>Korije erè ak kòreksyon paròl nan videyo.</p>
-                    <span class="badge dev">Dev</span>
-                </div>
-
-                <!-- AI Music -->
-                <div class="tool-card" onclick="openModal('music-ai')">
-                    <div class="tool-icon">🎼</div>
-                    <h3>Jeneratè Mizik IA</h3>
-                    <p>Jenere mizik pou videyo ou otomatikman ak IA.</p>
-                    <span class="badge dev">Dev</span>
-                </div>
+            
+            <div class="stat">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Kreyòl Ayisyen</div>
+            </div>
+            
+            <div class="stat">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Disponib</div>
             </div>
         </div>
     </div>
-
-    <!-- Modal -->
-    <div id="modal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 id="modal-title">Tool Name</h2>
-                <button class="close-btn" onclick="closeModal()">×</button>
-            </div>
-            <div id="modal-body">
-                <!-- Dynamic content -->
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const API_URL = window.location.origin;
-
-        const tools = {
-            'audiobook': {
-                title: '📚 Kreye Audiobook',
-                form: `
-                    <div class="form-group">
-                        <label>Upload Dokiman (PDF, DOCX, TXT)</label>
-                        <input type="file" accept=".pdf,.docx,.txt" id="audiobook-file">
-                    </div>
-                    <div class="form-group">
-                        <label>Vwa</label>
-                        <select id="audiobook-voice">
-                            <option value="native">Kreyòl Natif Natal</option>
-                            <option value="openai">OpenAI TTS</option>
-                            <option value="elevenlabs">ElevenLabs</option>
-                        </select>
-                    </div>
-                    <button class="btn-primary" onclick="alert('Fonksyon pral konekte ak API')">Kreye Audiobook</button>
-                `
-            },
-            'podcast': {
-                title: '🎙️ Jenere Podcast',
-                form: `
-                    <div class="form-group">
-                        <label>Sous (URL oswa upload fichye)</label>
-                        <input type="text" placeholder="https://..." id="podcast-url">
-                    </div>
-                    <div class="form-group">
-                        <label>Tit Podcast</label>
-                        <input type="text" placeholder="Tit podcast ou..." id="podcast-title">
-                    </div>
-                    <div class="form-group">
-                        <label>Vwa</label>
-                        <select id="podcast-voice">
-                            <option value="native">Kreyòl Natif Natal</option>
-                            <option value="openai">OpenAI TTS</option>
-                        </select>
-                    </div>
-                    <button class="btn-primary" onclick="alert('Fonksyon pral konekte ak API')">Kreye Podcast</button>
-                `
-            },
-            'url-audio': {
-                title: '🔗 URL → Odyo',
-                form: `
-                    <div class="form-group">
-                        <label>URL Paj Wèb</label>
-                        <input type="text" placeholder="https://..." id="url-audio-url">
-                    </div>
-                    <div class="form-group">
-                        <label>Vwa</label>
-                        <select id="url-audio-voice">
-                            <option value="native">Kreyòl Natif Natal</option>
-                            <option value="openai">OpenAI TTS</option>
-                            <option value="gtts">gTTS</option>
-                        </select>
-                    </div>
-                    <button class="btn-primary" onclick="alert('Fonksyon pral konekte ak API')">Konvèti an Odyo</button>
-                `
-            },
-            'script-ai': {
-                title: '✨ Jeneratè Skrip IA',
-                form: `
-                    <div class="form-group">
-                        <label>Pwonp (Bay IA yon pwonp)</label>
-                        <textarea placeholder="Ekri pwonp ou a isit la..." id="script-prompt"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Model</label>
-                        <select id="script-model">
-                            <option value="openai">OpenAI GPT-4</option>
-                            <option value="anthropic">Anthropic Claude</option>
-                        </select>
-                    </div>
-                    <button class="btn-primary" disabled>Pral Disponib Byento</button>
-                `
-            },
-            'video-voiceover': {
-                title: '🎬 Nouvo Vwadeyò Videyo',
-                form: `
-                    <div class="form-group">
-                        <label>Upload Videyo</label>
-                        <input type="file" accept="video/*">
-                    </div>
-                    <button class="btn-primary" disabled>Pral Disponib Byento</button>
-                `
-            },
-            'video-sfx': {
-                title: '🎵 Ajoute Efè Son ak Mizik',
-                form: `
-                    <div class="form-group">
-                        <label>Upload Videyo</label>
-                        <input type="file" accept="video/*">
-                    </div>
-                    <button class="btn-primary" disabled>Pral Disponib Byento</button>
-                `
-            },
-            'video-captions': {
-                title: '💬 Ajoute Soutit',
-                form: `
-                    <div class="form-group">
-                        <label>Upload Videyo</label>
-                        <input type="file" accept="video/*">
-                    </div>
-                    <button class="btn-primary" disabled>Pral Disponib Byento</button>
-                `
-            },
-            'video-denoise': {
-                title: '🔇 Retire Bri Background',
-                form: `
-                    <div class="form-group">
-                        <label>Upload Videyo</label>
-                        <input type="file" accept="video/*">
-                    </div>
-                    <button class="btn-primary" disabled>Pral Disponib Byento</button>
-                `
-            },
-            'video-correct': {
-                title: '🔧 Korije Erè Vwadeyò',
-                form: `
-                    <div class="form-group">
-                        <label>Upload Videyo</label>
-                        <input type="file" accept="video/*">
-                    </div>
-                    <button class="btn-primary" disabled>Pral Disponib Byento</button>
-                `
-            },
-            'music-ai': {
-                title: '🎼 Jeneratè Mizik IA',
-                form: `
-                    <div class="form-group">
-                        <label>Upload Videyo</label>
-                        <input type="file" accept="video/*">
-                    </div>
-                    <button class="btn-primary" disabled>Pral Disponib Byento</button>
-                `
-            }
-        };
-
-        function openModal(toolId) {
-            const tool = tools[toolId];
-            document.getElementById('modal-title').textContent = tool.title;
-            document.getElementById('modal-body').innerHTML = tool.form;
-            document.getElementById('modal').classList.add('show');
-        }
-
-        function closeModal() {
-            document.getElementById('modal').classList.remove('show');
-        }
-
-        // Close on background click
-        document.getElementById('modal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                closeModal();
-            }
-        });
-    </script>
 </body>
 </html>
