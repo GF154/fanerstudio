@@ -731,8 +731,8 @@
                 <div class="tool-card" onclick="openModal('video-denoise')">
                     <div class="tool-icon">🔇</div>
                     <h3>Retire Bri Background</h3>
-                    <p>Netwaye odyo a li gen bri. Amelyore kalite son.</p>
-                    <span class="badge dev">Dev</span>
+                    <p>Netwaye odyo a elimine bri. Amelyore kalite son.</p>
+                    <span class="badge ready">Ready</span>
                 </div>
 
                 <div class="tool-card" onclick="openModal('video-correct')">
@@ -1102,8 +1102,80 @@
                 `
             },
             'video-denoise': {
-                title: '🔇 Retire Bri Background',
-                form: `<button class="btn-primary" disabled>Pral Disponib Byento</button>`
+                title: 'Retire Bri Background',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Netwaye odyo videyo ou a elimine bri background. Amelyore kalite son videyo ou.</p>
+                    
+                    <!-- Upload Video or Audio -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Telechaje videyo oswa odyo</label>
+                        <div class="upload-zone" onclick="document.getElementById('denoise-file').click()">
+                            <div class="upload-icon">🎬</div>
+                            <div class="upload-text">Klike pou telechaje, oswa trennen epi lage</div>
+                            <div class="upload-formats">Videyo: .mp4, .mov, .avi | Odyo: .mp3, .wav, .m4a</div>
+                            <input type="file" id="denoise-file" accept="video/*,audio/*" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <!-- Noise Reduction Level -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Nivo reduksyon bri</label>
+                        <select class="voice-select">
+                            <option value="light">Lejè (konserve plis son orijinal)</option>
+                            <option value="medium" selected>Mwayen (balanse)</option>
+                            <option value="strong">Fò (retire tout bri)</option>
+                            <option value="custom">Pèsonalize</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Noise Type -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Tip bri</label>
+                        <select class="voice-select">
+                            <option value="auto">🔍 Detekte otomatikman</option>
+                            <option value="wind">💨 Van</option>
+                            <option value="traffic">🚗 Trafik</option>
+                            <option value="hum">⚡ Boudonman elektrik</option>
+                            <option value="room">🏠 Bri chanm</option>
+                            <option value="crowd">👥 Foul moun</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Audio Enhancement Options -->
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Amelyorasyon odyo</label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="normalize-audio" style="width: auto; cursor: pointer;" checked>
+                            <span>Nòmalize volim odyo</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="enhance-voice" style="width: auto; cursor: pointer;" checked>
+                            <span>Amelyore klarite vwa</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="remove-clicks" style="width: auto; cursor: pointer;">
+                            <span>Retire klik ak pop</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="reduce-echo" style="width: auto; cursor: pointer;">
+                            <span>Redui echo</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Preview Option -->
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="preview-sample" style="width: auto; cursor: pointer;" checked>
+                            <span>Kreye echantiyon 10 segonn anvan tretman konplè</span>
+                        </label>
+                    </div>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Netwaye odyo...')">Netwaye odyo</button>
+                `
             },
             'video-correct': {
                 title: '🔧 Korije Erè Vwadeyò',
