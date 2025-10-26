@@ -924,13 +924,22 @@
                 `
             },
             'script-ai': {
-                title: '✨ Jeneratè Skrip IA',
+                title: 'Jeneratè Skrip IA',
                 form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Dekri skrip oswa istwa ou vle jenere.</p>
+                    
                     <div class="form-group">
-                        <label>Pwonp (Bay IA yon pwonp)</label>
-                        <textarea placeholder="Ekri pwonp ou a isit la..."></textarea>
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Pwonp</label>
+                        <textarea 
+                            placeholder="Egzanp: Ekri yon istwa kout (1000 mo) sou de enventè ki kreye premye machin ki pale nan mond lan. Sa pase nan kòmansman ane 1900 yo nan Polòy."
+                            style="width: 100%; min-height: 200px; padding: 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1em; font-family: inherit; resize: vertical; transition: all 0.3s;"
+                            onfocus="this.style.borderColor='#3b6ba8'; this.style.background='white';"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.background='#f7fafc';"
+                        ></textarea>
+                        <p style="color: #a0aec0; font-size: 0.85em; margin-top: 8px;">Bay detay sou sa w vle: tèm, pèsonaj, kote, epòk, stil, elatriye.</p>
                     </div>
-                    <button class="btn-primary" disabled>Pral Disponib Byento</button>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Jenere skrip...')">Jenere</button>
                 `
             },
             'video-voiceover': {
