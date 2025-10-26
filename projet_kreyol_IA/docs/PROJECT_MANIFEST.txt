@@ -1,0 +1,287 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                 PROJECT MANIFEST / MANIFEST PWOJÈ                        ║
+║              Complete File Listing / List Konplè Fichye                  ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+Generated: October 2024
+Project: Pwojè Kreyòl IA (Haitian Creole AI Project)
+Version: 2.0 Enhanced Edition
+
+═══════════════════════════════════════════════════════════════════════════
+
+📁 CORE APPLICATION FILES / FICHYE APLIKASYON PRENSIPAL
+═══════════════════════════════════════════════════════════════════════════
+
+Main Scripts:
+  ✓ main.py                      - Original main script (local workflow)
+  ✓ main_cloud.py                - Simple cloud workflow
+  ✓ process_book.py              - Cloud processing with updates
+  ✓ process_book_enhanced.py     - Enhanced workflow (all features)
+  ✓ batch_processor.py           - Batch processing engine
+  ✓ run_batch.py                 - Run batch from config
+  ✓ web_app.py                   - Streamlit web interface
+  ✓ start_here.py                - Interactive menu system
+  ✓ check_setup.py               - Setup verification tool
+  ✓ run_all_tests.py             - Test runner
+
+Legacy/Additional:
+  ✓ api.py                       - API endpoints
+  ✓ app.py                       - Application interface
+  ✓ cli.py                       - Command-line interface
+  ✓ start_api.py                 - API starter
+  ✓ example.py                   - Usage examples
+  ✓ download_model.py            - Model downloader
+
+═══════════════════════════════════════════════════════════════════════════
+
+📦 UTILITIES / ITILITE
+═══════════════════════════════════════════════════════════════════════════
+
+utils/
+  ✓ __init__.py                  - Package init
+  ✓ cloud_storage.py            ⭐ GCS operations (upload/download)
+  ✓ email_notifier.py           ⭐ Email notification system
+  ✓ metadata_manager.py         ⭐ Metadata management
+  ✓ text_extraction.py          ⭐ PDF text extraction wrapper
+  ✓ translate.py                ⭐ Translation wrapper
+  ✓ audio_gen.py                ⭐ Audio generation wrapper
+  ✓ podcast_mix.py              ⭐ Audio mixing
+  ✓ logger.py                   ⭐ Enhanced logging system
+  ✓ progress_tracker.py         ⭐ Progress tracking utilities
+
+═══════════════════════════════════════════════════════════════════════════
+
+🔧 SOURCE MODULES / MODIL SOUS
+═══════════════════════════════════════════════════════════════════════════
+
+src/
+  ✓ __init__.py                  - Package init with exports
+  ✓ config.py                    - Configuration management
+  ✓ pdf_extractor.py             - PDF extraction (core)
+  ✓ translator.py                - Translation engine (core)
+  ✓ audio_generator.py           - Audio generation (core)
+  ✓ text_extractor.py            - Text extraction utilities
+  ✓ utils.py                     - Core utilities
+  ✓ monitoring.py                - System monitoring
+  ✓ database.py                  - Database operations
+  ✓ auth.py                      - Authentication
+  ✓ rate_limiter.py              - Rate limiting
+  ✓ redis_cache.py               - Redis caching
+  ✓ retry.py                     - Retry logic
+
+═══════════════════════════════════════════════════════════════════════════
+
+🧪 TESTS / TÈS
+═══════════════════════════════════════════════════════════════════════════
+
+tests/
+  ✓ __init__.py                  - Test package init
+  ✓ conftest.py                  - Pytest configuration
+  ✓ test_modules.py              - Module tests
+  ✓ test_auth.py                 - Authentication tests
+  ✓ test_chunking.py             - Text chunking tests
+  ✓ test_config.py               - Configuration tests
+  ✓ test_rate_limiter.py         - Rate limiter tests
+  ✓ test_retry.py                - Retry logic tests
+  ✓ test_validation.py           - Validation tests
+  ✓ test_email.py               ⭐ Email notification tests
+  ✓ test_metadata.py            ⭐ Metadata manager tests
+  ✓ test_integration.py         ⭐ Integration tests
+  ✓ test_cloud_storage.py        - Cloud storage test (root)
+  ✓ README.md                    - Testing documentation
+
+═══════════════════════════════════════════════════════════════════════════
+
+📚 DOCUMENTATION / DOKIMANTASYON
+═══════════════════════════════════════════════════════════════════════════
+
+Main Documentation:
+  ✓ README.md                    - Main project README
+  ✓ README_ENHANCED.md          ⭐ Enhanced edition README
+  ✓ README_ENHANCED_FEATURES.md ⭐ Complete feature guide
+  ✓ QUICK_START_ENHANCED.md     ⭐ 5-minute quick start
+  ✓ CLOUD_STORAGE_GUIDE.md       - Cloud storage setup
+  ✓ README_CLOUD.md              - Cloud integration guide
+  ✓ INSTALL.md                   - Installation guide
+  ✓ QUICKSTART.md                - Quick start guide
+
+Additional Documentation:
+  ✓ README_PHASE1.md             - Phase 1 documentation
+  ✓ README_PHASE2.md             - Phase 2 documentation
+  ✓ README_PHASE4.md             - Phase 4 documentation
+  ✓ ABOUT.md                     - About the project
+  ✓ OVERVIEW.txt                 - Project overview
+
+Completion & Summary Files:
+  ✓ PHASE1_COMPLETE.md           - Phase 1 completion
+  ✓ PHASE1_SUMMARY.txt           - Phase 1 summary
+  ✓ PHASE2_COMPLETE.md           - Phase 2 completion
+  ✓ PHASE2_SUMMARY.txt           - Phase 2 summary
+  ✓ PHASE3_COMPLETE.md           - Phase 3 completion
+  ✓ PHASE4_COMPLETE.md           - Phase 4 completion
+  ✓ PHASE4_SUMMARY.txt           - Phase 4 summary
+  ✓ PHASE5_COMPLETE.md           - Phase 5 completion
+  ✓ PHASE5_SUMMARY.txt           - Phase 5 summary
+  ✓ EVALUATION_COMPLETE.md       - Evaluation completion
+  ✓ EVALUATION_SUMMARY.txt       - Evaluation summary
+  ✓ POSTGRESQL_MIGRATION.md      - Database migration guide
+  ✓ CHANGELOG.md                 - Change log
+
+Enhanced Features Documentation:
+  ✓ ENHANCED_FEATURES_COMPLETE.txt ⭐ Complete feature summary
+  ✓ KÒMANSE_ICI.txt             ⭐ Haitian Creole start guide
+  ✓ START_HERE.txt               - Start guide
+  ✓ CLOUD_STORAGE_SETUP.txt      - Cloud setup summary
+  ✓ PROJECT_MANIFEST.txt         ⭐ This file
+
+═══════════════════════════════════════════════════════════════════════════
+
+⚙️  CONFIGURATION FILES / FICHYE KONFIGIRASYON
+═══════════════════════════════════════════════════════════════════════════
+
+Environment & Config:
+  ✓ .env (user-created)          - Environment variables (not in git)
+  ✓ .env.example (blocked)       - Example environment file
+  ✓ config.example.env          ⭐ Example configuration
+  ✓ cloud_env_template.txt       - Cloud environment template
+  ✓ env_template.txt             - General environment template
+  ✓ books_config.json           ⭐ Batch processing configuration
+  ✓ requirements.txt             - Python dependencies
+  ✓ .gitignore                   - Git ignore rules
+
+Build & Deploy:
+  ✓ Dockerfile                   - Docker configuration
+  ✓ docker-compose.yml           - Docker Compose config
+  ✓ deploy.sh                    - Deployment script (Linux/Mac)
+  ✓ deploy.bat                   - Deployment script (Windows)
+
+═══════════════════════════════════════════════════════════════════════════
+
+🚀 LAUNCHER SCRIPTS / SKRIP LANSÈ
+═══════════════════════════════════════════════════════════════════════════
+
+Main Launchers:
+  ✓ START.sh                    ⭐ Interactive menu (Linux/Mac)
+  ✓ START.bat                   ⭐ Interactive menu (Windows)
+  ✓ run.sh                       - Run main script (Linux/Mac)
+  ✓ run.bat                      - Run main script (Windows)
+  ✓ run_web.sh                  ⭐ Run web interface (Linux/Mac)
+  ✓ run_web.bat                 ⭐ Run web interface (Windows)
+  ✓ setup_cloud.sh               - Cloud setup (Linux/Mac)
+  ✓ setup_cloud.bat              - Cloud setup (Windows)
+
+═══════════════════════════════════════════════════════════════════════════
+
+📂 DIRECTORIES / REPÈRTWA
+═══════════════════════════════════════════════════════════════════════════
+
+Data Directories:
+  data/                          - Input data
+  input/                        ⭐ Cloud input files
+    └── .gitkeep                ⭐ Keep directory in git
+  
+  output/                       ⭐ Output files
+    ├── .gitkeep                ⭐ Keep directory in git
+    ├── batch_results/          ⭐ Batch processing results
+    ├── metadata/               ⭐ Book metadata files
+    └── web_results/            ⭐ Web app results
+  
+  cache/                         - Translation cache
+  logs/                          - Log files
+    └── kreyol_ai_*.log
+
+System Directories:
+  __pycache__/                   - Python cache (not in git)
+  src/__pycache__/               - Source cache
+  tests/__pycache__/             - Tests cache
+
+═══════════════════════════════════════════════════════════════════════════
+
+📊 FILE STATISTICS / ESTATISTIK FICHYE
+═══════════════════════════════════════════════════════════════════════════
+
+By Category:
+  • Python Scripts:        30+ files
+  • Utilities:            12+ files
+  • Tests:                13+ files
+  • Documentation:        30+ files
+  • Configuration:         8+ files
+  • Launcher Scripts:      8+ files
+  
+Total Project Files:    100+ files
+Lines of Code:         10,000+ lines
+Documentation Pages:      50+ pages
+
+New in Enhanced v2.0:
+  • Enhanced Features:    15+ files
+  • New Utilities:         9+ files
+  • New Tests:             3+ files
+  • New Documentation:     5+ files
+  • Total New Content:    30+ files
+
+═══════════════════════════════════════════════════════════════════════════
+
+🎯 KEY FEATURES BY FILE
+═══════════════════════════════════════════════════════════════════════════
+
+Batch Processing:
+  → batch_processor.py (core engine)
+  → run_batch.py (runner)
+  → books_config.json (configuration)
+
+Email Notifications:
+  → utils/email_notifier.py (system)
+  → tests/test_email.py (tests)
+
+Web Interface:
+  → web_app.py (Streamlit app)
+  → run_web.sh / run_web.bat (launchers)
+
+Metadata System:
+  → utils/metadata_manager.py (manager)
+  → tests/test_metadata.py (tests)
+
+Cloud Integration:
+  → utils/cloud_storage.py (GCS operations)
+  → main_cloud.py (simple workflow)
+  → process_book_enhanced.py (enhanced workflow)
+
+Testing:
+  → run_all_tests.py (test runner)
+  → check_setup.py (setup checker)
+  → tests/*.py (individual tests)
+
+Utilities:
+  → utils/logger.py (enhanced logging)
+  → utils/progress_tracker.py (progress tracking)
+  → utils/text_extraction.py (PDF wrapper)
+  → utils/translate.py (translation wrapper)
+  → utils/audio_gen.py (audio wrapper)
+
+═══════════════════════════════════════════════════════════════════════════
+
+📝 NOTES
+═══════════════════════════════════════════════════════════════════════════
+
+Files marked with ⭐ are new in Enhanced v2.0
+
+Hidden Files (not shown):
+  • .env (user-created, in .gitignore)
+  • __pycache__/ directories
+  • *.pyc files
+  • .DS_Store, Thumbs.db
+  • *.log files in logs/
+
+For Complete Documentation:
+  → See README_ENHANCED_FEATURES.md for full feature guide
+  → See QUICK_START_ENHANCED.md for quick start
+  → See ENHANCED_FEATURES_COMPLETE.txt for summary
+
+═══════════════════════════════════════════════════════════════════════════
+
+Last Updated: October 2024
+Project Status: ✅ Complete & Fully Functional
+Version: 2.0 Enhanced Edition
+
+═══════════════════════════════════════════════════════════════════════════
+

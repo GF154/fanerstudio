@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faner Studio - Tout Fonksyonalite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #2c5282 0%, #3b6ba8 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: -50px auto 50px;
+            padding: 0 20px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .section-icon {
+            font-size: 28px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        /* Tools Grid */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        /* Tool Card */
+        .tool-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            border-color: #cbd5e0;
+        }
+
+        .tool-icon {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .tool-card h3 {
+            font-size: 1.3em;
+            color: #2d3748;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .tool-card p {
+            color: #718096;
+            font-size: 0.95em;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        /* Badge */
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            text-transform: capitalize;
+        }
+
+        .badge.ready {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge.dev {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .modal-header h2 {
+            font-size: 1.8em;
+            color: #2d3748;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 32px;
+            color: #a0aec0;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .close-btn:hover {
+            background: #f7fafc;
+            color: #2d3748;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            color: #2d3748;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #3b6ba8;
+            background: white;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #2c5282 0%, #3b6ba8 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(43, 82, 130, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed #cbd5e0;
+            border-radius: 12px;
+            padding: 48px 24px;
+            text-align: center;
+            background: #f7fafc;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .upload-zone:hover {
+            border-color: #3b6ba8;
+            background: #edf2f7;
+        }
+
+        .upload-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .upload-text {
+            font-size: 1em;
+            color: #2d3748;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .upload-formats {
+            font-size: 0.85em;
+            color: #a0aec0;
+        }
+
+        /* Voice Select */
+        .voice-select {
+            width: 100%;
+            padding: 12px 16px;
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            color: #2d3748;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .voice-select:focus {
+            outline: none;
+            border-color: #3b6ba8;
+            background: white;
+        }
+
+        /* Create Button */
+        .btn-create {
+            background: #2d3748;
+            margin-top: 24px;
+        }
+
+        .btn-create:hover {
+            background: #1a202c;
+        }
+
+        /* Tabs */
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 16px;
+            color: #718096;
+            font-size: 0.95em;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab-btn:hover {
+            color: #2d3748;
+        }
+
+        .tab-btn.active {
+            color: #2d3748;
+            border-bottom-color: #3b6ba8;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Design */
+        
+        /* Large Desktop (1920px+) */
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1400px;
+            }
+            
+            .section-title {
+                font-size: 2em;
+            }
+            
+            .tools-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        /* Desktop (1200px - 1919px) */
+        @media (min-width: 1200px) and (max-width: 1919px) {
+            .tools-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Laptop (1024px - 1199px) */
+        @media (min-width: 1024px) and (max-width: 1199px) {
+            .container {
+                max-width: 1000px;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 20px;
+            }
+
+            .section {
+                padding: 35px;
+            }
+        }
+
+        /* Tablet Landscape (768px - 1023px) */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .header h1 {
+                font-size: 2.2em;
+            }
+
+            .header p {
+                font-size: 1em;
+            }
+
+            .container {
+                max-width: 750px;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+
+            .section {
+                padding: 30px;
+            }
+
+            .tool-card h3 {
+                font-size: 1.2em;
+            }
+        }
+
+        /* Tablet Portrait (481px - 767px) */
+        @media (min-width: 481px) and (max-width: 767px) {
+            .header {
+                padding: 50px 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .header p {
+                font-size: 1em;
+                margin-bottom: 20px;
+            }
+
+            .back-btn {
+                padding: 8px 16px;
+                font-size: 0.9em;
+            }
+
+            .container {
+                margin: -40px auto 40px;
+            }
+
+            .section {
+                padding: 25px;
+                margin-bottom: 30px;
+            }
+
+            .section-title {
+                font-size: 1.5em;
+            }
+
+            .tools-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 16px;
+            }
+
+            .tool-card {
+                padding: 20px;
+            }
+
+            .tool-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 28px;
+            }
+
+            .tool-card h3 {
+                font-size: 1.1em;
+            }
+
+            .tool-card p {
+                font-size: 0.9em;
+            }
+
+            .modal-content {
+                padding: 24px;
+            }
+        }
+
+        /* Mobile (320px - 480px) */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 40px 15px;
+            }
+
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header p {
+                font-size: 0.95em;
+                margin-bottom: 20px;
+            }
+
+            .back-btn {
+                padding: 8px 14px;
+                font-size: 0.85em;
+            }
+
+            .container {
+                margin: -30px auto 30px;
+                padding: 0 10px;
+            }
+
+            .section {
+                padding: 20px;
+                margin-bottom: 25px;
+                border-radius: 12px;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                margin-bottom: 20px;
+            }
+
+            .section-icon {
+                font-size: 24px;
+            }
+
+            .section-title {
+                font-size: 1.4em;
+            }
+
+            .tools-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .tool-card {
+                padding: 18px;
+            }
+
+            .tool-icon {
+                width: 50px;
+                height: 50px;
+                font-size: 26px;
+                margin-bottom: 12px;
+            }
+
+            .tool-card h3 {
+                font-size: 1.1em;
+                margin-bottom: 6px;
+            }
+
+            .tool-card p {
+                font-size: 0.88em;
+                margin-bottom: 12px;
+                line-height: 1.5;
+            }
+
+            .badge {
+                padding: 4px 10px;
+                font-size: 0.75em;
+            }
+
+            .modal {
+                padding: 15px;
+            }
+
+            .modal-content {
+                padding: 20px;
+                border-radius: 12px;
+            }
+
+            .modal-header h2 {
+                font-size: 1.4em;
+            }
+
+            .close-btn {
+                font-size: 28px;
+                width: 36px;
+                height: 36px;
+            }
+
+            .form-group {
+                margin-bottom: 16px;
+            }
+
+            .form-group label {
+                font-size: 0.9em;
+                margin-bottom: 6px;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                padding: 10px 12px;
+                font-size: 0.95em;
+            }
+
+            .btn-primary {
+                padding: 12px 20px;
+                font-size: 0.95em;
+            }
+        }
+
+        /* Extra Small Mobile (< 320px) */
+        @media (max-width: 319px) {
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .section-title {
+                font-size: 1.2em;
+            }
+
+            .tool-card h3 {
+                font-size: 1em;
+            }
+
+            .tool-card p {
+                font-size: 0.85em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>HT Tout Fonksyonalite</h1>
+        <p>Chwazi yon zouti pou kòmanse</p>
+        <a href="/" class="back-btn">← Retounen Akèy</a>
+    </div>
+
+    <!-- Container -->
+    <div class="container">
+        <!-- ODYO Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🎵</span>
+                <h2 class="section-title">Zouti Odyo</h2>
+            </div>
+
+            <div class="tools-grid">
+                <div class="tool-card" onclick="openModal('audiobook')">
+                    <div class="tool-icon">📚</div>
+                    <h3>Kreye Audiobook</h3>
+                    <p>Konvèti PDF, DOCX, oswa TXT an audiobook Kreyòl. Tradiksyon otomatik.</p>
+                    <span class="badge ready">Ready</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('podcast')">
+                    <div class="tool-icon">🎙️</div>
+                    <h3>Jenere Podcast</h3>
+                    <p>Kreye podcast soti nan URL oswa dokiman. Multi-speaker sipòte.</p>
+                    <span class="badge ready">Ready</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('url-audio')">
+                    <div class="tool-icon">🔗</div>
+                    <h3>URL → Odyo</h3>
+                    <p>Konvèti nenpòt paj wèb an odyo Kreyòl. Rapid ak fasil.</p>
+                    <span class="badge ready">Ready</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('script-ai')">
+                    <div class="tool-icon">✨</div>
+                    <h3>Jeneratè Skrip IA</h3>
+                    <p>Kreye skrip ak AI. Bay yon pwonp epi resevwa kontni kreyatif.</p>
+                    <span class="badge dev">Dev</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIDEYO Section -->
+        <div class="section">
+            <div class="section-header">
+                <span class="section-icon">🎬</span>
+                <h2 class="section-title">Zouti Videyo</h2>
+            </div>
+
+            <div class="tools-grid">
+                <div class="tool-card" onclick="openModal('video-voiceover')">
+                    <div class="tool-icon">🎬</div>
+                    <h3>Nouvo Vwadeyò Videyo</h3>
+                    <p>Ajoute paròl nan videyo ou yo. Tradiksyon otomatik sipòte.</p>
+                    <span class="badge dev">Dev</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('video-sfx')">
+                    <div class="tool-icon">🎵</div>
+                    <h3>Jeneratè Bann Son IA</h3>
+                    <p>Pwodui otomatikman bann son inik pou videyo ou ak IA.</p>
+                    <span class="badge ready">Ready</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('video-captions')">
+                    <div class="tool-icon">💬</div>
+                    <h3>Ajoute Soutit</h3>
+                    <p>Soutit otomatik pou videyo ou. Tradiksyon plizyè lang.</p>
+                    <span class="badge ready">Ready</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('video-denoise')">
+                    <div class="tool-icon">🔇</div>
+                    <h3>Retire Bri Background</h3>
+                    <p>Netwaye odyo a elimine bri. Amelyore kalite son.</p>
+                    <span class="badge ready">Ready</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('video-correct')">
+                    <div class="tool-icon">🔧</div>
+                    <h3>Korije Erè Vwadeyò</h3>
+                    <p>Korije erè ak pwoblèm nan vwadeyò videyo ou.</p>
+                    <span class="badge ready">Ready</span>
+                </div>
+
+                <div class="tool-card" onclick="openModal('music-ai')">
+                    <div class="tool-icon">🎼</div>
+                    <h3>Jeneratè Mizik IA</h3>
+                    <p>Jenere mizik pou videyo ou otomatikman ak IA.</p>
+                    <span class="badge dev">Dev</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modal-title">Tool Name</h2>
+                <button class="close-btn" onclick="closeModal()">×</button>
+            </div>
+            <div id="modal-body"></div>
+        </div>
+    </div>
+
+    <script>
+        const tools = {
+            'audiobook': {
+                title: 'Kreye yon Audiobook',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Si w gen yon dokiman deja, telechaje l anba a.</p>
+                    
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Telechaje yon dokiman (opsyonèl)</label>
+                        <div class="upload-zone" onclick="document.getElementById('audiobook-file').click()">
+                            <div class="upload-icon">📤</div>
+                            <div class="upload-text">Klike pou telechaje, oswa trennen epi lage</div>
+                            <div class="upload-formats">.epub, .pdf, .txt, .html, .docx</div>
+                            <input type="file" id="audiobook-file" accept=".epub,.pdf,.txt,.html,.docx" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Vwa defo</label>
+                        <select class="voice-select">
+                            <option value="le-glacial">🎭 Le Glacial</option>
+                            <option value="kreyol-natif">🇭🇹 Kreyòl Natif Natal</option>
+                            <option value="openai">🤖 OpenAI TTS</option>
+                            <option value="elevenlabs">🎙️ ElevenLabs</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="auto-assign" style="width: auto; cursor: pointer;">
+                            <span>Asiye vwa otomatikman</span>
+                            <span style="background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600; color: #4a5568;">Alpha</span>
+                        </label>
+                        <p style="color: #a0aec0; font-size: 0.85em; margin-top: 8px; margin-left: 28px;">Detekte pèsonaj yo nan pwojè a otomatikman epi asiye yo vwa ki koresponn. Pwosesis sa a ka pran tan pou kontni ki pi long.</p>
+                    </div>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Kreye audiobook...')">Kreye pwojè</button>
+                `
+            },
+            'podcast': {
+                title: 'Kreye yon Podcast',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Kreye otomatikman yon podcast prezante pa vwa IA ki sone tankou moun.</p>
+                    
+                    <!-- Tabs -->
+                    <div style="display: flex; gap: 16px; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0;">
+                        <button class="tab-btn active" onclick="switchTab('upload')" id="tab-upload">
+                            Telechaje yon dokiman
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('url')" id="tab-url">
+                            Enpòte URL
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('project')" id="tab-project">
+                            Itilize pwojè ki egziste
+                        </button>
+                    </div>
+                    
+                    <!-- Tab Content: Upload -->
+                    <div id="content-upload" class="tab-content active">
+                        <div class="upload-zone" onclick="document.getElementById('podcast-file').click()">
+                            <div class="upload-icon">📤</div>
+                            <div class="upload-text">Klike pou telechaje, oswa trennen epi lage</div>
+                            <div class="upload-formats">.epub, .pdf, .txt, .html, .docx</div>
+                            <input type="file" id="podcast-file" accept=".epub,.pdf,.txt,.html,.docx" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <!-- Tab Content: URL -->
+                    <div id="content-url" class="tab-content" style="display: none;">
+                        <input type="text" placeholder="https://..." style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1em;">
+                    </div>
+                    
+                    <!-- Tab Content: Project -->
+                    <div id="content-project" class="tab-content" style="display: none;">
+                        <select class="voice-select">
+                            <option>Chwazi yon pwojè...</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Format -->
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Fòma</label>
+                        <select class="voice-select">
+                            <option value="conversation">Konvèsasyon</option>
+                            <option value="interview">Entèvyou</option>
+                            <option value="storytelling">Rakonte Istwa</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Host voice -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Vwa prezantatè</label>
+                        <select class="voice-select">
+                            <option value="chris">🎭 Chris</option>
+                            <option value="marie">👩 Marie</option>
+                            <option value="jean">👨 Jean</option>
+                            <option value="kreyol-natif">🇭🇹 Kreyòl Natif</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Guest voice -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Vwa envite</label>
+                        <select class="voice-select">
+                            <option value="jessica">🎭 Jessica</option>
+                            <option value="pierre">👨 Pierre</option>
+                            <option value="rose">👩 Rose</option>
+                            <option value="openai">🤖 OpenAI TTS</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Podcast language -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Lang podcast</label>
+                        <select class="voice-select">
+                            <option value="auto">Detekte otomatikman</option>
+                            <option value="ht">🇭🇹 Kreyòl Ayisyen</option>
+                            <option value="fr">🇫🇷 Fransè</option>
+                            <option value="en">🇺🇸 Anglè</option>
+                        </select>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; margin-top: 24px;">
+                        <button style="padding: 12px 24px; border: none; background: #f7fafc; color: #4a5568; border-radius: 8px; cursor: pointer; font-size: 1em;">⚙️</button>
+                        <button class="btn-primary btn-create" style="flex: 1;" onclick="alert('Jenere podcast...')">Jenere</button>
+                    </div>
+                `
+            },
+            'url-audio': {
+                title: 'URL an Odyo',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Transfòme nenpòt paj wèb an odyo pale, li awotvwa pa yon vwa IA ki sanble ak moun.</p>
+                    
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Enpòte URL</label>
+                        <input type="text" placeholder="https://..." style="width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1em; transition: all 0.3s;">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Vwa defo</label>
+                        <select class="voice-select">
+                            <option value="le-glacial">🎭 Le Glacial</option>
+                            <option value="kreyol-natif">🇭🇹 Kreyòl Natif Natal</option>
+                            <option value="openai">🤖 OpenAI TTS</option>
+                            <option value="elevenlabs">🎙️ ElevenLabs</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="auto-assign-url" style="width: auto; cursor: pointer;">
+                            <span>Asiye vwa otomatikman</span>
+                            <span style="background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600; color: #4a5568;">Alpha</span>
+                        </label>
+                        <p style="color: #a0aec0; font-size: 0.85em; margin-top: 8px; margin-left: 28px;">Detekte pèsonaj yo nan pwojè a otomatikman epi asiye yo vwa ki koresponn. Pwosesis sa a ka pran tan pou kontni ki pi long.</p>
+                    </div>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Kreye pwojè...')">Kreye pwojè</button>
+                `
+            },
+            'script-ai': {
+                title: 'Jeneratè Skrip IA',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Dekri skrip oswa istwa ou vle jenere.</p>
+                    
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Pwonp</label>
+                        <textarea 
+                            placeholder="Egzanp: Ekri yon istwa kout (1000 mo) sou de enventè ki kreye premye machin ki pale nan mond lan. Sa pase nan kòmansman ane 1900 yo nan Polòy."
+                            style="width: 100%; min-height: 200px; padding: 16px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1em; font-family: inherit; resize: vertical; transition: all 0.3s;"
+                            onfocus="this.style.borderColor='#3b6ba8'; this.style.background='white';"
+                            onblur="this.style.borderColor='#e2e8f0'; this.style.background='#f7fafc';"
+                        ></textarea>
+                        <p style="color: #a0aec0; font-size: 0.85em; margin-top: 8px;">Bay detay sou sa w vle: tèm, pèsonaj, kote, epòk, stil, elatriye.</p>
+                    </div>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Jenere skrip...')">Jenere</button>
+                `
+            },
+            'video-voiceover': {
+                title: 'Nouvo Vwadeyò Videyo',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Ajoute nouvo vwa (voiceover) nan videyo ou yo. Sipòte tradiksyon otomatik nan plizyè lang.</p>
+                    
+                    <!-- Upload Video -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Telechaje videyo</label>
+                        <div class="upload-zone" onclick="document.getElementById('voiceover-video').click()">
+                            <div class="upload-icon">🎬</div>
+                            <div class="upload-text">Klike pou telechaje videyo, oswa trennen epi lage</div>
+                            <div class="upload-formats">.mp4, .mov, .avi, .mkv, .webm</div>
+                            <input type="file" id="voiceover-video" accept="video/*" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <!-- Source Language -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Lang orijinal videyo</label>
+                        <select class="voice-select">
+                            <option value="auto">🔍 Detekte otomatikman</option>
+                            <option value="ht">🇭🇹 Kreyòl Ayisyen</option>
+                            <option value="fr">🇫🇷 Fransè</option>
+                            <option value="en">🇺🇸 Anglè</option>
+                            <option value="es">🇪🇸 Panyòl</option>
+                            <option value="pt">🇧🇷 Pòtigè</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Target Language -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Lang ou vle tradui</label>
+                        <select class="voice-select">
+                            <option value="ht">🇭🇹 Kreyòl Ayisyen</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Voice Selection -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Vwa pou vwadeyò</label>
+                        <select class="voice-select">
+                            <option value="kreyol-natif">🇭🇹 Kreyòl Natif Natal</option>
+                            <option value="le-glacial">🎭 Le Glacial</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Audio Options -->
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Opsyon odyo</label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="remove-original" style="width: auto; cursor: pointer;">
+                            <span>Retire odyo orijinal la</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="keep-music" style="width: auto; cursor: pointer;" checked>
+                            <span>Kenbe mizik ak efè son yo</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="sync-lips" style="width: auto; cursor: pointer;">
+                            <span>Senkwonize lèv yo (lip sync)</span>
+                            <span style="background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600; color: #4a5568;">Beta</span>
+                        </label>
+                    </div>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Kreye vwadeyò...')">Kreye vwadeyò</button>
+                `
+            },
+            'video-sfx': {
+                title: 'Jeneratè Bann Son IA',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Pwodui otomatikman yon bann son inik ki koresponn ak videyo ou.</p>
+                    
+                    <!-- Upload Video -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Telechaje videyo</label>
+                        <div class="upload-zone" onclick="document.getElementById('soundtrack-video').click()">
+                            <div class="upload-icon">🎬</div>
+                            <div class="upload-text">Klike pou telechaje videyo, oswa trennen epi lage</div>
+                            <div class="upload-formats">.mp4, .mov</div>
+                            <input type="file" id="soundtrack-video" accept="video/mp4,video/quicktime" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Kreye bann son...')">Kreye pwojè</button>
+                `
+            },
+            'video-captions': {
+                title: 'Ajoute Soutit',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Kreye soutit otomatik pou videyo ou. Sipòte tradiksyon nan plizyè lang.</p>
+                    
+                    <!-- Upload Video -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Telechaje videyo</label>
+                        <div class="upload-zone" onclick="document.getElementById('captions-video').click()">
+                            <div class="upload-icon">🎬</div>
+                            <div class="upload-text">Klike pou telechaje videyo, oswa trennen epi lage</div>
+                            <div class="upload-formats">.mp4, .mov, .avi, .mkv, .webm</div>
+                            <input type="file" id="captions-video" accept="video/*" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <!-- Source Language -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Lang videyo a</label>
+                        <select class="voice-select">
+                            <option value="auto">🔍 Detekte otomatikman</option>
+                            <option value="ht">🇭🇹 Kreyòl Ayisyen</option>
+                            <option value="fr">🇫🇷 Fransè</option>
+                            <option value="en">🇺🇸 Anglè</option>
+                            <option value="es">🇪🇸 Panyòl</option>
+                            <option value="pt">🇧🇷 Pòtigè</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Target Languages (Multiple) -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Lang soutit yo</label>
+                        <select class="voice-select">
+                            <option value="ht">🇭🇹 Kreyòl Ayisyen</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Caption Style -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Stil soutit</label>
+                        <select class="voice-select">
+                            <option value="bottom">Anba ekran (default)</option>
+                            <option value="top">Anlè ekran</option>
+                            <option value="burned">Entegre nan videyo (burned-in)</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Caption Options -->
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Opsyon soutit</label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="auto-sync" style="width: auto; cursor: pointer;" checked>
+                            <span>Senkwonize otomatik ak paròl yo</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="highlight-words" style="width: auto; cursor: pointer;">
+                            <span>Highlight mo k ap pale a</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="export-srt" style="width: auto; cursor: pointer;" checked>
+                            <span>Eksplòte fichye .srt</span>
+                        </label>
+                    </div>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Kreye soutit...')">Kreye soutit</button>
+                `
+            },
+            'video-denoise': {
+                title: 'Retire Bri Background',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Netwaye odyo videyo ou a elimine bri background. Amelyore kalite son videyo ou.</p>
+                    
+                    <!-- Upload Video or Audio -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Telechaje videyo oswa odyo</label>
+                        <div class="upload-zone" onclick="document.getElementById('denoise-file').click()">
+                            <div class="upload-icon">🎬</div>
+                            <div class="upload-text">Klike pou telechaje, oswa trennen epi lage</div>
+                            <div class="upload-formats">Videyo: .mp4, .mov, .avi | Odyo: .mp3, .wav, .m4a</div>
+                            <input type="file" id="denoise-file" accept="video/*,audio/*" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <!-- Noise Reduction Level -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Nivo reduksyon bri</label>
+                        <select class="voice-select">
+                            <option value="light">Lejè (konserve plis son orijinal)</option>
+                            <option value="medium" selected>Mwayen (balanse)</option>
+                            <option value="strong">Fò (retire tout bri)</option>
+                            <option value="custom">Pèsonalize</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Noise Type -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Tip bri</label>
+                        <select class="voice-select">
+                            <option value="auto">🔍 Detekte otomatikman</option>
+                            <option value="wind">💨 Van</option>
+                            <option value="traffic">🚗 Trafik</option>
+                            <option value="hum">⚡ Boudonman elektrik</option>
+                            <option value="room">🏠 Bri chanm</option>
+                            <option value="crowd">👥 Foul moun</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Audio Enhancement Options -->
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Amelyorasyon odyo</label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="normalize-audio" style="width: auto; cursor: pointer;" checked>
+                            <span>Nòmalize volim odyo</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="enhance-voice" style="width: auto; cursor: pointer;" checked>
+                            <span>Amelyore klarite vwa</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="remove-clicks" style="width: auto; cursor: pointer;">
+                            <span>Retire klik ak pop</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="reduce-echo" style="width: auto; cursor: pointer;">
+                            <span>Redui echo</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Preview Option -->
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="preview-sample" style="width: auto; cursor: pointer;" checked>
+                            <span>Kreye echantiyon 10 segonn anvan tretman konplè</span>
+                        </label>
+                    </div>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Netwaye odyo...')">Netwaye odyo</button>
+                `
+            },
+            'video-correct': {
+                title: 'Korije Erè Vwadeyò',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Korije erè ak pwoblèm nan vwadeyò videyo ou. Reyenrejistre seksyon ki gen pwoblèm yo.</p>
+                    
+                    <!-- Upload Video -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Telechaje videyo ak vwadeyò</label>
+                        <div class="upload-zone" onclick="document.getElementById('correct-video').click()">
+                            <div class="upload-icon">🎬</div>
+                            <div class="upload-text">Klike pou telechaje videyo, oswa trennen epi lage</div>
+                            <div class="upload-formats">.mp4, .mov, .avi, .mkv, .webm</div>
+                            <input type="file" id="correct-video" accept="video/*" style="display: none;">
+                        </div>
+                    </div>
+                    
+                    <!-- Detection Method -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Metòd deteksyon erè</label>
+                        <select class="voice-select">
+                            <option value="auto">🔍 Otomatik (IA detekte erè)</option>
+                            <option value="manual">✏️ Manyèl (ou chwazi seksyon yo)</option>
+                            <option value="transcript">📝 Konpare ak transkripsyon</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Error Types to Detect -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Tip erè pou detekte</label>
+                        <div style="background: #f7fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 16px;">
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                                <input type="checkbox" id="error-pronunciation" style="width: auto; cursor: pointer;" checked>
+                                <span>Pwononsyasyon move</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                                <input type="checkbox" id="error-timing" style="width: auto; cursor: pointer;" checked>
+                                <span>Pwoblèm timing (desenkwonizasyon)</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                                <input type="checkbox" id="error-words" style="width: auto; cursor: pointer;" checked>
+                                <span>Mo ki pa kòrèk</span>
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                                <input type="checkbox" id="error-audio" style="width: auto; cursor: pointer;">
+                                <span>Kalite odyo ki move</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <!-- Correction Voice -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Vwa pou kòreksyon yo</label>
+                        <select class="voice-select">
+                            <option value="original">🔄 Menm vwa orijinal la</option>
+                            <option value="kreyol-natif">🇭🇹 Kreyòl Natif Natal</option>
+                            <option value="le-glacial">🎭 Le Glacial</option>
+                            <option value="custom">🎙️ Anrejistre nouvo vwa</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Correction Options -->
+                    <div class="form-group" style="margin-bottom: 8px;">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Opsyon kòreksyon</label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="smooth-transitions" style="width: auto; cursor: pointer;" checked>
+                            <span>Tranzisyon smooth ant seksyon yo</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
+                            <input type="checkbox" id="match-tone" style="width: auto; cursor: pointer;" checked>
+                            <span>Adapte ton ak vwadeyò orijinal la</span>
+                        </label>
+                        
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="keep-original" style="width: auto; cursor: pointer;" checked>
+                            <span>Kenbe kopi videyo orijinal la</span>
+                        </label>
+                    </div>
+                    
+                    <!-- Preview Before Apply -->
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
+                            <input type="checkbox" id="preview-corrections" style="width: auto; cursor: pointer;" checked>
+                            <span>Preview kòreksyon yo anvan aplike</span>
+                        </label>
+                    </div>
+                    
+                    <button class="btn-primary btn-create" onclick="alert('Detekte ak korije erè...')">Detekte erè</button>
+                `
+            },
+            'music-ai': {
+                title: '🎼 Jeneratè Mizik IA',
+                form: `<button class="btn-primary" disabled>Pral Disponib Byento</button>`
+            }
+        };
+
+        function openModal(toolId) {
+            const tool = tools[toolId];
+            document.getElementById('modal-title').textContent = tool.title;
+            document.getElementById('modal-body').innerHTML = tool.form;
+            document.getElementById('modal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+        }
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById('content-' + tabName).style.display = 'block';
+            
+            // Add active class to selected tab
+            document.getElementById('tab-' + tabName).classList.add('active');
+        }
+
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+</body>
+</html>
+

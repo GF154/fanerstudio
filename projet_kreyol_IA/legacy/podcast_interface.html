@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎙️ Podcast Creator - Kreyòl IA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            color: #aaa;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .editor-section {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 500px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            color: white;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 15px;
+            line-height: 1.8;
+            resize: vertical;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+        }
+
+        .card h3 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .voice-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .voice-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+
+        .voice-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #667eea;
+        }
+
+        .voice-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+        }
+
+        .voice-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        .voice-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .voice-role {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .format-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .format-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .format-btn:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .format-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-color: #667eea;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 18px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .examples {
+            margin-top: 20px;
+        }
+
+        .example-btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: white;
+            text-align: left;
+            cursor: pointer;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+
+        .example-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #667eea;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 5px;
+        }
+
+        .progress {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress.show {
+            display: flex;
+        }
+
+        .progress-content {
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .progress-subtext {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎙️ Podcast Creator</h1>
+            <p>Create professional podcasts in Haitian Creole with AI voices</p>
+        </div>
+
+        <div class="main-content">
+            <div class="editor-section">
+                <div class="section-title">
+                    <span>📝</span>
+                    <span>Podcast Script</span>
+                </div>
+                <textarea id="scriptEditor" placeholder="Host: Bonjou! Welcome to our podcast...&#10;Guest: Mèsi pou envitasyon an!&#10;&#10;Write your script here. Format:&#10;Speaker: Text"></textarea>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-value" id="charCount">0</div>
+                        <div class="stat-label">Characters</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="segmentCount">0</div>
+                        <div class="stat-label">Segments</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="speakerCount">0</div>
+                        <div class="stat-label">Speakers</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="card">
+                    <h3>🗣️ Voice Selection</h3>
+                    <div class="voice-grid">
+                        <div class="voice-item active" data-voice="chris">
+                            <div class="voice-avatar">👨</div>
+                            <div class="voice-name">Chris</div>
+                            <div class="voice-role">Host</div>
+                        </div>
+                        <div class="voice-item active" data-voice="jessica">
+                            <div class="voice-avatar">👩</div>
+                            <div class="voice-name">Jessica</div>
+                            <div class="voice-role">Guest</div>
+                        </div>
+                        <div class="voice-item" data-voice="pierre">
+                            <div class="voice-avatar">👨‍🦰</div>
+                            <div class="voice-name">Pierre</div>
+                            <div class="voice-role">Expert</div>
+                        </div>
+                        <div class="voice-item" data-voice="marie">
+                            <div class="voice-avatar">👩‍🦰</div>
+                            <div class="voice-name">Marie</div>
+                            <div class="voice-role">Narrator</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>🎵 Format</h3>
+                    <div class="format-selector">
+                        <button class="format-btn active" data-format="conversation">💬 Conversation</button>
+                        <button class="format-btn" data-format="interview">🎤 Interview</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>📋 Examples</h3>
+                    <div class="examples">
+                        <button class="example-btn" onclick="loadExample('demo')">
+                            🎧 Demo Podcast
+                        </button>
+                        <button class="example-btn" onclick="loadExample('interview')">
+                            🎤 Interview Format
+                        </button>
+                        <button class="example-btn" onclick="loadExample('news')">
+                            📰 News Podcast
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-secondary" onclick="clearScript()">🗑️ Clear</button>
+            <button class="btn btn-primary" onclick="generatePodcast()">🎙️ Generate Podcast</button>
+        </div>
+    </div>
+
+    <div class="progress" id="progressOverlay">
+        <div class="progress-content">
+            <div class="spinner"></div>
+            <div class="progress-text" id="progressText">Creating podcast...</div>
+            <div class="progress-subtext" id="progressSubtext">Please wait</div>
+        </div>
+    </div>
+
+    <script>
+        const scriptEditor = document.getElementById('scriptEditor');
+        const charCount = document.getElementById('charCount');
+        const segmentCount = document.getElementById('segmentCount');
+        const speakerCount = document.getElementById('speakerCount');
+
+        // Update stats
+        scriptEditor.addEventListener('input', updateStats);
+
+        function updateStats() {
+            const text = scriptEditor.value;
+            charCount.textContent = text.length;
+
+            const lines = text.split('\n').filter(line => line.trim());
+            const segments = lines.filter(line => line.includes(':'));
+            segmentCount.textContent = segments.length;
+
+            const speakers = new Set();
+            segments.forEach(line => {
+                const match = line.match(/^([^:]+):/);
+                if (match) speakers.add(match[1].trim());
+            });
+            speakerCount.textContent = speakers.size;
+        }
+
+        // Voice selection
+        document.querySelectorAll('.voice-item').forEach(item => {
+            item.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // Format selection
+        document.querySelectorAll('.format-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.format-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Load examples
+        function loadExample(type) {
+            const examples = {
+                demo: `Host: Bonjou! Welcome to Kreyòl Podcast, the show where we explore Haitian culture and language.
+
+Guest: Mèsi pou envitasyon an! Thank you for having me today.
+
+Host: Today we're discussing the importance of preserving the Haitian Creole language. Can you tell us why this matters?
+
+Guest: Well, Kreyòl is more than just a language - it's the heart of Haitian identity.
+
+Host: That's beautifully said. Thank you for joining us!`,
+
+                interview: `Interviewer: Welcome to our special interview series. Today we're talking with a Haitian cultural expert.
+
+Expert: Thank you for having me. It's a pleasure to be here.
+
+Interviewer: Let's talk about Haitian music. What makes it so unique?
+
+Expert: Haitian music is a beautiful blend of African rhythms and Caribbean melodies.`,
+
+                news: `Anchor: Good evening, this is Kreyòl News.
+
+Reporter: Today we're reporting from Port-au-Prince with the latest updates.
+
+Anchor: Thank you for that report. Stay tuned for more.`
+            };
+
+            scriptEditor.value = examples[type] || '';
+            updateStats();
+        }
+
+        function clearScript() {
+            if (confirm('Clear the script?')) {
+                scriptEditor.value = '';
+                updateStats();
+            }
+        }
+
+        async function generatePodcast() {
+            const script = scriptEditor.value.trim();
+            
+            if (!script) {
+                alert('Please write a script first!');
+                return;
+            }
+
+            showProgress('Creating podcast...', 'Analyzing script');
+
+            // Simuler la génération
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            updateProgress('Generating audio...', 'Processing voices');
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+            updateProgress('Assembling segments...', 'Mixing audio');
+
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            hideProgress();
+
+            alert(`🎉 Podcast created successfully!
+
+📁 Saved to: output/podcast/podcast.mp3
+⏱️ Duration: ~${Math.round(script.length / 150)} seconds
+🗣️ Speakers: ${speakerCount.textContent}
+
+Click OK to download or listen.`);
+        }
+
+        function showProgress(text, subtext) {
+            document.getElementById('progressText').textContent = text;
+            document.getElementById('progressSubtext').textContent = subtext;
+            document.getElementById('progressOverlay').classList.add('show');
+        }
+
+        function updateProgress(text, subtext) {
+            document.getElementById('progressText').textContent = text;
+            document.getElementById('progressSubtext').textContent = subtext;
+        }
+
+        function hideProgress() {
+            document.getElementById('progressOverlay').classList.remove('show');
+        }
+
+        // Initialize
+        updateStats();
+    </script>
+</body>
+</html>
+

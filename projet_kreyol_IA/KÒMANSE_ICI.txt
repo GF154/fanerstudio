@@ -1,0 +1,278 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                                                                          ║
+║          🇭🇹 BYENVENI NAN PWOJÈ KREYÒL IA! 🇭🇹                          ║
+║          WELCOME TO THE HAITIAN CREOLE AI PROJECT!                      ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+KISA PWOJÈ SA A FÈ?
+What does this project do?
+═══════════════════════════════════════════════════════════════════════════
+
+Pwojè sa a pèmèt ou:
+This project allows you to:
+
+✅ Tradui liv PDF nan Kreyòl Ayisyen
+   Translate PDF books to Haitian Creole
+
+✅ Kreye liv odyo (audiobook) an Kreyòl
+   Create Creole audiobooks
+
+✅ Kreye podcast an Kreyòl
+   Create Creole podcasts
+
+✅ Pataje fichye yo sou entènèt (lyen piblik)
+   Share files online (public links)
+
+✅ Trete plizyè liv an menm tan
+   Process multiple books at once
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                  🚀 KÒMANSE RAPID (3 ETAP!)                              ║
+║                  QUICK START (3 STEPS!)                                  ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+ETAP 1: ENSTALE PAKÈ YO / INSTALL PACKAGES
+═══════════════════════════════════════════════════════════════════════════
+
+Windows:
+    setup_cloud.bat
+
+Linux/Mac:
+    chmod +x setup_cloud.sh
+    ./setup_cloud.sh
+
+Oswa / Or:
+    pip install -r requirements.txt
+
+
+ETAP 2: KONFIGIRE / CONFIGURE
+═══════════════════════════════════════════════════════════════════════════
+
+1. Kopye fichye config / Copy config file:
+   cp cloud_env_template.txt .env
+
+2. Modifye .env / Edit .env:
+   nano .env    (Linux/Mac)
+   notepad .env (Windows)
+
+3. Ajoute non bucket ou / Add your bucket name:
+   GCS_BUCKET_NAME=your-bucket-name
+
+4. Otantifye / Authenticate:
+   gcloud auth application-default login
+
+
+ETAP 3: KÒMANSE! / START!
+═══════════════════════════════════════════════════════════════════════════
+
+OPSYON A - Meni Enteraktif (REKÒMANDE!)
+OPTION A - Interactive Menu (RECOMMENDED!)
+
+Windows:
+    START.bat
+
+Linux/Mac:
+    chmod +x START.sh
+    ./START.sh
+
+Oswa / Or:
+    python start_here.py
+
+
+OPSYON B - Entèfas Web (PI FASIL!)
+OPTION B - Web Interface (EASIEST!)
+
+    streamlit run web_app.py
+
+Oswa / Or:
+    run_web.bat    (Windows)
+    ./run_web.sh   (Linux/Mac)
+
+
+OPSYON C - Liy Kòmand (POU EKSPE!)
+OPTION C - Command Line (FOR EXPERTS!)
+
+    python process_book_enhanced.py
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║              📚 TRETE YON LIV / PROCESS A BOOK                           ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+1. Telechaje PDF ou a nan Google Cloud Storage
+   Upload your PDF to Google Cloud Storage
+
+2. Lance yon nan opsyon yo anwo a
+   Run one of the options above
+
+3. Suiv enstriksyon yo
+   Follow the instructions
+
+4. Tann pandan pwosesis la (ka pran kèk minit)
+   Wait during processing (may take a few minutes)
+
+5. Jwenn lyen piblik yo!
+   Get public links!
+
+Rezilta / Results:
+   📘 Tèks tradui / Translated text (.txt)
+   🔊 Audiobook (.mp3)
+   🎙️ Podcast (.mp3)
+   📋 Metadata (.json)
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                 ⚙️  FONKSYONALITE / FEATURES                             ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+✅ EKSTRAKSYON PDF / PDF EXTRACTION
+   Ekstrè tèks nan nenpòt PDF
+   Extract text from any PDF
+
+✅ TRADIKSYON OTOMATIK / AUTOMATIC TRANSLATION
+   Tradui otomatikman an Kreyòl Ayisyen
+   Automatically translate to Haitian Creole
+
+✅ KREYASYON ODYO / AUDIO CREATION
+   Kreye liv odyo (audiobook) ak vwa natirèl
+   Create audiobook with natural voice
+
+✅ CLOUD STORAGE
+   Sove tout fichye yo sou Google Cloud
+   Save all files to Google Cloud
+
+✅ LYEN PIBLIK / PUBLIC LINKS
+   Jwenn lyen piblik pou pataje
+   Get public links to share
+
+✅ BATCH PROCESSING
+   Trete plizyè liv an menm tan
+   Process multiple books at once
+
+✅ NOTIFIKASYON EMAIL / EMAIL NOTIFICATIONS
+   Resevwa email lè pwosesis la fini
+   Receive email when processing is done
+
+✅ ENTÈFAS WEB / WEB INTERFACE
+   Itilize entèfas bèl ak fasil
+   Use beautiful and easy interface
+
+✅ METADATA
+   Swiv tout enfòmasyon sou liv yo
+   Track all book information
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    📖 DOKIMANTASYON / DOCUMENTATION                      ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+Pou pi plis enfòmasyon / For more information:
+
+📘 QUICK_START_ENHANCED.md
+   Gid rapid 5 minit
+   5-minute quick guide
+
+📗 README_ENHANCED_FEATURES.md
+   Gid konplè sou tout fonksyonalite
+   Complete guide for all features
+
+📙 README_ENHANCED.md
+   README prensipal pou vèsyon amelyore
+   Main README for enhanced version
+
+📕 CLOUD_STORAGE_GUIDE.md
+   Gid pou konfigire Google Cloud Storage
+   Guide for configuring Google Cloud Storage
+
+📓 ENHANCED_FEATURES_COMPLETE.txt
+   Rezime tout sa ki ajoute
+   Summary of everything added
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                 🆘 PWOBLÈM? / PROBLEMS?                                  ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+PWOBLÈM 1: "Bucket not found"
+───────────────────────────────────────────────────────────────────────────
+   Solisyon / Solution:
+   - Verifye GCS_BUCKET_NAME nan .env
+   - Check GCS_BUCKET_NAME in .env
+
+PWOBLÈM 2: "Authentication failed"
+───────────────────────────────────────────────────────────────────────────
+   Solisyon / Solution:
+   gcloud auth application-default login
+
+PWOBLÈM 3: "Email pa voye / Email not sending"
+───────────────────────────────────────────────────────────────────────────
+   Solisyon / Solution:
+   - Itilize Gmail App Password (pa modpas regilye)
+   - Use Gmail App Password (not regular password)
+   - https://myaccount.google.com/apppasswords
+
+PWOBLÈM 4: "Module not found"
+───────────────────────────────────────────────────────────────────────────
+   Solisyon / Solution:
+   pip install -r requirements.txt
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    💡 KONSÈY / TIPS                                      ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+💡 Konsèy 1: Kòmanse ak entèfas web - li pi fasil!
+   Tip 1: Start with web interface - it's easiest!
+
+💡 Konsèy 2: Notifikasyon email opsyonèl men trè itil
+   Tip 2: Email notifications optional but very helpful
+
+💡 Konsèy 3: Trete yon liv pou kòmanse, apre w ka fè batch
+   Tip 3: Process one book first, then do batch
+
+💡 Konsèy 4: Tout fichye yo otomatikman sove nan cloud
+   Tip 4: All files automatically saved to cloud
+
+💡 Konsèy 5: Gade metadata pou swiv tout bagay
+   Tip 5: Check metadata to track everything
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                 📞 SIPÒ / SUPPORT                                        ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+Bezwen èd? / Need help?
+
+1. 📖 Li dokimantasyon an premye
+   Read documentation first
+
+2. 🆘 Gade sekyon troubleshooting
+   Check troubleshooting section
+
+3. 🐛 Rapòte pwoblèm sou GitHub
+   Report bugs on GitHub
+
+4. 💬 Mande kominote a
+   Ask the community
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                    🎯 KÒMANSE KOUNYE A!                                  ║
+║                    START NOW!                                            ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+Windows:
+    START.bat
+
+Linux/Mac:
+    ./START.sh
+
+Oswa / Or:
+    python start_here.py
+
+Oswa / Or:
+    streamlit run web_app.py
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                                                                          ║
+║         🇭🇹 MÈSI POU ITILIZE PWOJÈ KREYÒL IA! 🇭🇹                       ║
+║         THANK YOU FOR USING HAITIAN CREOLE AI PROJECT!                  ║
+║                                                                          ║
+║                    Bon travay! / Good work! 🚀✨                         ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+

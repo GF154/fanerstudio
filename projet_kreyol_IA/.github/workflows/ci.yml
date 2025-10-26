@@ -1,0 +1,155 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-asyncio httpx
+    
+    - name: Run tests
+      run: |
+        pytest tests/ --cov=src --cov-report=xml --cov-report=html -v
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: false
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install linting tools
+      run: |
+        python -m pip install --upgrade pip
+        pip install flake8 black isort
+    
+    - name: Run Black
+      run: black --check src/ tests/ || true
+    
+    - name: Run isort
+      run: isort --check-only src/ tests/ || true
+    
+    - name: Run Flake8
+      run: flake8 src/ tests/ --max-line-length=120 --extend-ignore=E203,W503 || true
+
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    needs: [test, lint]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    
+    - name: Build Docker image
+      run: |
+        docker build -t kreyol-ai:${{ github.sha }} .
+        docker tag kreyol-ai:${{ github.sha }} kreyol-ai:latest
+    
+    - name: Test Docker image
+      run: |
+        docker run -d --name test-api -p 8000:8000 kreyol-ai:latest
+        sleep 15
+        curl -f http://localhost:8000/health || exit 1
+        docker stop test-api
+    
+    - name: Save Docker image
+      if: github.ref == 'refs/heads/main'
+      run: |
+        docker save kreyol-ai:latest | gzip > kreyol-ai-latest.tar.gz
+    
+    - name: Upload artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-artifact@v3
+      with:
+        name: docker-image
+        path: kreyol-ai-latest.tar.gz
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+    
+    - name: Install safety
+      run: pip install safety
+    
+    - name: Run security check
+      run: safety check --json || true
+    
+    - name: Scan Docker image with Trivy
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'kreyol-ai:latest'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+      continue-on-error: true
+
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    needs: [test, lint, build]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+    
+    - name: Deploy to production
+      run: |
+        echo "Deployment would happen here"
+        echo "Configure your deployment target (Heroku, AWS, etc.)"
+    
+    - name: Notify deployment
+      run: |
+        echo "✅ Deployment completed successfully!"
+

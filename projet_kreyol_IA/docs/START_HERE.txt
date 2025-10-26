@@ -1,0 +1,280 @@
+╔══════════════════════════════════════════════════════════════════════════╗
+║                                                                          ║
+║              🇭🇹  BYENVENI NAN PWOJÈ KREYÒL IA! 🇭🇹                      ║
+║              WELCOME TO THE HAITIAN CREOLE AI PROJECT!                  ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+
+
+═══════════════════════════════════════════════════════════════════════════
+  KISA SA YE? / WHAT IS THIS?
+═══════════════════════════════════════════════════════════════════════════
+
+Yon zouti ki pran yon PDF (nan nenpòt lang) epi:
+  1. Ekstrè tout tèks la
+  2. Tradui li an Kreyòl Ayisyen
+  3. Kreye yon liv odyo MP3
+
+A tool that takes a PDF (in any language) and:
+  1. Extracts all the text
+  2. Translates it to Haitian Creole
+  3. Creates an MP3 audiobook
+
+
+═══════════════════════════════════════════════════════════════════════════
+  KÒMANSE RAPID / QUICK START
+═══════════════════════════════════════════════════════════════════════════
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  WINDOWS USERS                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  1. Doub-klike sou: run.bat
+  2. Script la ap verifye tout bagay epi kòmanse!
+
+  OU BYEN:
+
+  1. Ouvè PowerShell oswa Command Prompt
+  2. cd "C:\Users\Fanerlink\OneDrive\Documents\liv odyo\projet_kreyol_IA"
+  3. pip install -r requirements.txt
+  4. Mete yon PDF nan data\input.pdf
+  5. python main.py
+
+
+┌─────────────────────────────────────────────────────────────────────────┐
+│  MAC / LINUX USERS                                                      │
+└─────────────────────────────────────────────────────────────────────────┘
+
+  1. chmod +x run.sh
+  2. ./run.sh
+
+  OR:
+
+  1. Open Terminal
+  2. cd projet_kreyol_IA
+  3. pip3 install -r requirements.txt
+  4. Place a PDF in data/input.pdf
+  5. python3 main.py
+
+
+═══════════════════════════════════════════════════════════════════════════
+  FICHYE ENPÒTAN / IMPORTANT FILES
+═══════════════════════════════════════════════════════════════════════════
+
+  📄 START_HERE.txt (sa a)   → Kòmanse la / Start here
+  ⚡ QUICKSTART.md           → Gid rapid / Quick guide (5 min)
+  📖 README.md               → Dokimantasyon konplè / Full docs
+  🔧 INSTALL.md              → Gid enstalasyon / Install guide
+  ℹ️  ABOUT.md               → Enfòmasyon / Information
+  📊 OVERVIEW.txt            → Rezime / Summary
+
+  🚀 main.py                 → Script prensipal / Main script
+  📝 example.py              → Egzanp / Examples
+  ▶️  run.bat / run.sh       → Script otomatik / Auto script
+
+
+═══════════════════════════════════════════════════════════════════════════
+  REZILTA / RESULTS
+═══════════════════════════════════════════════════════════════════════════
+
+Apre egzekisyon, ou ap jwenn 3 fichye:
+After execution, you will find 3 files:
+
+  📄 data/output_text.txt      ← Tèks orijinal ekstrè
+                                  Original extracted text
+
+  🌍 output/traduction.txt     ← Tradiksyon an Kreyòl
+                                  Translation in Creole
+
+  🔊 output/audiobook.mp3      ← Liv odyo ⭐
+                                  Audiobook ⭐
+
+
+═══════════════════════════════════════════════════════════════════════════
+  SA W BEZWEN / WHAT YOU NEED
+═══════════════════════════════════════════════════════════════════════════
+
+  ✓ Python 3.8 oswa pli wo / or higher
+  ✓ 4GB RAM minimum (8GB rekòmande / recommended)
+  ✓ 3GB espas disk / disk space
+  ✓ Entènèt (pou enstalasyon sèlman / for installation only)
+  ✓ Yon PDF pou trete / A PDF to process
+
+
+═══════════════════════════════════════════════════════════════════════════
+  TAN SA PRAN / HOW LONG IT TAKES
+═══════════════════════════════════════════════════════════════════════════
+
+  📦 Enstalasyon:          10-30 minit (yon fwa sèlman)
+                           10-30 minutes (one time only)
+
+  📖 Ekstraksyon:          30 segonn - 2 minit
+                           30 seconds - 2 minutes
+
+  🧠 Tradiksyon:           5 - 20 minit
+                           5 - 20 minutes
+
+  🎧 Kreyasyon odyo:       1 - 5 minit
+                           1 - 5 minutes
+
+  ═══════════════════════════════════════════════════
+  ⏱️  TOTAL:               ~6 - 27 minit
+                           ~6 - 27 minutes
+
+
+═══════════════════════════════════════════════════════════════════════════
+  SI W GEN PWOBLÈM / TROUBLESHOOTING
+═══════════════════════════════════════════════════════════════════════════
+
+❌ "ModuleNotFoundError"
+   → pip install -r requirements.txt
+
+❌ "Pa jwenn PDF / PDF not found"
+   → Verifye ke ou gen: data/input.pdf
+
+❌ "out of memory"
+   → Fèmen lòt aplikasyon / Close other apps
+   → Bezwen omwen 4GB RAM / Need at least 4GB RAM
+
+❌ "Model downloading..."
+   → Sa nòmal premye fwa! Tann kèk minit
+     This is normal first time! Wait a few minutes
+
+📖 Li INSTALL.md pou plis detay / Read INSTALL.md for more details
+
+
+═══════════════════════════════════════════════════════════════════════════
+  EGZANP RAPID / QUICK EXAMPLE
+═══════════════════════════════════════════════════════════════════════════
+
+  # 1. Enstale
+  pip install -r requirements.txt
+
+  # 2. Mete yon PDF (egzanp: yon liv Franse)
+  # Place a PDF (example: a French book)
+  Copy "mon_livre.pdf" to "data/input.pdf"
+
+  # 3. Egzekite
+  python main.py
+
+  # 4. Tann kèk minit... ☕
+
+  # 5. Jwenn rezilta ou!
+  # Get your results!
+  - output/traduction.txt  (tèks Kreyòl)
+  - output/audiobook.mp3   (liv odyo)
+
+
+═══════════════════════════════════════════════════════════════════════════
+  KI LI PREMYE? / WHAT TO READ FIRST?
+═══════════════════════════════════════════════════════════════════════════
+
+  🏃 Si w prese:              Li QUICKSTART.md
+     If you're in a hurry:
+
+  🔧 Si w gen pwoblèm:        Li INSTALL.md
+     If you have problems:
+
+  📚 Si w vle tout detay:     Li README.md
+     If you want all details:
+
+  💡 Si w vle konprann plis:  Li ABOUT.md
+     If you want to learn more:
+
+
+═══════════════════════════════════════════════════════════════════════════
+  KI LANG KI SIPÒTE? / WHAT LANGUAGES ARE SUPPORTED?
+═══════════════════════════════════════════════════════════════════════════
+
+Script la ka tradui PDF soti nan 100+ lang AN Kreyòl Ayisyen:
+The script can translate PDFs from 100+ languages TO Haitian Creole:
+
+  ✅ Franse / French          ✅ Angle / English
+  ✅ Panyòl / Spanish         ✅ Pòtigè / Portuguese
+  ✅ Alman / German           ✅ Italyen / Italian
+  ✅ Chinwa / Chinese         ✅ Japonè / Japanese
+  ✅ Arab / Arabic            ✅ Ris / Russian
+  ... ak anpil lòt / and many more!
+
+
+═══════════════════════════════════════════════════════════════════════════
+  ESTRIKTI DOSYE / FOLDER STRUCTURE
+═══════════════════════════════════════════════════════════════════════════
+
+projet_kreyol_IA/
+  ├── data/
+  │   ├── input.pdf             ⭐ METE PDF W LA / PUT PDF HERE
+  │   └── output_text.txt       (tèks ekstrè / extracted)
+  │
+  ├── output/
+  │   ├── traduction.txt        (tradiksyon Kreyòl / Creole translation)
+  │   └── audiobook.mp3         ⭐ LIV ODYO / AUDIOBOOK
+  │
+  ├── main.py                   (script prensipal / main script)
+  ├── requirements.txt          (depandans / dependencies)
+  └── [lòt fichye dokimantasyon / other doc files]
+
+
+═══════════════════════════════════════════════════════════════════════════
+  PWOCHEN ETAP / NEXT STEPS
+═══════════════════════════════════════════════════════════════════════════
+
+  1. ✓ Enstale depandans / Install dependencies
+     → pip install -r requirements.txt
+
+  2. ✓ Teste ak yon ti PDF / Test with small PDF (5-10 paj)
+     → Mete li nan data/input.pdf
+
+  3. ✓ Egzekite / Run
+     → python main.py
+
+  4. ✓ Verifye rezilta / Check results
+     → Gade output/ folder
+
+  5. ✓ Si tout bagay bon, itilize gwo dokiman!
+     → If all good, use larger documents!
+
+
+═══════════════════════════════════════════════════════════════════════════
+  SIPÒ / SUPPORT
+═══════════════════════════════════════════════════════════════════════════
+
+Si ou gen kesyon oswa pwoblèm:
+If you have questions or problems:
+
+  📖 Li dokimantasyon yo / Read the documentation
+  🔍 Gade INSTALL.md pou pwoblèm teknik / Check INSTALL.md for issues
+  💬 Kontakte kominote / Contact the community
+  🐛 Rapòte erè / Report bugs
+
+
+═══════════════════════════════════════════════════════════════════════════
+  KONSÈY / TIPS
+═══════════════════════════════════════════════════════════════════════════
+
+  💡 Kòmanse ak yon ti PDF pou teste
+     Start with a small PDF to test
+
+  💡 Asire w gen espas disk ase (3GB+)
+     Make sure you have enough disk space (3GB+)
+
+  💡 Premye egzekisyon ap pran plis tan (telechaje modèl)
+     First run takes longer (downloading model)
+
+  💡 Pa fèmen pwogram pandan l ap travay
+     Don't close the program while it's working
+
+  💡 Si tradiksyon pa pafè, se nòmal - ou ka edite li
+     If translation isn't perfect, that's normal - you can edit it
+
+
+╔══════════════════════════════════════════════════════════════════════════╗
+║                                                                          ║
+║              Bon chans! Nou la pou ede w!                                ║
+║              Good luck! We're here to help!                              ║
+║                                                                          ║
+║              Fèt ak ❤️  pou kominote Kreyòl Ayisyen                      ║
+║              Made with ❤️  for the Haitian Creole community              ║
+║                                                                          ║
+╚══════════════════════════════════════════════════════════════════════════╝
+

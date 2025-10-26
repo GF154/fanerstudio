@@ -1,0 +1,19 @@
+# Konfigirasyon API / API Configuration
+# (Opsyonèl - sèlman si w itilize sèvis ekstèn)
+# (Optional - only if using external services)
+# Kopye fichye sa a kòm .env epi ranpli valè yo
+# Copy this file as .env and fill in the values
+
+# OpenAI API (pou tradiksyon ak TTS kalite siperyè)
+# OpenAI API (for high-quality translation and TTS)
+OPENAI_API_KEY=your_openai_api_key_here
+
+# Google Cloud API (pou Google Translate ak Google TTS)
+# Google Cloud API (for Google Translate and Google TTS)
+GOOGLE_API_KEY=your_google_api_key_here
+
+# Opsyon jeneral / General Options
+SOURCE_LANGUAGE=fr  # Lang sous (fr=Franse, en=Angle, ht=Kreyòl)
+TARGET_LANGUAGE=ht  # Lang sib (fr=Franse, en=Angle, ht=Kreyòl)
+TTS_LANGUAGE=ht     # Lang pou TTS (ht=Kreyòl)
+

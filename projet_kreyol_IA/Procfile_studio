@@ -1,0 +1,3 @@
+# 🇭🇹 Kreyòl IA Studio - Procfile for Render/Heroku
+web: python -m app.main
+

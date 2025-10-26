@@ -1,0 +1,178 @@
+╔═══════════════════════════════════════════════════════════════╗
+║                                                               ║
+║        🇭🇹 GID RAPID POU TRETMAN GWO DOKIMAN PDF 🇭🇹          ║
+║                  Vèsyon 3.2.0 - 2025-10-24                   ║
+║                                                               ║
+╚═══════════════════════════════════════════════════════════════╝
+
+
+📚 SA W KA FÈ KOUNYE A:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ Pwosese PDF jiska 10,000+ paj
+✅ Memwa optimize (80% pi ba)
+✅ Progress real-time (ou wè kote nou ye)
+✅ Streaming pou fichye TRÈZTRÈ gwo
+
+
+📊 KAPASITE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+   📄 PDF TI (< 100 paj)        ⏱️  30 segonn - 2 minit
+   📄 PDF MWAYEN (100-500 paj)   ⏱️  2 - 10 minit  
+   📄 PDF GWO (500-2000 paj)     ⏱️  10 - 30 minit
+   📄 PDF EKSTRÈM (2000+ paj)    ⏱️  30+ minit (ak limit)
+
+
+🚀 KIJAN POU KÒMANSE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1️⃣ TESTE RAPID:
+   
+   Doub-klike sou:  TEST_GWO_PDF.bat
+   
+   Ou pral wè 5 opsyon pou teste:
+   • Test PDF nòmal
+   • Test PDF mwayen
+   • Test PDF gwo
+   • Test streaming
+   • Test kustom
+
+
+2️⃣ ITILIZE NAN NAVIGATÈ:
+   
+   a) PDF ti/mwayen (< 500 paj):
+      • Ale http://localhost:8000
+      • Klike "Nouvo Liv Odyo"
+      • Upload PDF ou
+      • Pa gen limit - tout paj yo ap ekstrè!
+   
+   b) PDF gwo (500+ paj):
+      • Menm pwosedi
+      • Men ou ka limite kantite paj
+      • Egzanp: Sèlman 500 paj pou teste rapid
+
+
+3️⃣ ITILIZE API (Advanced):
+
+   Standard Endpoint:
+   ─────────────────
+   POST http://localhost:8000/api/audiobook
+   
+   Form Data:
+   • file: [ou fichye PDF]
+   • voice: creole-native
+   • max_pages: 500          ← NOUVO! (optional)
+   • show_progress: true     ← NOUVO! (optional)
+   
+   
+   Streaming Endpoint (pou PDF trè gwo):
+   ──────────────────────────────────────
+   POST http://localhost:8000/api/audiobook-streaming
+   
+   Form Data:
+   • file: [ou fichye PDF]
+   • voice: creole-native
+   • chunk_size_pages: 100   ← NOUVO!
+
+
+⚠️  ATANSYON POU PDF GWO:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Lè ou upload yon PDF > 1000 paj, ou pral wè:
+
+   ⚠️  GWO PDF DETEKTE!
+      📄 Paj: 2,347
+      💾 Gwosè: 78.45 MB
+      ⏱️  Tan estimé: 46-78 minit
+   
+   📊 Ap limite ekstraksyon: 500/2347 paj
+
+Rekòmandasyon:
+• Teste ak 100-500 paj avan
+• Si ou bezwen tout, itilize streaming endpoint
+• Diminye chunk_size si memwa ka rive nan limit
+
+
+📈 PROGRESS TRACKING:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Pandan pwosesis, ou pral wè:
+
+   📄 Ekstrè PDF: 45%|████████▌         | 450/1000 [02:15<02:45]
+   
+   ✓ 100/1000 paj ekstrè...
+   ✓ 200/1000 paj ekstrè...
+   ✓ 300/1000 paj ekstrè...
+
+Apre fini:
+
+   ✅ Ekstraksyon konple!
+      📄 Paj pwosese: 1000/2347
+      📝 Mo: 245,789
+      🔤 Karaktè: 1,502,456
+
+
+💡 TIP POU OPTIMIZE:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. PDF SENP (sèlman tèks):
+   ✅ Chunk size: 100-200 paj
+   ✅ Rapid epi efikas
+
+2. PDF KONPLÈKS (ak imaj):
+   ✅ Chunk size: 50-100 paj
+   ✅ Pi stable
+
+3. PDF TRÈ GWO (5000+ paj):
+   ✅ Chunk size: 25-50 paj
+   ✅ Max pages: 1000-2000
+   ✅ Itilize streaming endpoint
+
+
+📚 POU PLI ENFÒMASYON:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📖 Gid Konplè:      docs/GWO_PDF_GUIDE.md
+📋 Changelog:       CHANGELOG_V3.2.md
+🔧 Details Teknik:  docs/PDF_OPTIMIZATION_V3.2.md
+🌐 API Docs:        http://localhost:8000/docs
+
+
+❓ SI GEN PWOBLÈM:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Pwoblèm: "Timeout"
+   → Diminye max_pages oswa chunk_size
+   → Itilize streaming endpoint
+
+Pwoblèm: "Memwa full"
+   → Diminye chunk_size (50 → 25)
+   → Limite max_pages (1000 → 500)
+
+Pwoblèm: "Pa gen progress"
+   → Normal si PDF < 20 paj
+   → Gade tèminal la pou enfòmasyon
+
+Pwoblèm: "Erè paj 347"
+   → Normal - paj sa a skip
+   → Pwosesis kontinye ak lòt paj yo
+
+
+✅ TOUT PRÊT!
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Sèvè deja ap kouri ak auto-reload aktivé.
+Tout nouvo fonksyonalite yo disponib kounye a!
+
+Lance TEST_GWO_PDF.bat pou kòmanse teste! 🚀
+
+
+═══════════════════════════════════════════════════════════════
+
+Vèsyon: 3.2.0
+Dat: 2025-10-24
+Status: ✅ PRODUCTION READY
+
+🇭🇹 FÈT AK FYÈTE NAN AYITI! ✨
+

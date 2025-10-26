@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faner Studio - Platfòm Kreyasyon Kontan Kreyòl</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-animation span {
+            position: absolute;
+            display: block;
+            width: 20px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            animation: float 25s infinite;
+            border-radius: 50%;
+        }
+
+        .bg-animation span:nth-child(1) { left: 25%; animation-delay: 0s; }
+        .bg-animation span:nth-child(2) { left: 10%; animation-delay: 2s; animation-duration: 20s; }
+        .bg-animation span:nth-child(3) { left: 70%; animation-delay: 4s; }
+        .bg-animation span:nth-child(4) { left: 40%; animation-delay: 0s; animation-duration: 30s; }
+        .bg-animation span:nth-child(5) { left: 65%; animation-delay: 0s; }
+        .bg-animation span:nth-child(6) { left: 75%; animation-delay: 3s; }
+        .bg-animation span:nth-child(7) { left: 35%; animation-delay: 7s; }
+        .bg-animation span:nth-child(8) { left: 50%; animation-delay: 15s; animation-duration: 35s; }
+        .bg-animation span:nth-child(9) { left: 20%; animation-delay: 2s; animation-duration: 25s; }
+        .bg-animation span:nth-child(10) { left: 85%; animation-delay: 0s; animation-duration: 30s; }
+
+        @keyframes float {
+            0% {
+                bottom: -150px;
+                opacity: 0;
+            }
+            25% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+            75% {
+                opacity: 1;
+            }
+            100% {
+                bottom: 100%;
+                opacity: 0;
+            }
+        }
+
+        /* Container */
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            width: 100%;
+            text-align: center;
+            color: white;
+        }
+
+        /* Logo */
+        .logo {
+            font-size: 5em;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+            display: block;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Title */
+        h1 {
+            font-size: 3.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            animation: fadeInDown 1s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Subtitle */
+        .subtitle {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            opacity: 0.95;
+            animation: fadeInUp 1s ease 0.3s backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Features */
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 50px;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 0.6s backwards;
+        }
+
+        .feature {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 20px 30px;
+            min-width: 200px;
+            transition: all 0.3s;
+        }
+
+        .feature:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .feature-text {
+            font-size: 1.1em;
+            font-weight: 600;
+        }
+
+        /* CTA Button */
+        .cta-button {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 20px 60px;
+            font-size: 1.3em;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            animation: fadeInUp 1s ease 0.9s backwards;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .cta-button:active {
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        /* Stats */
+        .stats {
+            margin-top: 60px;
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            animation: fadeInUp 1s ease 1.2s backwards;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 1em;
+            opacity: 0.9;
+        }
+
+        /* Responsive Design */
+        
+        /* Large Desktop (1920px+) */
+        @media (min-width: 1920px) {
+            .container {
+                max-width: 1200px;
+            }
+            
+            .logo {
+                font-size: 6em;
+            }
+            
+            h1 {
+                font-size: 4em;
+            }
+            
+            .subtitle {
+                font-size: 1.8em;
+            }
+        }
+
+        /* Desktop (1024px - 1919px) */
+        @media (min-width: 1024px) and (max-width: 1919px) {
+            .container {
+                max-width: 1000px;
+            }
+            
+            .logo {
+                font-size: 5em;
+            }
+        }
+
+        /* Laptop (768px - 1023px) */
+        @media (min-width: 768px) and (max-width: 1023px) {
+            .container {
+                max-width: 750px;
+                padding: 0 30px;
+            }
+
+            .logo {
+                font-size: 4.5em;
+            }
+
+            h1 {
+                font-size: 3em;
+            }
+
+            .subtitle {
+                font-size: 1.3em;
+            }
+
+            .features {
+                gap: 20px;
+            }
+
+            .feature {
+                min-width: 180px;
+                padding: 18px 25px;
+            }
+
+            .cta-button {
+                padding: 18px 50px;
+                font-size: 1.2em;
+            }
+        }
+
+        /* Tablet (481px - 767px) */
+        @media (min-width: 481px) and (max-width: 767px) {
+            body {
+                padding: 15px;
+            }
+
+            .logo {
+                font-size: 3.5em;
+            }
+
+            h1 {
+                font-size: 2.5em;
+            }
+
+            .subtitle {
+                font-size: 1.2em;
+                margin-bottom: 30px;
+            }
+
+            .features {
+                gap: 15px;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .feature {
+                min-width: 150px;
+                flex: 1 1 calc(50% - 15px);
+                padding: 15px 20px;
+            }
+
+            .feature-icon {
+                font-size: 2em;
+            }
+
+            .feature-text {
+                font-size: 1em;
+            }
+
+            .cta-button {
+                padding: 16px 40px;
+                font-size: 1.1em;
+            }
+
+            .stats {
+                gap: 30px;
+            }
+
+            .stat-number {
+                font-size: 2em;
+            }
+        }
+
+        /* Mobile (320px - 480px) */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .logo {
+                font-size: 3em;
+                margin-bottom: 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+                margin-bottom: 15px;
+            }
+
+            .subtitle {
+                font-size: 1em;
+                margin-bottom: 25px;
+                line-height: 1.5;
+            }
+
+            .features {
+                gap: 12px;
+                flex-direction: column;
+                margin-bottom: 35px;
+            }
+
+            .feature {
+                width: 100%;
+                min-width: unset;
+                padding: 15px;
+            }
+
+            .feature-icon {
+                font-size: 2em;
+                margin-bottom: 8px;
+            }
+
+            .feature-text {
+                font-size: 0.95em;
+            }
+
+            .cta-button {
+                padding: 15px 35px;
+                font-size: 1em;
+                width: 100%;
+            }
+
+            .stats {
+                gap: 25px;
+                margin-top: 40px;
+                flex-direction: column;
+            }
+
+            .stat-number {
+                font-size: 1.8em;
+            }
+
+            .stat-label {
+                font-size: 0.9em;
+            }
+        }
+
+        /* Extra Small Mobile (< 320px) */
+        @media (max-width: 319px) {
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            .logo {
+                font-size: 2.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="bg-animation">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="logo">🇭🇹</div>
+        
+        <h1>Faner Studio</h1>
+        
+        <p class="subtitle">
+            Platfòm #1 pou kreye kontni an Kreyòl Ayisyen<br>
+            ak teknoloji IA pwofesyonèl
+        </p>
+
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">🎵</div>
+                <div class="feature-text">Audiobook & Podcast</div>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🎬</div>
+                <div class="feature-text">Zouti Videyo</div>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">🌍</div>
+                <div class="feature-text">Tradiksyon NLLB</div>
+            </div>
+            
+            <div class="feature">
+                <div class="feature-icon">✨</div>
+                <div class="feature-text">IA Kreyatif</div>
+            </div>
+        </div>
+
+        <a href="/tools.html" class="cta-button">
+            Kòmanse Kounye a →
+        </a>
+
+        <div class="stats">
+            <div class="stat">
+                <div class="stat-number">10+</div>
+                <div class="stat-label">Zouti Disponib</div>
+            </div>
+            
+            <div class="stat">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Kreyòl Ayisyen</div>
+            </div>
+            
+            <div class="stat">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Disponib</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

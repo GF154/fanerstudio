@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇭🇹 Kreyòl IA - Professional Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --bg-hover: #e9ecef;
+            --border-color: #dee2e6;
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --accent: #0d6efd;
+            --accent-hover: #0b5ed7;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-primary);
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .sidebar-content {
+            flex: 1;
+            padding: 12px;
+        }
+
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 8px 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            margin-bottom: 2px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .menu-item:hover {
+            background: var(--bg-hover);
+        }
+
+        .menu-item.active {
+            background: var(--bg-hover);
+            font-weight: 500;
+        }
+
+        .menu-icon {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-header {
+            padding: 20px 32px;
+            background: var(--bg-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .content-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .content-header p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .content-body {
+            flex: 1;
+            padding: 32px;
+            overflow-y: auto;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Upload Zone */
+        .upload-zone {
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            padding: 48px 32px;
+            text-align: center;
+            background: var(--bg-primary);
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 24px;
+        }
+
+        .upload-zone:hover {
+            border-color: var(--accent);
+            background: #f0f7ff;
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--accent);
+            background: #e7f3ff;
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 16px;
+            background: var(--bg-secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .upload-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .upload-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        textarea, input[type="text"], input[type="url"], select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg-primary);
+            transition: all 0.2s;
+        }
+
+        textarea:focus, input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+        }
+
+        textarea {
+            min-height: 200px;
+            resize: vertical;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+
+        /* Options Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .option-card {
+            padding: 16px;
+            background: var(--bg-primary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-card:hover {
+            border-color: var(--accent);
+            background: #f0f7ff;
+        }
+
+        .option-card.selected {
+            border-color: var(--accent);
+            background: #e7f3ff;
+        }
+
+        .option-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .option-title {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .option-desc {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Buttons */
+        .btn-group {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+        }
+
+        /* Feature List */
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .feature-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .feature-content h3 {
+            font-size: 14px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .feature-content p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        /* Voice Selector */
+        .voice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .voice-card {
+            padding: 16px;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .voice-card:hover {
+            border-color: var(--accent);
+        }
+
+        .voice-card.selected {
+            border-color: var(--accent);
+            background: #e7f3ff;
+        }
+
+        .voice-avatar {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 12px;
+            background: var(--bg-secondary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .voice-name {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .voice-role {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+
+        /* Progress Overlay */
+        .progress-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-overlay.show {
+            display: flex;
+        }
+
+        .progress-content {
+            background: white;
+            padding: 32px;
+            border-radius: 16px;
+            text-align: center;
+            min-width: 320px;
+        }
+
+        .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--bg-secondary);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-title {
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        .progress-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .stat-card {
+            padding: 16px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* Result Card */
+        .result-card {
+            background: #d1f4dd;
+            border: 1px solid #9ae6b4;
+            border-radius: 12px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+
+        .result-card h3 {
+            font-size: 18px;
+            margin-bottom: 16px;
+        }
+
+        .result-link {
+            display: block;
+            padding: 12px 16px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: all 0.2s;
+        }
+
+        .result-link:hover {
+            background: var(--bg-hover);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <span>🇭🇹</span>
+                    <span>Kreyòl IA Studio</span>
+                </div>
+            </div>
+
+            <div class="sidebar-content">
+                <!-- AUDIO Section -->
+                <div class="section">
+                    <div class="section-title">
+                        <span>🎧</span>
+                        <span>AUDIO</span>
+                    </div>
+                    <div class="menu-item active" data-page="audiobook">
+                        <span class="menu-icon">📚</span>
+                        <span>New audiobook</span>
+                    </div>
+                    <div class="menu-item" data-page="podcast">
+                        <span class="menu-icon">🎙️</span>
+                        <span>Create a podcast</span>
+                    </div>
+                    <div class="menu-item" data-page="url-audio">
+                        <span class="menu-icon">🔗</span>
+                        <span>URL to audio</span>
+                    </div>
+                    <div class="menu-item" data-page="ai-script">
+                        <span class="menu-icon">✨</span>
+                        <span>AI Script Generator</span>
+                    </div>
+                </div>
+
+                <!-- VIDEO Section -->
+                <div class="section">
+                    <div class="section-title">
+                        <span>🎬</span>
+                        <span>VIDEO</span>
+                    </div>
+                    <div class="menu-item" data-page="video-voiceover">
+                        <span class="menu-icon">🎥</span>
+                        <span>New video voiceover</span>
+                    </div>
+                    <div class="menu-item" data-page="sfx-music">
+                        <span class="menu-icon">🎵</span>
+                        <span>Add SFX and music</span>
+                    </div>
+                    <div class="menu-item" data-page="captions">
+                        <span class="menu-icon">📝</span>
+                        <span>Add captions</span>
+                    </div>
+                    <div class="menu-item" data-page="remove-noise">
+                        <span class="menu-icon">🔇</span>
+                        <span>Remove background noise</span>
+                    </div>
+                    <div class="menu-item" data-page="fix-voiceover">
+                        <span class="menu-icon">🔧</span>
+                        <span>Fix voiceover mistakes</span>
+                    </div>
+                    <div class="menu-item" data-page="soundtrack">
+                        <span class="menu-icon">🎼</span>
+                        <span>AI Soundtrack Generator</span>
+                    </div>
+                </div>
+
+                <!-- KREYÒL Section -->
+                <div class="section">
+                    <div class="section-title">
+                        <span>🇭🇹</span>
+                        <span>KREYÒL</span>
+                    </div>
+                    <div class="menu-item" data-page="translate">
+                        <span class="menu-icon">🌍</span>
+                        <span>Translate to Creole</span>
+                    </div>
+                    <div class="menu-item" data-page="pdf-translator">
+                        <span class="menu-icon">📄</span>
+                        <span>PDF Translator</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <h1 id="pageTitle">New audiobook</h1>
+                <p id="pageSubtitle">Transform your documents into Haitian Creole audiobooks with native voices</p>
+            </div>
+
+            <div class="content-body">
+                <!-- Page: New Audiobook -->
+                <div class="page active" id="page-audiobook">
+                    <div class="upload-zone" onclick="document.getElementById('file-audiobook').click()">
+                        <div class="upload-icon">📤</div>
+                        <div class="upload-title">Click to upload, or drag and drop</div>
+                        <div class="upload-subtitle">.epub, .pdf, .txt, .html, .docx</div>
+                        <input type="file" id="file-audiobook" accept=".pdf,.txt,.epub,.html,.docx">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Voice selection</label>
+                        <select>
+                            <option>🇭🇹 Haitian Creole (Native - Hugging Face)</option>
+                            <option>🇫🇷 French (Fallback)</option>
+                            <option>🇺🇸 English</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Output options</label>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon">✅</span>
+                                <div class="feature-content">
+                                    <h3>AI Translation (M2M100)</h3>
+                                    <p>High-quality translation specifically trained for Haitian Creole</p>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">✅</span>
+                                <div class="feature-content">
+                                    <h3>Native Creole Voice</h3>
+                                    <p>Professional audio with authentic Haitian pronunciation</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary" onclick="createAudiobook()">Create Audiobook</button>
+                    </div>
+                </div>
+
+                <!-- Page: Create Podcast -->
+                <div class="page" id="page-podcast">
+                    <div class="form-group">
+                        <label class="form-label">Podcast script</label>
+                        <textarea id="podcast-script" placeholder="Host: Bonjou! Welcome to our podcast...&#10;Guest: Mèsi pou envitasyon an!&#10;&#10;Write your script here with speaker names followed by their dialogue."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Select voices for your podcast</label>
+                        <div class="voice-grid">
+                            <div class="voice-card selected">
+                                <div class="voice-avatar">👨</div>
+                                <div class="voice-name">Chris</div>
+                                <div class="voice-role">Host</div>
+                            </div>
+                            <div class="voice-card selected">
+                                <div class="voice-avatar">👩</div>
+                                <div class="voice-name">Jessica</div>
+                                <div class="voice-role">Guest</div>
+                            </div>
+                            <div class="voice-card">
+                                <div class="voice-avatar">👨‍🦰</div>
+                                <div class="voice-name">Pierre</div>
+                                <div class="voice-role">Expert</div>
+                            </div>
+                            <div class="voice-card">
+                                <div class="voice-avatar">👩‍🦰</div>
+                                <div class="voice-name">Marie</div>
+                                <div class="voice-role">Narrator</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Format</label>
+                        <div class="options-grid">
+                            <div class="option-card selected" data-format="conversation">
+                                <div class="option-icon">💬</div>
+                                <div class="option-title">Conversation</div>
+                                <div class="option-desc">Natural dialogue</div>
+                            </div>
+                            <div class="option-card" data-format="interview">
+                                <div class="option-icon">🎤</div>
+                                <div class="option-title">Interview</div>
+                                <div class="option-desc">Q&A format</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Clear</button>
+                        <button class="btn btn-primary" onclick="createPodcast()">Generate Podcast</button>
+                    </div>
+                </div>
+
+                <!-- Page: URL to Audio -->
+                <div class="page" id="page-url-audio">
+                    <div class="form-group">
+                        <label class="form-label">Enter article URL</label>
+                        <input type="url" placeholder="https://example.com/article">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Output language</label>
+                        <div class="options-grid">
+                            <div class="option-card selected">
+                                <div class="option-icon">🇭🇹</div>
+                                <div class="option-title">Kreyòl</div>
+                                <div class="option-desc">Haitian Creole</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">🇫🇷</div>
+                                <div class="option-title">Français</div>
+                                <div class="option-desc">French</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">🇺🇸</div>
+                                <div class="option-title">English</div>
+                                <div class="option-desc">English</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary" onclick="convertURL()">Convert to Audio</button>
+                    </div>
+                </div>
+
+                <!-- Page: AI Script Generator -->
+                <div class="page" id="page-ai-script">
+                    <div class="form-group">
+                        <label class="form-label">What would you like to create?</label>
+                        <div class="options-grid">
+                            <div class="option-card">
+                                <div class="option-icon">📚</div>
+                                <div class="option-title">Story</div>
+                                <div class="option-desc">Creative narrative</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">📰</div>
+                                <div class="option-title">News</div>
+                                <div class="option-desc">News article</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">🎓</div>
+                                <div class="option-title">Educational</div>
+                                <div class="option-desc">Learning content</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">🎙️</div>
+                                <div class="option-title">Podcast</div>
+                                <div class="option-desc">Podcast script</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Describe your idea</label>
+                        <textarea placeholder="Example: A short story about a child discovering the beauty of Haitian culture..."></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary" onclick="generateScript()">Generate Script</button>
+                    </div>
+                </div>
+
+                <!-- Page: Video Voiceover -->
+                <div class="page" id="page-video-voiceover">
+                    <div class="upload-zone" onclick="document.getElementById('file-video').click()">
+                        <div class="upload-icon">🎥</div>
+                        <div class="upload-title">Upload your video</div>
+                        <div class="upload-subtitle">.mp4, .mov, .avi, .mkv</div>
+                        <input type="file" id="file-video" accept=".mp4,.mov,.avi,.mkv">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Voiceover script (Creole)</label>
+                        <textarea placeholder="Enter the voiceover text in Haitian Creole..."></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary" onclick="addVoiceover()">Add Voiceover</button>
+                    </div>
+                </div>
+
+                <!-- Page: SFX and Music -->
+                <div class="page" id="page-sfx-music">
+                    <div class="upload-zone" onclick="document.getElementById('file-audio').click()">
+                        <div class="upload-icon">🎵</div>
+                        <div class="upload-title">Upload your audio</div>
+                        <div class="upload-subtitle">.mp3, .wav, .m4a</div>
+                        <input type="file" id="file-audio" accept=".mp3,.wav,.m4a">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Haitian music styles</label>
+                        <div class="options-grid">
+                            <div class="option-card">
+                                <div class="option-icon">🎺</div>
+                                <div class="option-title">Compas</div>
+                                <div class="option-desc">Traditional dance</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">🥁</div>
+                                <div class="option-title">Rara</div>
+                                <div class="option-desc">Festival music</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">🎸</div>
+                                <div class="option-title">Troubadou</div>
+                                <div class="option-desc">Folk acoustic</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">🎹</div>
+                                <div class="option-title">Mizik Rasin</div>
+                                <div class="option-desc">Roots music</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary" onclick="addMusic()">Add Music & Effects</button>
+                    </div>
+                </div>
+
+                <!-- Page: Add Captions -->
+                <div class="page" id="page-captions">
+                    <div class="upload-zone" onclick="document.getElementById('file-video-captions').click()">
+                        <div class="upload-icon">📝</div>
+                        <div class="upload-title">Upload your video</div>
+                        <div class="upload-subtitle">.mp4, .mov, .avi</div>
+                        <input type="file" id="file-video-captions" accept=".mp4,.mov,.avi">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Caption options</label>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon">🇭🇹</span>
+                                <div class="feature-content">
+                                    <h3>Haitian Creole captions</h3>
+                                    <p>Auto-generated with AI transcription</p>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🎨</span>
+                                <div class="feature-content">
+                                    <h3>Customizable style</h3>
+                                    <p>Choose fonts, colors, and positioning</p>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">⚡</span>
+                                <div class="feature-content">
+                                    <h3>Auto-sync</h3>
+                                    <p>Perfect timing with your audio</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary" onclick="addCaptions()">Generate Captions</button>
+                    </div>
+                </div>
+
+                <!-- Page: Remove Noise -->
+                <div class="page" id="page-remove-noise">
+                    <div class="upload-zone" onclick="document.getElementById('file-audio-noise').click()">
+                        <div class="upload-icon">🔇</div>
+                        <div class="upload-title">Upload noisy audio</div>
+                        <div class="upload-subtitle">.mp3, .wav, .m4a</div>
+                        <input type="file" id="file-audio-noise" accept=".mp3,.wav,.m4a">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Noise reduction level</label>
+                        <div class="options-grid">
+                            <div class="option-card selected">
+                                <div class="option-icon">🔊</div>
+                                <div class="option-title">Light</div>
+                                <div class="option-desc">Subtle removal</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">🔉</div>
+                                <div class="option-title">Medium</div>
+                                <div class="option-desc">Balanced</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">🔇</div>
+                                <div class="option-title">Strong</div>
+                                <div class="option-desc">Maximum</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary" onclick="removeNoise()">Clean Audio</button>
+                    </div>
+                </div>
+
+                <!-- Page: Fix Voiceover -->
+                <div class="page" id="page-fix-voiceover">
+                    <div class="upload-zone" onclick="document.getElementById('file-audio-fix').click()">
+                        <div class="upload-icon">🔧</div>
+                        <div class="upload-title">Upload voiceover to fix</div>
+                        <div class="upload-subtitle">.mp3, .wav, .m4a</div>
+                        <input type="file" id="file-audio-fix" accept=".mp3,.wav,.m4a">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Corrected text</label>
+                        <textarea placeholder="Enter the corrected text for the parts you want to replace..."></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary" onclick="fixVoiceover()">Fix & Regenerate</button>
+                    </div>
+                </div>
+
+                <!-- Page: AI Soundtrack -->
+                <div class="page" id="page-soundtrack">
+                    <div class="form-group">
+                        <label class="form-label">Choose Haitian music style</label>
+                        <div class="options-grid">
+                            <div class="option-card">
+                                <div class="option-icon">🎺</div>
+                                <div class="option-title">Compas</div>
+                                <div class="option-desc">Upbeat dance</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">🥁</div>
+                                <div class="option-title">Rara</div>
+                                <div class="option-desc">Festival</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">🎻</div>
+                                <div class="option-title">Troubadou</div>
+                                <div class="option-desc">Folk ballads</div>
+                            </div>
+                            <div class="option-card">
+                                <div class="option-icon">🎹</div>
+                                <div class="option-title">Mizik Rasin</div>
+                                <div class="option-desc">Roots drums</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Describe your soundtrack</label>
+                        <textarea placeholder="Example: Uplifting background music for a documentary about Haiti..."></textarea>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary" onclick="generateSoundtrack()">Generate Soundtrack</button>
+                    </div>
+                </div>
+
+                <!-- Page: Translate to Creole -->
+                <div class="page" id="page-translate">
+                    <div class="form-group">
+                        <label class="form-label">Source text</label>
+                        <textarea id="translate-input" placeholder="Enter text in French, English, or Spanish..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Translation options</label>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon">🤖</span>
+                                <div class="feature-content">
+                                    <h3>AI Translation (M2M100)</h3>
+                                    <p>Higher quality, specifically trained for Creole</p>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">💾</span>
+                                <div class="feature-content">
+                                    <h3>Intelligent caching</h3>
+                                    <p>Saves translations for faster future use</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Clear</button>
+                        <button class="btn btn-primary" onclick="translateText()">Translate to Kreyòl</button>
+                    </div>
+                </div>
+
+                <!-- Page: PDF Translator -->
+                <div class="page" id="page-pdf-translator">
+                    <div class="upload-zone" onclick="document.getElementById('file-pdf').click()">
+                        <div class="upload-icon">📄</div>
+                        <div class="upload-title">Upload PDF to translate</div>
+                        <div class="upload-subtitle">.pdf</div>
+                        <input type="file" id="file-pdf" accept=".pdf">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Output options</label>
+                        <ul class="feature-list">
+                            <li class="feature-item">
+                                <span class="feature-icon">📄</span>
+                                <div class="feature-content">
+                                    <h3>Translated text file</h3>
+                                    <p>Plain text version in Creole</p>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">🎧</span>
+                                <div class="feature-content">
+                                    <h3>Generate audiobook</h3>
+                                    <p>Automatically create audio version with native voice</p>
+                                </div>
+                            </li>
+                            <li class="feature-item">
+                                <span class="feature-icon">💾</span>
+                                <div class="feature-content">
+                                    <h3>Save original text</h3>
+                                    <p>Keep both original and translation</p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="btn-group">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary" onclick="translatePDF()">Translate PDF</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Progress Overlay -->
+        <div class="progress-overlay" id="progressOverlay">
+            <div class="progress-content">
+                <div class="spinner"></div>
+                <div class="progress-title" id="progressTitle">Processing...</div>
+                <div class="progress-subtitle" id="progressSubtitle">Please wait</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Navigation
+        const menuItems = document.querySelectorAll('.menu-item');
+        const pages = document.querySelectorAll('.page');
+        const pageTitle = document.getElementById('pageTitle');
+        const pageSubtitle = document.getElementById('pageSubtitle');
+
+        const pageTitles = {
+            'audiobook': {
+                title: 'New audiobook',
+                subtitle: 'Transform your documents into Haitian Creole audiobooks with native voices'
+            },
+            'podcast': {
+                title: 'Create a podcast',
+                subtitle: 'Generate professional podcasts with multiple AI voices in Creole'
+            },
+            'url-audio': {
+                title: 'URL to audio',
+                subtitle: 'Convert any web article to Creole audiobook'
+            },
+            'ai-script': {
+                title: 'AI Script Generator',
+                subtitle: 'Generate creative scripts in Haitian Creole using AI'
+            },
+            'video-voiceover': {
+                title: 'New video voiceover',
+                subtitle: 'Add professional Creole voiceover to your videos'
+            },
+            'sfx-music': {
+                title: 'Add SFX and music',
+                subtitle: 'Enhance your audio with Haitian music and sound effects'
+            },
+            'captions': {
+                title: 'Add captions',
+                subtitle: 'Automatically generate captions in Haitian Creole'
+            },
+            'remove-noise': {
+                title: 'Remove background noise',
+                subtitle: 'Clean up your audio with AI-powered noise reduction'
+            },
+            'fix-voiceover': {
+                title: 'Fix voiceover mistakes',
+                subtitle: 'Replace or fix parts of your voiceover without re-recording'
+            },
+            'soundtrack': {
+                title: 'AI Soundtrack Generator',
+                subtitle: 'Generate original Haitian-inspired music with AI'
+            },
+            'translate': {
+                title: 'Translate to Creole',
+                subtitle: 'Translate any text to Haitian Creole with AI'
+            },
+            'pdf-translator': {
+                title: 'PDF Translator',
+                subtitle: 'Translate entire PDF documents to Haitian Creole'
+            }
+        };
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', function() {
+                // Update active menu
+                menuItems.forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+
+                // Get page
+                const pageName = this.getAttribute('data-page');
+                
+                // Update page
+                pages.forEach(p => p.classList.remove('active'));
+                document.getElementById(`page-${pageName}`).classList.add('active');
+
+                // Update title
+                if (pageTitles[pageName]) {
+                    pageTitle.textContent = pageTitles[pageName].title;
+                    pageSubtitle.textContent = pageTitles[pageName].subtitle;
+                }
+            });
+        });
+
+        // Option cards selection
+        document.querySelectorAll('.option-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const parent = this.parentElement;
+                parent.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Voice cards selection
+        document.querySelectorAll('.voice-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+
+        // Progress functions
+        function showProgress(title, subtitle) {
+            document.getElementById('progressTitle').textContent = title;
+            document.getElementById('progressSubtitle').textContent = subtitle;
+            document.getElementById('progressOverlay').classList.add('show');
+        }
+
+        function updateProgress(title, subtitle) {
+            document.getElementById('progressTitle').textContent = title;
+            document.getElementById('progressSubtitle').textContent = subtitle;
+        }
+
+        function hideProgress() {
+            document.getElementById('progressOverlay').classList.remove('show');
+        }
+
+        // API Functions
+        async function createAudiobook() {
+            const fileInput = document.getElementById('file-audiobook');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('❌ Please select a file');
+                return;
+            }
+            
+            showProgress('Uploading...', 'Sending file to server');
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('voice', 'creole-native');
+            
+            try {
+                const response = await fetch('/api/audiobook', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) throw new Error('Server error');
+                
+                updateProgress('Translating...', 'AI is translating to Creole');
+                const result = await response.json();
+                
+                hideProgress();
+                
+                alert(`🎉 Audiobook created successfully!
+
+📄 Translation: ${result.files.translation}
+🎧 Audio: ${result.files.audio}
+
+📊 Stats:
+- Original: ${result.stats.original_words} words
+- Translated: ${result.stats.translated_words} words`);
+                
+            } catch (error) {
+                hideProgress();
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        async function createPodcast() {
+            const script = document.getElementById('podcast-script').value;
+            
+            if (!script.trim()) {
+                alert('❌ Please write a script');
+                return;
+            }
+            
+            showProgress('Creating podcast...', 'Generating voices');
+            
+            const formData = new FormData();
+            formData.append('script', script);
+            formData.append('format', 'conversation');
+            
+            try {
+                const response = await fetch('/api/podcast', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) throw new Error('Server error');
+                
+                const result = await response.json();
+                hideProgress();
+                
+                alert(`🎉 Podcast created successfully!
+
+🎙️ Audio: ${result.files.audio}
+
+📊 Stats:
+- Segments: ${result.stats.segments}
+- Speakers: ${result.stats.speakers}
+- Duration: ~${Math.round(result.stats.duration_estimate)}s`);
+                
+            } catch (error) {
+                hideProgress();
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        async function translateText() {
+            const textarea = document.getElementById('translate-input');
+            const text = textarea.value;
+            
+            if (!text.trim()) {
+                alert('❌ Please enter text');
+                return;
+            }
+            
+            showProgress('Translating...', 'AI is translating to Creole');
+            
+            const formData = new FormData();
+            formData.append('text', text);
+            formData.append('target_lang', 'ht');
+            
+            try {
+                const response = await fetch('/api/translate', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) throw new Error('Server error');
+                
+                const result = await response.json();
+                hideProgress();
+                
+                // Show result
+                const resultDiv = document.createElement('div');
+                resultDiv.className = 'result-card';
+                resultDiv.innerHTML = `
+                    <h3>🇭🇹 Translation in Creole:</h3>
+                    <p style="white-space: pre-wrap; margin: 16px 0;">${result.translation}</p>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">${result.stats.translated_words}</div>
+                            <div class="stat-label">Words</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${result.stats.translated_length}</div>
+                            <div class="stat-label">Characters</div>
+                        </div>
+                    </div>
+                `;
+                
+                const oldResult = document.querySelector('#page-translate .result-card');
+                if (oldResult) oldResult.remove();
+                
+                document.querySelector('#page-translate').appendChild(resultDiv);
+                
+            } catch (error) {
+                hideProgress();
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        async function translatePDF() {
+            const fileInput = document.getElementById('file-pdf');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                alert('❌ Please select a PDF');
+                return;
+            }
+            
+            showProgress('Translating PDF...', 'Extracting text');
+            
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('generate_audio', 'true');
+            
+            try {
+                const response = await fetch('/api/pdf-translate', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) throw new Error('Server error');
+                
+                updateProgress('Translating...', 'AI is translating');
+                const result = await response.json();
+                
+                hideProgress();
+                
+                alert(`🎉 PDF translated successfully!
+
+📄 Translation: ${result.files.translation}
+${result.files.audio ? '🎧 Audiobook: ' + result.files.audio : ''}
+
+📊 Stats:
+- Pages: ${result.stats.pages}
+- Characters: ${result.stats.chars}`);
+                
+            } catch (error) {
+                hideProgress();
+                alert('❌ Error: ' + error.message);
+            }
+        }
+
+        // Placeholder functions for other features
+        function convertURL() {
+            alert('🚧 URL to Audio feature coming soon!');
+        }
+
+        function generateScript() {
+            alert('🚧 AI Script Generator coming soon!');
+        }
+
+        function addVoiceover() {
+            alert('🚧 Video Voiceover feature coming soon!');
+        }
+
+        function addMusic() {
+            alert('🚧 SFX and Music feature coming soon!');
+        }
+
+        function addCaptions() {
+            alert('🚧 Captions feature coming soon!');
+        }
+
+        function removeNoise() {
+            alert('🚧 Noise Removal feature coming soon!');
+        }
+
+        function fixVoiceover() {
+            alert('🚧 Fix Voiceover feature coming soon!');
+        }
+
+        function generateSoundtrack() {
+            alert('🚧 AI Soundtrack Generator coming soon!');
+        }
+
+        // Drag and drop for all upload zones
+        document.querySelectorAll('.upload-zone').forEach(zone => {
+            zone.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                zone.classList.add('dragover');
+            });
+
+            zone.addEventListener('dragleave', () => {
+                zone.classList.remove('dragover');
+            });
+
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                // Handle file drop
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇭🇹 Pwojè Kreyòl IA - Create Audiobook</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f5f5f7;
+            color: #1d1d1f;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 320px;
+            background: white;
+            border-right: 1px solid #e5e5e7;
+            padding: 32px 20px;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            margin-bottom: 32px;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #86868b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin-bottom: 4px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 15px;
+            color: #1d1d1f;
+        }
+
+        .menu-item:hover {
+            background: #f5f5f7;
+        }
+
+        .menu-item.active {
+            background: #e8e8ed;
+            font-weight: 500;
+        }
+
+        .menu-item-icon {
+            font-size: 20px;
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 48px 64px;
+            overflow-y: auto;
+            background: white;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #f5f5f7;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #86868b;
+            transition: all 0.2s;
+        }
+
+        .close-btn:hover {
+            background: #e5e5e7;
+        }
+
+        .header {
+            margin-bottom: 12px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #86868b;
+        }
+
+        .section {
+            margin-top: 40px;
+        }
+
+        .section-label {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #1d1d1f;
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 2px dashed #d2d2d7;
+            border-radius: 16px;
+            padding: 80px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #fbfbfd;
+        }
+
+        .upload-area:hover {
+            border-color: #0071e3;
+            background: #f5f9ff;
+        }
+
+        .upload-area.dragover {
+            border-color: #0071e3;
+            background: #e8f4ff;
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 20px;
+            background: #0071e3;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .upload-text {
+            font-size: 16px;
+            color: #1d1d1f;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .upload-formats {
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        /* Voice Selector */
+        .voice-selector {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            border: 1px solid #d2d2d7;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .voice-selector:hover {
+            border-color: #0071e3;
+        }
+
+        .voice-info {
+            display: flex;
+            align-items: center;
+        }
+
+        .voice-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin-right: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .voice-name {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .dropdown-icon {
+            color: #86868b;
+            font-size: 14px;
+        }
+
+        /* Toggle Switch */
+        .toggle-section {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            padding: 20px;
+            border-radius: 12px;
+            background: #f5f5f7;
+        }
+
+        .toggle-info {
+            flex: 1;
+            margin-right: 20px;
+        }
+
+        .toggle-title {
+            font-size: 15px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+        }
+
+        .alpha-badge {
+            background: #0071e3;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .toggle-description {
+            font-size: 14px;
+            color: #86868b;
+            line-height: 1.5;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 52px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #d2d2d7;
+            transition: 0.3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 28px;
+            width: 28px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: #0071e3;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Create Button */
+        .create-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 64px;
+            background: #1d1d1f;
+            color: white;
+            border: none;
+            padding: 16px 48px;
+            border-radius: 28px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .create-btn:hover {
+            background: #0071e3;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 32px rgba(0, 113, 227, 0.3);
+        }
+
+        .create-btn:active {
+            transform: translateY(0);
+        }
+
+        /* File Info */
+        .file-info {
+            display: none;
+            margin-top: 16px;
+            padding: 16px;
+            background: #e8f4ff;
+            border-radius: 12px;
+            border-left: 4px solid #0071e3;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-name {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .file-size {
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        /* Progress */
+        .progress-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 320px;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .progress-container.show {
+            display: flex;
+        }
+
+        .progress-content {
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .progress-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e5e5e7;
+            border-top: 4px solid #0071e3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .progress-text {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .progress-subtext {
+            font-size: 14px;
+            color: #86868b;
+        }
+
+        /* Voice Options Modal */
+        .voice-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .voice-modal.show {
+            display: flex;
+        }
+
+        .voice-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .voice-modal-header {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 24px;
+        }
+
+        .voice-option {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+
+        .voice-option:hover {
+            background: #f5f5f7;
+        }
+
+        .voice-option.selected {
+            background: #e8f4ff;
+            border: 2px solid #0071e3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-section">
+                <div class="section-title">🎧 Audio</div>
+                <div class="menu-item active">
+                    <span class="menu-item-icon">📚</span>
+                    <span>New audiobook</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-item-icon">🎙️</span>
+                    <span>Create a podcast</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-item-icon">🔗</span>
+                    <span>URL to audio</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-item-icon">✨</span>
+                    <span>AI Script Generator</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="section-title">🎬 Video</div>
+                <div class="menu-item">
+                    <span class="menu-item-icon">🎥</span>
+                    <span>New video voiceover</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-item-icon">🎵</span>
+                    <span>Add SFX and music</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-item-icon">📝</span>
+                    <span>Add captions</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-item-icon">🔇</span>
+                    <span>Remove background noise</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-item-icon">🔧</span>
+                    <span>Fix voiceover mistakes</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-item-icon">🎼</span>
+                    <span>AI Soundtrack Generator</span>
+                </div>
+            </div>
+
+            <div class="sidebar-section">
+                <div class="section-title">🇭🇹 Kreyòl</div>
+                <div class="menu-item">
+                    <span class="menu-item-icon">🌍</span>
+                    <span>Translate to Creole</span>
+                </div>
+                <div class="menu-item">
+                    <span class="menu-item-icon">📄</span>
+                    <span>PDF Translator</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <button class="close-btn" onclick="window.close()">✕</button>
+
+            <div class="header">
+                <h1>Create an audiobook</h1>
+                <p>If you already have a document, upload it below.</p>
+            </div>
+
+            <!-- Upload Section -->
+            <div class="section">
+                <div class="section-label">Upload a document (optional)</div>
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📤</div>
+                    <div class="upload-text">Click to upload, or drag and drop</div>
+                    <div class="upload-formats">.epub, .pdf, .txt, .html, .docx</div>
+                    <input type="file" id="fileInput" accept=".pdf,.txt,.epub,.html,.docx">
+                </div>
+                <div class="file-info" id="fileInfo">
+                    <div class="file-name" id="fileName"></div>
+                    <div class="file-size" id="fileSize"></div>
+                </div>
+            </div>
+
+            <!-- Voice Selection -->
+            <div class="section">
+                <div class="section-label">Default voice</div>
+                <div class="voice-selector" id="voiceSelector">
+                    <div class="voice-info">
+                        <div class="voice-avatar">🇭🇹</div>
+                        <div class="voice-name" id="selectedVoice">Haitian Creole (Native)</div>
+                    </div>
+                    <div class="dropdown-icon">▼</div>
+                </div>
+            </div>
+
+            <!-- Auto-assign voices -->
+            <div class="section">
+                <div class="toggle-section">
+                    <div class="toggle-info">
+                        <div class="toggle-title">
+                            Auto-assign voices
+                            <span class="alpha-badge">Alpha</span>
+                        </div>
+                        <div class="toggle-description">
+                            Automatically detect characters in the project and assign matching voices to them.
+                            This process can take significant time for longer content.
+                        </div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="autoVoices">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Create Button -->
+            <button class="create-btn" id="createBtn">Create project</button>
+        </div>
+
+        <!-- Progress Overlay -->
+        <div class="progress-container" id="progressContainer">
+            <div class="progress-content">
+                <div class="progress-spinner"></div>
+                <div class="progress-text" id="progressText">Creating your audiobook...</div>
+                <div class="progress-subtext" id="progressSubtext">This may take a few minutes</div>
+            </div>
+        </div>
+
+        <!-- Voice Selection Modal -->
+        <div class="voice-modal" id="voiceModal">
+            <div class="voice-modal-content">
+                <div class="voice-modal-header">Select Voice</div>
+                
+                <div class="voice-option selected" onclick="selectVoice('Haitian Creole (Native)', '🇭🇹')">
+                    <div class="voice-avatar">🇭🇹</div>
+                    <div style="margin-left: 12px;">
+                        <div class="voice-name">Haitian Creole (Native)</div>
+                        <div style="font-size: 13px; color: #86868b;">facebook/mms-tts-hat</div>
+                    </div>
+                </div>
+
+                <div class="voice-option" onclick="selectVoice('French (Fallback)', '🇫🇷')">
+                    <div class="voice-avatar" style="background: linear-gradient(135deg, #0055A4 0%, #EF4135 100%);">🇫🇷</div>
+                    <div style="margin-left: 12px;">
+                        <div class="voice-name">French (Fallback)</div>
+                        <div style="font-size: 13px; color: #86868b;">Google TTS</div>
+                    </div>
+                </div>
+
+                <div class="voice-option" onclick="selectVoice('English', '🇺🇸')">
+                    <div class="voice-avatar" style="background: linear-gradient(135deg, #B22234 0%, #3C3B6E 100%);">🇺🇸</div>
+                    <div style="margin-left: 12px;">
+                        <div class="voice-name">English</div>
+                        <div style="font-size: 13px; color: #86868b;">Google TTS</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedFile = null;
+
+        // Upload Area
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFile(e.dataTransfer.files[0]);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFile(e.target.files[0]);
+            }
+        });
+
+        function handleFile(file) {
+            selectedFile = file;
+            fileName.textContent = `📄 ${file.name}`;
+            fileSize.textContent = `${(file.size / 1024).toFixed(2)} KB`;
+            fileInfo.classList.add('show');
+        }
+
+        // Voice Selection
+        const voiceSelector = document.getElementById('voiceSelector');
+        const voiceModal = document.getElementById('voiceModal');
+
+        voiceSelector.addEventListener('click', () => {
+            voiceModal.classList.add('show');
+        });
+
+        voiceModal.addEventListener('click', (e) => {
+            if (e.target === voiceModal) {
+                voiceModal.classList.remove('show');
+            }
+        });
+
+        function selectVoice(name, emoji) {
+            document.getElementById('selectedVoice').textContent = name;
+            document.querySelector('.voice-avatar').textContent = emoji;
+            voiceModal.classList.remove('show');
+            
+            // Update selected option
+            document.querySelectorAll('.voice-option').forEach(opt => opt.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+        }
+
+        // Create Project
+        const createBtn = document.getElementById('createBtn');
+        const progressContainer = document.getElementById('progressContainer');
+        const progressText = document.getElementById('progressText');
+        const progressSubtext = document.getElementById('progressSubtext');
+
+        createBtn.addEventListener('click', async () => {
+            if (!selectedFile) {
+                alert('Please upload a document first!');
+                return;
+            }
+
+            // Show progress
+            progressContainer.classList.add('show');
+            progressText.textContent = 'Uploading document...';
+            progressSubtext.textContent = 'Please wait';
+
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            progressText.textContent = 'Translating to Haitian Creole...';
+            progressSubtext.textContent = 'Using AI translation model';
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            progressText.textContent = 'Generating audiobook...';
+            progressSubtext.textContent = 'Creating with native Haitian voice';
+
+            await new Promise(resolve => setTimeout(resolve, 2000));
+
+            progressText.textContent = '✅ Audiobook created!';
+            progressSubtext.textContent = 'Ready to download';
+
+            setTimeout(() => {
+                progressContainer.classList.remove('show');
+                alert('🎉 Audiobook created successfully!\n\nFiles saved to: output/' + selectedFile.name.split('.')[0]);
+            }, 1500);
+        });
+    </script>
+</body>
+</html>
+

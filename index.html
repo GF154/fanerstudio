@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faner Studio - Tradiksyon Kreyòl Ayisyen</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header .flag {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .translation-box {
+            margin-bottom: 20px;
+        }
+
+        .translation-box label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .translation-box textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-family: inherit;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        .translation-box textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .controls select {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .result {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result.show {
+            display: block;
+        }
+
+        .result h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .result p {
+            color: #333;
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        .loading {
+            text-align: center;
+            color: #667eea;
+            font-size: 1.2em;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .error {
+            background: #fee;
+            border-left: 4px solid #f44;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+
+        .error.show {
+            display: block;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .footer a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item .number {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-item .label {
+            font-size: 0.9em;
+            color: #666;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="flag">🇭🇹</div>
+            <h1>Faner Studio</h1>
+            <p>Tradiksyon Pwofesyonèl ak NLLB</p>
+        </div>
+
+        <div class="translation-box">
+            <label for="sourceText">📝 Tèks pou tradwi:</label>
+            <textarea id="sourceText" rows="6" placeholder="Ekri oswa kole tèks ou a isit la..."></textarea>
+        </div>
+
+        <div class="controls">
+            <select id="sourceLang">
+                <option value="auto">🌐 Detekte Otomatik</option>
+                <option value="fr">🇫🇷 Franse</option>
+                <option value="en">🇺🇸 Anglè</option>
+                <option value="es">🇪🇸 Panyòl</option>
+            </select>
+
+            <select id="targetLang">
+                <option value="ht">🇭🇹 Kreyòl Ayisyen</option>
+                <option value="fr">🇫🇷 Franse</option>
+                <option value="en">🇺🇸 Anglè</option>
+            </select>
+        </div>
+
+        <button class="btn" id="translateBtn">
+            🔄 Tradwi Kounye a
+        </button>
+
+        <div class="loading" id="loading">
+            ⏳ Tradiksyon ap fèt...
+        </div>
+
+        <div class="error" id="error"></div>
+
+        <div class="result" id="result">
+            <h3>✅ Rezilta:</h3>
+            <p id="translatedText"></p>
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="number" id="charCount">0</div>
+                    <div class="label">Karaktè</div>
+                </div>
+                <div class="stat-item">
+                    <div class="number" id="wordCount">0</div>
+                    <div class="label">Mo</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Pwofesyonèl ak 💜 pou kominote Kreyòl Ayisyen</p>
+            <p><a href="/docs" target="_blank">📖 API Documentation</a></p>
+        </div>
+    </div>
+
+    <script>
+        // Auto-detect API URL (works both locally and on Render)
+        const API_URL = window.location.origin;
+
+        const sourceText = document.getElementById('sourceText');
+        const targetLang = document.getElementById('targetLang');
+        const translateBtn = document.getElementById('translateBtn');
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+        const translatedText = document.getElementById('translatedText');
+        const errorBox = document.getElementById('error');
+        const charCount = document.getElementById('charCount');
+        const wordCount = document.getElementById('wordCount');
+
+        translateBtn.addEventListener('click', async () => {
+            const text = sourceText.value.trim();
+            
+            if (!text) {
+                showError('Tanpri ekri yon tèks pou tradwi!');
+                return;
+            }
+
+            // Hide previous results
+            result.classList.remove('show');
+            errorBox.classList.remove('show');
+            loading.classList.add('show');
+            translateBtn.disabled = true;
+
+            try {
+                const formData = new FormData();
+                formData.append('text', text);
+                formData.append('target', targetLang.value);
+
+                const response = await fetch(`${API_URL}/translate`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Erè: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    translatedText.textContent = data.translated;
+                    charCount.textContent = data.translated.length;
+                    wordCount.textContent = data.translated.split(/\s+/).length;
+                    result.classList.add('show');
+                } else {
+                    throw new Error(data.error || 'Tradiksyon pa mache');
+                }
+
+            } catch (error) {
+                showError(`Erè: ${error.message}`);
+            } finally {
+                loading.classList.remove('show');
+                translateBtn.disabled = false;
+            }
+        });
+
+        function showError(message) {
+            errorBox.textContent = message;
+            errorBox.classList.add('show');
+            setTimeout(() => {
+                errorBox.classList.remove('show');
+            }, 5000);
+        }
+
+        // Allow Enter key to translate (Ctrl+Enter)
+        sourceText.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                translateBtn.click();
+            }
+        });
+    </script>
+</body>
+</html>
+
