@@ -716,9 +716,9 @@
 
                 <div class="tool-card" onclick="openModal('video-sfx')">
                     <div class="tool-icon">🎵</div>
-                    <h3>Ajoute Efè Son ak Mizik</h3>
-                    <p>Ajoute vwadeyò, mizik, ak efè son nan videyo ou.</p>
-                    <span class="badge dev">Dev</span>
+                    <h3>Jeneratè Bann Son IA</h3>
+                    <p>Pwodui otomatikman bann son inik pou videyo ou ak IA.</p>
+                    <span class="badge ready">Ready</span>
                 </div>
 
                 <div class="tool-card" onclick="openModal('video-captions')">
@@ -943,84 +943,33 @@
                 `
             },
             'video-voiceover': {
-                title: 'Nouvo Vwadeyò Videyo',
+                title: '🎬 Nouvo Vwadeyò Videyo',
                 form: `
-                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Ajoute nouvo vwa (voiceover) nan videyo ou yo. Sipòte tradiksyon otomatik nan plizyè lang.</p>
+                    <div class="form-group">
+                        <label>Upload Videyo</label>
+                        <input type="file" accept="video/*">
+                    </div>
+                    <button class="btn-primary" disabled>Pral Disponib Byento</button>
+                `
+            },
+            'video-sfx': {
+                title: 'Jeneratè Bann Son IA',
+                form: `
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Pwodui otomatikman yon bann son inik ki koresponn ak videyo ou.</p>
                     
                     <!-- Upload Video -->
                     <div class="form-group">
                         <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Telechaje videyo</label>
-                        <div class="upload-zone" onclick="document.getElementById('video-file').click()">
+                        <div class="upload-zone" onclick="document.getElementById('soundtrack-video').click()">
                             <div class="upload-icon">🎬</div>
                             <div class="upload-text">Klike pou telechaje videyo, oswa trennen epi lage</div>
-                            <div class="upload-formats">.mp4, .mov, .avi, .mkv, .webm</div>
-                            <input type="file" id="video-file" accept="video/*" style="display: none;">
+                            <div class="upload-formats">.mp4, .mov</div>
+                            <input type="file" id="soundtrack-video" accept="video/mp4,video/quicktime" style="display: none;">
                         </div>
                     </div>
                     
-                    <!-- Source Language -->
-                    <div class="form-group">
-                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Lang orijinal videyo</label>
-                        <select class="voice-select">
-                            <option value="auto">🔍 Detekte otomatikman</option>
-                            <option value="ht">🇭🇹 Kreyòl Ayisyen</option>
-                            <option value="fr">🇫🇷 Fransè</option>
-                            <option value="en">🇺🇸 Anglè</option>
-                            <option value="es">🇪🇸 Panyòl</option>
-                            <option value="pt">🇧🇷 Pòtigè</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Target Language -->
-                    <div class="form-group">
-                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Lang ou vle tradui</label>
-                        <select class="voice-select">
-                            <option value="ht">🇭🇹 Kreyòl Ayisyen</option>
-                            <option value="fr">🇫🇷 Fransè</option>
-                            <option value="en">🇺🇸 Anglè</option>
-                            <option value="es">🇪🇸 Panyòl</option>
-                            <option value="pt">🇧🇷 Pòtigè</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Voice Selection -->
-                    <div class="form-group">
-                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Vwa pou vwadeyò</label>
-                        <select class="voice-select">
-                            <option value="kreyol-natif">🇭🇹 Kreyòl Natif Natal</option>
-                            <option value="le-glacial">🎭 Le Glacial</option>
-                            <option value="openai">🤖 OpenAI TTS</option>
-                            <option value="elevenlabs">🎙️ ElevenLabs</option>
-                        </select>
-                    </div>
-                    
-                    <!-- Audio Options -->
-                    <div class="form-group" style="margin-bottom: 8px;">
-                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Opsyon odyo</label>
-                        
-                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
-                            <input type="checkbox" id="remove-original" style="width: auto; cursor: pointer;">
-                            <span>Retire odyo orijinal la</span>
-                        </label>
-                        
-                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer; margin-bottom: 8px;">
-                            <input type="checkbox" id="keep-music" style="width: auto; cursor: pointer;" checked>
-                            <span>Kenbe mizik ak efè son yo</span>
-                        </label>
-                        
-                        <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
-                            <input type="checkbox" id="sync-lips" style="width: auto; cursor: pointer;">
-                            <span>Senkwonize lèv yo (lip sync)</span>
-                            <span style="background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600; color: #4a5568;">Beta</span>
-                        </label>
-                    </div>
-                    
-                    <button class="btn-primary btn-create" onclick="alert('Kreye vwadeyò...')">Kreye vwadeyò</button>
+                    <button class="btn-primary btn-create" onclick="alert('Kreye bann son...')">Kreye pwojè</button>
                 `
-            },
-            'video-sfx': {
-                title: '🎵 Ajoute Efè Son ak Mizik',
-                form: `<button class="btn-primary" disabled>Pral Disponib Byento</button>`
             },
             'video-captions': {
                 title: '💬 Ajoute Soutit',
