@@ -7,10 +7,21 @@ GUARANTEED to work on Render free tier
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse, FileResponse
+from fastapi.staticfiles import StaticFiles
 import httpx
 import os
 
 app = FastAPI(title="Faner Studio API", version="1.0")
+
+# Mount static files (for tools.html and other HTML files)
+@app.get("/tools.html")
+def tools():
+    """Serve the tools page"""
+    html_path = os.path.join(os.path.dirname(__file__), "tools.html")
+    if os.path.exists(html_path):
+        return FileResponse(html_path)
+    else:
+        return {"error": "Tools page not found"}
 
 @app.get("/")
 def root():
