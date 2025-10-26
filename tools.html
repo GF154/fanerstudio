@@ -734,22 +734,22 @@
     <script>
         const tools = {
             'audiobook': {
-                title: 'Create an audiobook',
+                title: 'Kreye yon Audiobook',
                 form: `
-                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">If you already have a document, upload it below.</p>
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Si w gen yon dokiman deja, telechaje l anba a.</p>
                     
                     <div class="form-group">
-                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Upload a document (optional)</label>
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Telechaje yon dokiman (opsyonèl)</label>
                         <div class="upload-zone" onclick="document.getElementById('audiobook-file').click()">
                             <div class="upload-icon">📤</div>
-                            <div class="upload-text">Click to upload, or drag and drop</div>
+                            <div class="upload-text">Klike pou telechaje, oswa trennen epi lage</div>
                             <div class="upload-formats">.epub, .pdf, .txt, .html, .docx</div>
                             <input type="file" id="audiobook-file" accept=".epub,.pdf,.txt,.html,.docx" style="display: none;">
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Default voice</label>
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Vwa defo</label>
                         <select class="voice-select">
                             <option value="le-glacial">🎭 Le Glacial</option>
                             <option value="kreyol-natif">🇭🇹 Kreyòl Natif Natal</option>
@@ -761,13 +761,13 @@
                     <div class="form-group" style="margin-bottom: 8px;">
                         <label style="display: flex; align-items: center; gap: 8px; font-size: 0.95em; color: #4a5568; cursor: pointer;">
                             <input type="checkbox" id="auto-assign" style="width: auto; cursor: pointer;">
-                            <span>Auto-assign voices</span>
+                            <span>Asiye vwa otomatikman</span>
                             <span style="background: #e2e8f0; padding: 2px 8px; border-radius: 4px; font-size: 0.75em; font-weight: 600; color: #4a5568;">Alpha</span>
                         </label>
-                        <p style="color: #a0aec0; font-size: 0.85em; margin-top: 8px; margin-left: 28px;">Automatically detect characters in the project and assign matching voices to them. This process can take significant time for longer content.</p>
+                        <p style="color: #a0aec0; font-size: 0.85em; margin-top: 8px; margin-left: 28px;">Detekte pèsonaj yo nan pwojè a otomatikman epi asiye yo vwa ki koresponn. Pwosesis sa a ka pran tan pou kontni ki pi long.</p>
                     </div>
                     
-                    <button class="btn-primary btn-create" onclick="alert('Kreye audiobook...')">Create project</button>
+                    <button class="btn-primary btn-create" onclick="alert('Kreye audiobook...')">Kreye pwojè</button>
                 `
             },
             'podcast': {
