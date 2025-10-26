@@ -347,6 +347,38 @@
             background: #1a202c;
         }
 
+        /* Tabs */
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 16px;
+            color: #718096;
+            font-size: 0.95em;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .tab-btn:hover {
+            color: #2d3748;
+        }
+
+        .tab-btn.active {
+            color: #2d3748;
+            border-bottom-color: #3b6ba8;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
         /* Responsive Design */
         
         /* Large Desktop (1920px+) */
@@ -771,17 +803,92 @@
                 `
             },
             'podcast': {
-                title: '🎙️ Jenere Podcast',
+                title: 'Kreye yon Podcast',
                 form: `
-                    <div class="form-group">
-                        <label>Sous (URL oswa upload fichye)</label>
-                        <input type="text" placeholder="https://...">
+                    <p style="color: #718096; margin-bottom: 24px; font-size: 0.95em;">Kreye otomatikman yon podcast prezante pa vwa IA ki sone tankou moun.</p>
+                    
+                    <!-- Tabs -->
+                    <div style="display: flex; gap: 16px; margin-bottom: 24px; border-bottom: 2px solid #e2e8f0;">
+                        <button class="tab-btn active" onclick="switchTab('upload')" id="tab-upload">
+                            Telechaje yon dokiman
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('url')" id="tab-url">
+                            Enpòte URL
+                        </button>
+                        <button class="tab-btn" onclick="switchTab('project')" id="tab-project">
+                            Itilize pwojè ki egziste
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label>Tit Podcast</label>
-                        <input type="text" placeholder="Tit podcast ou...">
+                    
+                    <!-- Tab Content: Upload -->
+                    <div id="content-upload" class="tab-content active">
+                        <div class="upload-zone" onclick="document.getElementById('podcast-file').click()">
+                            <div class="upload-icon">📤</div>
+                            <div class="upload-text">Klike pou telechaje, oswa trennen epi lage</div>
+                            <div class="upload-formats">.epub, .pdf, .txt, .html, .docx</div>
+                            <input type="file" id="podcast-file" accept=".epub,.pdf,.txt,.html,.docx" style="display: none;">
+                        </div>
                     </div>
-                    <button class="btn-primary" onclick="alert('Fonksyon pral konekte ak API')">Kreye Podcast</button>
+                    
+                    <!-- Tab Content: URL -->
+                    <div id="content-url" class="tab-content" style="display: none;">
+                        <input type="text" placeholder="https://..." style="width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 1em;">
+                    </div>
+                    
+                    <!-- Tab Content: Project -->
+                    <div id="content-project" class="tab-content" style="display: none;">
+                        <select class="voice-select">
+                            <option>Chwazi yon pwojè...</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Format -->
+                    <div class="form-group" style="margin-top: 24px;">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Fòma</label>
+                        <select class="voice-select">
+                            <option value="conversation">Konvèsasyon</option>
+                            <option value="interview">Entèvyou</option>
+                            <option value="storytelling">Rakonte Istwa</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Host voice -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Vwa prezantatè</label>
+                        <select class="voice-select">
+                            <option value="chris">🎭 Chris</option>
+                            <option value="marie">👩 Marie</option>
+                            <option value="jean">👨 Jean</option>
+                            <option value="kreyol-natif">🇭🇹 Kreyòl Natif</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Guest voice -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Vwa envite</label>
+                        <select class="voice-select">
+                            <option value="jessica">🎭 Jessica</option>
+                            <option value="pierre">👨 Pierre</option>
+                            <option value="rose">👩 Rose</option>
+                            <option value="openai">🤖 OpenAI TTS</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Podcast language -->
+                    <div class="form-group">
+                        <label style="font-weight: 600; color: #2d3748; margin-bottom: 12px;">Lang podcast</label>
+                        <select class="voice-select">
+                            <option value="auto">Detekte otomatikman</option>
+                            <option value="ht">🇭🇹 Kreyòl Ayisyen</option>
+                            <option value="fr">🇫🇷 Fransè</option>
+                            <option value="en">🇺🇸 Anglè</option>
+                        </select>
+                    </div>
+                    
+                    <div style="display: flex; gap: 12px; margin-top: 24px;">
+                        <button style="padding: 12px 24px; border: none; background: #f7fafc; color: #4a5568; border-radius: 8px; cursor: pointer; font-size: 1em;">⚙️</button>
+                        <button class="btn-primary btn-create" style="flex: 1;" onclick="alert('Jenere podcast...')">Jenere</button>
+                    </div>
                 `
             },
             'url-audio': {
@@ -845,6 +952,24 @@
 
         function closeModal() {
             document.getElementById('modal').classList.remove('show');
+        }
+
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById('content-' + tabName).style.display = 'block';
+            
+            // Add active class to selected tab
+            document.getElementById('tab-' + tabName).classList.add('active');
         }
 
         document.getElementById('modal').addEventListener('click', function(e) {
