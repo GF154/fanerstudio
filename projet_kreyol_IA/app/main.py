@@ -103,6 +103,19 @@ def main():
             print("✅ Video & AI routes loaded!")
         except Exception as e:
             print(f"⚠️  Video & AI routes not available: {e}")
+        
+        # Load music and audio editing features
+        try:
+            from app.setup_music import setup_music_routes, get_music_info
+            if setup_music_routes(app):
+                music_info = get_music_info()
+                print("\n🎵 NOUVELLES FONCTIONNALITÉS MUSICALES:")
+                print(f"   • Générateur de musique: {len(music_info['music_generator']['styles'])} styles")
+                print(f"   • Éditeur audio: {len(music_info['audio_editor']['features'])} effets")
+                print(f"   • Presets: {', '.join(music_info['audio_editor']['presets'])}")
+                print(f"   • Interface: http://localhost:8000/music-generator")
+        except Exception as e:
+            print(f"⚠️  Music routes not available: {e}")
             
     except Exception as e:
         print(f"⚠️  Error loading routes: {e}")

@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎵 Jeneratè Mizik IA - Faner Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ffffff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #00d4ff, #ff00ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: #a0a0a0;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 968px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .card-icon {
+            font-size: 2.5em;
+            margin-right: 15px;
+        }
+
+        .card-title {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #00d4ff;
+        }
+
+        select, input[type="number"], input[type="file"] {
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: auto;
+            margin-right: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(45deg, #00d4ff, #0099ff);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 212, 255, 0.4);
+        }
+
+        button:disabled {
+            background: #555;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .style-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .style-card {
+            background: rgba(255, 255, 255, 0.08);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .style-card:hover {
+            border-color: #00d4ff;
+            transform: scale(1.05);
+        }
+
+        .style-card.selected {
+            border-color: #00d4ff;
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .style-emoji {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .style-name {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .style-desc {
+            font-size: 0.85em;
+            color: #a0a0a0;
+        }
+
+        .result-section {
+            background: rgba(0, 212, 255, 0.1);
+            border: 2px solid #00d4ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .result-section.show {
+            display: block;
+        }
+
+        audio {
+            width: 100%;
+            margin: 15px 0;
+        }
+
+        .download-btn {
+            background: linear-gradient(45deg, #00ff88, #00cc66);
+            margin-top: 10px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #00d4ff;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .template-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .template-card:hover {
+            border-color: #ff00ff;
+            transform: translateY(-3px);
+        }
+
+        .template-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #ff00ff;
+        }
+
+        .template-info {
+            font-size: 0.9em;
+            color: #a0a0a0;
+            margin-bottom: 5px;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: rgba(0, 255, 136, 0.2);
+            border: 1px solid #00ff88;
+            color: #00ff88;
+        }
+
+        .alert-error {
+            background: rgba(255, 0, 100, 0.2);
+            border: 1px solid #ff0064;
+            color: #ff0064;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎵 Jeneratè Mizik IA</h1>
+            <p class="subtitle">Kreye mizik ayisyen avèk entèlijans atifisyèl</p>
+        </header>
+
+        <div class="main-grid">
+            <!-- Génération de musique -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🎼</span>
+                    <h2 class="card-title">Jenere Mizik</h2>
+                </div>
+
+                <div class="form-group">
+                    <label>Chwazi Stil Mizik</label>
+                    <div class="style-grid" id="styleGrid">
+                        <!-- Styles will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="duration">Dire (segond)</label>
+                    <input type="number" id="duration" min="10" max="300" value="30">
+                </div>
+
+                <div class="form-group">
+                    <label>Eleman yo</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="addMelody" checked>
+                            <span>Melodi</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="addBass" checked>
+                            <span>Bas</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="addDrums" checked>
+                            <span>Batri</span>
+                        </label>
+                    </div>
+                </div>
+
+                <button onclick="generateMusic()">🎵 Jenere Mizik</button>
+
+                <div class="loading" id="musicLoading">
+                    <div class="spinner"></div>
+                    <p>Ap jenere mizik la...</p>
+                </div>
+
+                <div class="result-section" id="musicResult">
+                    <h3>✅ Mizik Jenere!</h3>
+                    <audio controls id="musicAudio"></audio>
+                    <button class="download-btn" onclick="downloadMusic()">⬇️ Telechaje Mizik</button>
+                </div>
+
+                <div class="alert" id="musicAlert"></div>
+            </div>
+
+            <!-- Génération de beat -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-icon">🥁</span>
+                    <h2 class="card-title">Kreye Beat</h2>
+                </div>
+
+                <div class="form-group">
+                    <label for="beatStyle">Stil Beat</label>
+                    <select id="beatStyle">
+                        <option value="konpa">Konpa</option>
+                        <option value="rara">Rara</option>
+                        <option value="racine">Racine</option>
+                        <option value="rap_kreyol">Rap Kreyòl</option>
+                        <option value="zouk">Zouk</option>
+                        <option value="twoubadou">Twoubadou</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="bars">Kantite Mezi (bars)</label>
+                    <input type="number" id="bars" min="4" max="32" value="8">
+                </div>
+
+                <button onclick="generateBeat()">🥁 Kreye Beat</button>
+
+                <div class="loading" id="beatLoading">
+                    <div class="spinner"></div>
+                    <p>Ap kreye beat la...</p>
+                </div>
+
+                <div class="result-section" id="beatResult">
+                    <h3>✅ Beat Kreye!</h3>
+                    <audio controls id="beatAudio"></audio>
+                    <button class="download-btn" onclick="downloadBeat()">⬇️ Telechaje Beat</button>
+                </div>
+
+                <div class="alert" id="beatAlert"></div>
+            </div>
+        </div>
+
+        <!-- Mixage audio -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-icon">🎚️</span>
+                <h2 class="card-title">Mikse Vwa ak Mizik</h2>
+            </div>
+
+            <div class="main-grid">
+                <div class="form-group">
+                    <label for="voiceFile">Fichye Vwa</label>
+                    <input type="file" id="voiceFile" accept="audio/*">
+                </div>
+
+                <div class="form-group">
+                    <label for="mixStyle">Stil Mizik</label>
+                    <select id="mixStyle">
+                        <option value="konpa">Konpa</option>
+                        <option value="rara">Rara</option>
+                        <option value="racine">Racine</option>
+                        <option value="rap_kreyol">Rap Kreyòl</option>
+                        <option value="zouk">Zouk</option>
+                        <option value="twoubadou">Twoubadou</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="musicVolume">Volim Mizik (dB)</label>
+                    <input type="number" id="musicVolume" min="-40" max="0" value="-20">
+                </div>
+
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="useCustomMusic">
+                        <span>Itilize mizik pèsonalize</span>
+                    </label>
+                    <input type="file" id="customMusicFile" accept="audio/*" style="margin-top: 10px; display: none;">
+                </div>
+            </div>
+
+            <button onclick="mixAudio()">🎚️ Mikse Odyo</button>
+
+            <div class="loading" id="mixLoading">
+                <div class="spinner"></div>
+                <p>Ap mikse odyo a...</p>
+            </div>
+
+            <div class="result-section" id="mixResult">
+                <h3>✅ Odyo Mikse!</h3>
+                <audio controls id="mixAudio"></audio>
+                <button class="download-btn" onclick="downloadMix()">⬇️ Telechaje Odyo Mikse</button>
+            </div>
+
+            <div class="alert" id="mixAlert"></div>
+        </div>
+
+        <!-- Templates musicaux -->
+        <div class="card">
+            <div class="card-header">
+                <span class="card-icon">📋</span>
+                <h2 class="card-title">Modèl Mizik</h2>
+            </div>
+
+            <div class="templates-grid" id="templatesGrid">
+                <!-- Templates will be loaded here -->
+            </div>
+
+            <div class="loading" id="templateLoading">
+                <div class="spinner"></div>
+                <p>Ap jenere mizik...</p>
+            </div>
+
+            <div class="result-section" id="templateResult">
+                <h3>✅ Mizik Jenere!</h3>
+                <audio controls id="templateAudio"></audio>
+                <button class="download-btn" onclick="downloadTemplate()">⬇️ Telechaje</button>
+            </div>
+
+            <div class="alert" id="templateAlert"></div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let selectedStyle = 'konpa';
+        let currentMusicPath = '';
+        let currentBeatPath = '';
+        let currentMixPath = '';
+        let currentTemplatePath = '';
+
+        // Charger les styles musicaux
+        async function loadMusicStyles() {
+            try {
+                const response = await fetch('/api/music/styles');
+                const data = await response.json();
+                
+                const styleGrid = document.getElementById('styleGrid');
+                styleGrid.innerHTML = '';
+
+                const styleEmojis = {
+                    'konpa': '💃',
+                    'rara': '🎺',
+                    'racine': '🌿',
+                    'rap_kreyol': '🎤',
+                    'zouk': '❤️',
+                    'twoubadou': '🎸'
+                };
+
+                for (const [style, description] of Object.entries(data.styles)) {
+                    const emoji = styleEmojis[style] || '🎵';
+                    const card = document.createElement('div');
+                    card.className = 'style-card';
+                    if (style === selectedStyle) card.classList.add('selected');
+                    card.onclick = () => selectStyle(style);
+                    card.innerHTML = `
+                        <div class="style-emoji">${emoji}</div>
+                        <div class="style-name">${style}</div>
+                        <div class="style-desc">${description}</div>
+                    `;
+                    styleGrid.appendChild(card);
+                }
+            } catch (error) {
+                console.error('Erreur chargement styles:', error);
+            }
+        }
+
+        // Sélectionner un style
+        function selectStyle(style) {
+            selectedStyle = style;
+            document.querySelectorAll('.style-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.target.closest('.style-card').classList.add('selected');
+        }
+
+        // Générer de la musique
+        async function generateMusic() {
+            const duration = document.getElementById('duration').value;
+            const addMelody = document.getElementById('addMelody').checked;
+            const addBass = document.getElementById('addBass').checked;
+            const addDrums = document.getElementById('addDrums').checked;
+
+            showLoading('musicLoading');
+            hideResult('musicResult');
+            hideAlert('musicAlert');
+
+            try {
+                const response = await fetch('/api/music/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        style: selectedStyle,
+                        duration: parseInt(duration),
+                        add_melody: addMelody,
+                        add_bass: addBass,
+                        add_drums: addDrums
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentMusicPath = data.file_path;
+                    document.getElementById('musicAudio').src = data.download_url;
+                    showResult('musicResult');
+                    showAlert('musicAlert', 'success', data.message);
+                } else {
+                    showAlert('musicAlert', 'error', 'Erè: ' + (data.detail || 'Erè enkoni'));
+                }
+            } catch (error) {
+                showAlert('musicAlert', 'error', 'Erè: ' + error.message);
+            } finally {
+                hideLoading('musicLoading');
+            }
+        }
+
+        // Générer un beat
+        async function generateBeat() {
+            const style = document.getElementById('beatStyle').value;
+            const bars = document.getElementById('bars').value;
+
+            showLoading('beatLoading');
+            hideResult('beatResult');
+            hideAlert('beatAlert');
+
+            try {
+                const response = await fetch('/api/music/beat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        style: style,
+                        bars: parseInt(bars)
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentBeatPath = data.file_path;
+                    document.getElementById('beatAudio').src = data.download_url;
+                    showResult('beatResult');
+                    showAlert('beatAlert', 'success', data.message);
+                } else {
+                    showAlert('beatAlert', 'error', 'Erè: ' + (data.detail || 'Erè enkoni'));
+                }
+            } catch (error) {
+                showAlert('beatAlert', 'error', 'Erè: ' + error.message);
+            } finally {
+                hideLoading('beatLoading');
+            }
+        }
+
+        // Mixer audio
+        async function mixAudio() {
+            const voiceFile = document.getElementById('voiceFile').files[0];
+            if (!voiceFile) {
+                showAlert('mixAlert', 'error', 'Tanpri chwazi yon fichye vwa');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('voice_file', voiceFile);
+            formData.append('style', document.getElementById('mixStyle').value);
+            formData.append('music_volume', document.getElementById('musicVolume').value);
+
+            const useCustomMusic = document.getElementById('useCustomMusic').checked;
+            if (useCustomMusic) {
+                const customMusicFile = document.getElementById('customMusicFile').files[0];
+                if (customMusicFile) {
+                    formData.append('use_custom_music', 'true');
+                    formData.append('music_file', customMusicFile);
+                }
+            }
+
+            showLoading('mixLoading');
+            hideResult('mixResult');
+            hideAlert('mixAlert');
+
+            try {
+                const response = await fetch('/api/music/mix', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentMixPath = data.file_path;
+                    document.getElementById('mixAudio').src = data.download_url;
+                    showResult('mixResult');
+                    showAlert('mixAlert', 'success', data.message);
+                } else {
+                    showAlert('mixAlert', 'error', 'Erè: ' + (data.detail || 'Erè enkoni'));
+                }
+            } catch (error) {
+                showAlert('mixAlert', 'error', 'Erè: ' + error.message);
+            } finally {
+                hideLoading('mixLoading');
+            }
+        }
+
+        // Charger les templates
+        async function loadTemplates() {
+            try {
+                const response = await fetch('/api/music/templates');
+                const data = await response.json();
+
+                const grid = document.getElementById('templatesGrid');
+                grid.innerHTML = '';
+
+                data.templates.forEach(template => {
+                    const card = document.createElement('div');
+                    card.className = 'template-card';
+                    card.onclick = () => generateFromTemplate(template.id);
+                    card.innerHTML = `
+                        <div class="template-title">${template.name}</div>
+                        <div class="template-info">🎵 ${template.style}</div>
+                        <div class="template-info">⏱️ ${template.duration}s</div>
+                        <div class="template-info">🥁 ${template.bpm} BPM</div>
+                        <div class="template-info" style="margin-top: 8px; color: #fff;">${template.description}</div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Erreur chargement templates:', error);
+            }
+        }
+
+        // Générer depuis un template
+        async function generateFromTemplate(templateId) {
+            showLoading('templateLoading');
+            hideResult('templateResult');
+            hideAlert('templateAlert');
+
+            try {
+                const response = await fetch(`/api/music/generate-from-template/${templateId}`, {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    currentTemplatePath = data.file_path;
+                    document.getElementById('templateAudio').src = data.download_url;
+                    showResult('templateResult');
+                    showAlert('templateAlert', 'success', data.message);
+                } else {
+                    showAlert('templateAlert', 'error', 'Erè: ' + (data.detail || 'Erè enkoni'));
+                }
+            } catch (error) {
+                showAlert('templateAlert', 'error', 'Erè: ' + error.message);
+            } finally {
+                hideLoading('templateLoading');
+            }
+        }
+
+        // Fonctions utilitaires
+        function showLoading(id) {
+            document.getElementById(id).classList.add('show');
+        }
+
+        function hideLoading(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function showResult(id) {
+            document.getElementById(id).classList.add('show');
+        }
+
+        function hideResult(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function showAlert(id, type, message) {
+            const alert = document.getElementById(id);
+            alert.className = `alert alert-${type} show`;
+            alert.textContent = message;
+        }
+
+        function hideAlert(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function downloadMusic() {
+            window.location.href = `/api/music/download?path=${currentMusicPath}`;
+        }
+
+        function downloadBeat() {
+            window.location.href = `/api/music/download?path=${currentBeatPath}`;
+        }
+
+        function downloadMix() {
+            window.location.href = `/api/music/download?path=${currentMixPath}`;
+        }
+
+        function downloadTemplate() {
+            window.location.href = `/api/music/download?path=${currentTemplatePath}`;
+        }
+
+        // Gérer l'affichage de l'upload de musique personnalisée
+        document.getElementById('useCustomMusic').addEventListener('change', function() {
+            document.getElementById('customMusicFile').style.display = this.checked ? 'block' : 'none';
+        });
+
+        // Initialisation
+        window.addEventListener('DOMContentLoaded', () => {
+            loadMusicStyles();
+            loadTemplates();
+        });
+    </script>
+</body>
+</html>
+

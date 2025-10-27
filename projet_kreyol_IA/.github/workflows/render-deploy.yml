@@ -1,22 +1,45 @@
-name: Render CLI Deploy
-run-name: Deploying via Render CLI
+name: 🚀 Auto-Deploy to Render
+run-name: Deploying Faner Studio to Render
+
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+
 jobs:
-  Deploy-Render:
+  deploy:
+    name: Deploy to Render
     runs-on: ubuntu-latest
+    
     steps:
-      - name: Install Render CLI
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🔧 Install Render CLI
         run: |
           curl -L https://github.com/render-oss/cli/releases/download/v1.1.0/cli_1.1.0_linux_amd64.zip -o render.zip
           unzip render.zip
           sudo mv cli_v1.1.0 /usr/local/bin/render
-      - name: Trigger deploy with Render CLI
+          render --version
+      
+      - name: 🚀 Trigger Render Deploy
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
           CI: true
         run: |
-          render deploys create ${{ secrets.RENDER_SERVICE_ID }} --output json --confirm
+          if [ -z "$RENDER_API_KEY" ] || [ -z "$RENDER_SERVICE_ID" ]; then
+            echo "❌ Error: RENDER_API_KEY or RENDER_SERVICE_ID not set"
+            exit 1
+          fi
+          echo "🎯 Deploying to Render service: $RENDER_SERVICE_ID"
+          render deploys create $RENDER_SERVICE_ID --output json --confirm
+          echo "✅ Deploy triggered successfully!"
+      
+      - name: 📊 Deploy Status
+        if: success()
+        run: |
+          echo "🎉 Deployment initiated!"
+          echo "📍 Check status at: https://dashboard.render.com"
 
