@@ -96,36 +96,28 @@ jobs:
           render --version
       
       - name: 🚀 Trigger Render Deploy
-        env:
-          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
-          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-          GITHUB_SHA: ${{ github.sha }}
-          GITHUB_ACTOR: ${{ github.actor }}
-          CI: true
         run: |
           # Validate secrets
-          if [ -z "$RENDER_API_KEY" ] || [ -z "$RENDER_SERVICE_ID" ]; then
+          if [ -z "$API_KEY" ] || [ -z "$SERVICE_ID" ]; then
             echo "❌ Error: RENDER_API_KEY or RENDER_SERVICE_ID not set"
             echo ""
             echo "📝 To fix this:"
-            echo "  1. Go to: https://github.com/$GITHUB_REPOSITORY/settings/secrets/actions"
+            echo "  1. Go to: https://github.com/$REPO/settings/secrets/actions"
             echo "  2. Add RENDER_API_KEY (from https://dashboard.render.com/u/settings)"
             echo "  3. Add RENDER_SERVICE_ID (from your service URL: srv-xxxxx)"
             exit 1
           fi
           
           echo "🎯 Starting deployment..."
-          echo "📦 Repository: $GITHUB_REPOSITORY"
-          echo "🔀 Branch: $GITHUB_REF_NAME"
-          echo "📝 Commit: $GITHUB_SHA"
-          echo "👤 Author: $GITHUB_ACTOR"
+          echo "📦 Repository: $REPO"
+          echo "🔀 Branch: $BRANCH"
+          echo "📝 Commit: $COMMIT"
+          echo "👤 Author: $AUTHOR"
           echo ""
           
           # Trigger deployment
-          echo "🚀 Deploying to Render service: $RENDER_SERVICE_ID"
-          if render deploys create $RENDER_SERVICE_ID --output json --confirm; then
+          echo "🚀 Deploying to Render service: $SERVICE_ID"
+          if render deploys create "$SERVICE_ID" --output json --confirm; then
             echo ""
             echo "✅ Deployment triggered successfully!"
           else
@@ -137,6 +129,14 @@ jobs:
             echo "  - Render service down"
             exit 1
           fi
+        env:
+          API_KEY: ${{ secrets.RENDER_API_KEY }}
+          SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          COMMIT: ${{ github.sha }}
+          AUTHOR: ${{ github.actor }}
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
       
       - name: ⏳ Wait for deployment
         run: |
@@ -147,14 +147,11 @@ jobs:
       
       - name: 🏥 Health Check
         continue-on-error: true
-        env:
-          RENDER_SERVICE_URL: ${{ secrets.RENDER_SERVICE_URL }}
         run: |
           echo "🏥 Performing health check..."
           
           # Try to get the service URL (if available via environment)
-          if [ ! -z "$RENDER_SERVICE_URL" ]; then
-            SERVICE_URL="$RENDER_SERVICE_URL"
+          if [ ! -z "$SERVICE_URL" ]; then
             echo "🌐 Testing: ${SERVICE_URL}/health"
             
             # Wait a bit more for service to be ready
@@ -175,15 +172,11 @@ jobs:
           else
             echo "ℹ️ RENDER_SERVICE_URL not configured, skipping automated health check"
           fi
+        env:
+          SERVICE_URL: ${{ secrets.RENDER_SERVICE_URL }}
       
       - name: 📊 Deployment Success
         if: success()
-        env:
-          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_REF_NAME: ${{ github.ref_name }}
-          GITHUB_SHA: ${{ github.sha }}
-          GITHUB_ACTOR: ${{ github.actor }}
         run: |
           echo ""
           echo "════════════════════════════════════════════"
@@ -194,23 +187,25 @@ jobs:
           echo "   https://dashboard.render.com"
           echo ""
           echo "🔗 Service Details:"
-          echo "   https://dashboard.render.com/web/$RENDER_SERVICE_ID"
+          echo "   https://dashboard.render.com/web/$SERVICE_ID"
           echo ""
           echo "📝 Deployment Info:"
-          echo "   Repository: $GITHUB_REPOSITORY"
-          echo "   Branch: $GITHUB_REF_NAME"
-          echo "   Commit: $GITHUB_SHA"
-          echo "   Author: $GITHUB_ACTOR"
+          echo "   Repository: $REPO"
+          echo "   Branch: $BRANCH"
+          echo "   Commit: $COMMIT"
+          echo "   Author: $AUTHOR"
           echo "   Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
           echo ""
           echo "════════════════════════════════════════════"
+        env:
+          SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          REPO: ${{ github.repository }}
+          BRANCH: ${{ github.ref_name }}
+          COMMIT: ${{ github.sha }}
+          AUTHOR: ${{ github.actor }}
       
       - name: 🔔 Notify on Failure
         if: failure()
-        env:
-          GITHUB_SERVER_URL: ${{ github.server_url }}
-          GITHUB_REPOSITORY: ${{ github.repository }}
-          GITHUB_RUN_ID: ${{ github.run_id }}
         run: |
           echo ""
           echo "════════════════════════════════════════════"
@@ -224,8 +219,12 @@ jobs:
           echo "  4. Review recent code changes"
           echo ""
           echo "📚 Helpful links:"
-          echo "   GitHub Actions: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          echo "   GitHub Actions: $SERVER_URL/$REPO/actions/runs/$RUN_ID"
           echo "   Render Dashboard: https://dashboard.render.com"
           echo ""
           echo "════════════════════════════════════════════"
+        env:
+          SERVER_URL: ${{ github.server_url }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.run_id }}
 
