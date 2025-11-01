@@ -5,12 +5,14 @@ on:
   push:
     branches:
       - master
+      - main
   workflow_dispatch:
 
 jobs:
   deploy:
     name: Deploy to Render
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     
     steps:
       - name: 📥 Checkout code
@@ -18,9 +20,10 @@ jobs:
       
       - name: 🔧 Install Render CLI
         run: |
-          curl -L https://github.com/render-oss/cli/releases/download/v1.1.0/cli_1.1.0_linux_amd64.zip -o render.zip
-          unzip render.zip
+          curl -fsSL https://github.com/render-oss/cli/releases/download/v1.1.0/cli_1.1.0_linux_amd64.zip -o render.zip
+          unzip -q render.zip
           sudo mv cli_v1.1.0 /usr/local/bin/render
+          sudo chmod +x /usr/local/bin/render
           render --version
       
       - name: 🚀 Trigger Render Deploy
@@ -31,10 +34,15 @@ jobs:
         run: |
           if [ -z "$RENDER_API_KEY" ] || [ -z "$RENDER_SERVICE_ID" ]; then
             echo "❌ Error: RENDER_API_KEY or RENDER_SERVICE_ID not set"
+            echo "Please add these secrets in GitHub repository settings:"
+            echo "  Settings → Secrets and variables → Actions"
             exit 1
           fi
           echo "🎯 Deploying to Render service: $RENDER_SERVICE_ID"
-          render deploys create $RENDER_SERVICE_ID --output json --confirm
+          render deploys create $RENDER_SERVICE_ID --output json --confirm || {
+            echo "❌ Deploy command failed"
+            exit 1
+          }
           echo "✅ Deploy triggered successfully!"
       
       - name: 📊 Deploy Status
@@ -42,4 +50,11 @@ jobs:
         run: |
           echo "🎉 Deployment initiated!"
           echo "📍 Check status at: https://dashboard.render.com"
+          echo "🔗 Service: https://dashboard.render.com/web/${{ secrets.RENDER_SERVICE_ID }}"
+      
+      - name: 🔔 Notify on Failure
+        if: failure()
+        run: |
+          echo "❌ Deployment failed!"
+          echo "Please check the logs above for details."
 
