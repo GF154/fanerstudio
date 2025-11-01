@@ -22,13 +22,16 @@ app = FastAPI(
     redoc_url="/redoc"
 )
 
-# Configure CORS
+# Configure CORS - More restrictive for production
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "*").split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS if ALLOWED_ORIGINS != ["*"] else ["*"],
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["*"],
+    max_age=3600,
 )
 
 # Modèles de données
@@ -161,22 +164,27 @@ async def api_info():
 @app.get("/api/status")
 async def status():
     """Status détaillé du système"""
+    import platform
+    import sys
+    
     return {
         "service": "online",
-        "timestamp": "2024-10-27",
+        "timestamp": "2024-11-01",
         "environment": os.getenv("RENDER", "development"),
-        "python_version": "3.11.0",
+        "python_version": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+        "platform": platform.system(),
         "framework": "FastAPI 0.109.0",
         "deployment": {
-            "platform": "Render",
+            "platform": "Render" if os.getenv("RENDER") else "Local",
             "method": "GitHub Actions",
             "auto_deploy": True,
             "branch": "master"
         },
         "features": {
             "nllb_translation": True,
-            "music_generator": "coming_soon",
-            "audio_editor": "coming_soon"
+            "api_docs": True,
+            "health_check": True,
+            "cors_configured": True
         }
     }
 

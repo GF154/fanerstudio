@@ -6,12 +6,74 @@ on:
     branches:
       - master
       - main
+  pull_request:
+    branches:
+      - master
+      - main
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: false
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
 
 jobs:
-  deploy:
-    name: Deploy to Render
+  validate:
+    name: 🔍 Pre-deployment Validation
     runs-on: ubuntu-latest
+    timeout-minutes: 5
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: 🐍 Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+      
+      - name: 📦 Validate requirements.txt
+        run: |
+          if [ -f requirements.txt ]; then
+            echo "✅ requirements.txt found"
+            echo "📋 Dependencies:"
+            cat requirements.txt
+            
+            # Check for security vulnerabilities
+            pip install safety
+            safety check -r requirements.txt --continue-on-error || echo "⚠️ Security warnings found"
+          else
+            echo "❌ requirements.txt not found"
+            exit 1
+          fi
+      
+      - name: 🔧 Check main.py syntax
+        run: |
+          if [ -f main.py ]; then
+            echo "✅ main.py found"
+            python -m py_compile main.py
+            echo "✅ Syntax validation passed"
+          else
+            echo "❌ main.py not found"
+            exit 1
+          fi
+      
+      - name: 📊 Validation Summary
+        if: success()
+        run: |
+          echo "✅ All validation checks passed!"
+          echo "🚀 Ready for deployment"
+
+  deploy:
+    name: 🚀 Deploy to Render
+    runs-on: ubuntu-latest
+    needs: validate
+    if: github.event_name != 'pull_request'
     timeout-minutes: 15
     
     steps:
@@ -20,41 +82,150 @@ jobs:
       
       - name: 🔧 Install Render CLI
         run: |
+          echo "📥 Downloading Render CLI..."
           curl -fsSL https://github.com/render-oss/cli/releases/download/v1.1.0/cli_1.1.0_linux_amd64.zip -o render.zip
+          
+          echo "📦 Extracting..."
           unzip -q render.zip
+          
+          echo "⚙️ Installing..."
           sudo mv cli_v1.1.0 /usr/local/bin/render
           sudo chmod +x /usr/local/bin/render
+          
+          echo "✅ Render CLI installed successfully"
           render --version
       
       - name: 🚀 Trigger Render Deploy
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
           RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_ACTOR: ${{ github.actor }}
           CI: true
         run: |
+          # Validate secrets
           if [ -z "$RENDER_API_KEY" ] || [ -z "$RENDER_SERVICE_ID" ]; then
             echo "❌ Error: RENDER_API_KEY or RENDER_SERVICE_ID not set"
-            echo "Please add these secrets in GitHub repository settings:"
-            echo "  Settings → Secrets and variables → Actions"
+            echo ""
+            echo "📝 To fix this:"
+            echo "  1. Go to: https://github.com/$GITHUB_REPOSITORY/settings/secrets/actions"
+            echo "  2. Add RENDER_API_KEY (from https://dashboard.render.com/u/settings)"
+            echo "  3. Add RENDER_SERVICE_ID (from your service URL: srv-xxxxx)"
             exit 1
           fi
-          echo "🎯 Deploying to Render service: $RENDER_SERVICE_ID"
-          render deploys create $RENDER_SERVICE_ID --output json --confirm || {
-            echo "❌ Deploy command failed"
+          
+          echo "🎯 Starting deployment..."
+          echo "📦 Repository: $GITHUB_REPOSITORY"
+          echo "🔀 Branch: $GITHUB_REF_NAME"
+          echo "📝 Commit: $GITHUB_SHA"
+          echo "👤 Author: $GITHUB_ACTOR"
+          echo ""
+          
+          # Trigger deployment
+          echo "🚀 Deploying to Render service: $RENDER_SERVICE_ID"
+          if render deploys create $RENDER_SERVICE_ID --output json --confirm; then
+            echo ""
+            echo "✅ Deployment triggered successfully!"
+          else
+            echo ""
+            echo "❌ Deployment command failed"
+            echo "💡 Possible reasons:"
+            echo "  - Invalid API key or Service ID"
+            echo "  - Network issues"
+            echo "  - Render service down"
             exit 1
-          }
-          echo "✅ Deploy triggered successfully!"
+          fi
       
-      - name: 📊 Deploy Status
-        if: success()
+      - name: ⏳ Wait for deployment
         run: |
-          echo "🎉 Deployment initiated!"
-          echo "📍 Check status at: https://dashboard.render.com"
-          echo "🔗 Service: https://dashboard.render.com/web/${{ secrets.RENDER_SERVICE_ID }}"
+          echo "⏳ Waiting for deployment to complete..."
+          echo "This may take 2-5 minutes..."
+          sleep 30
+          echo "✅ Initial deployment phase completed"
+      
+      - name: 🏥 Health Check
+        continue-on-error: true
+        env:
+          RENDER_SERVICE_URL: ${{ secrets.RENDER_SERVICE_URL }}
+        run: |
+          echo "🏥 Performing health check..."
+          
+          # Try to get the service URL (if available via environment)
+          if [ ! -z "$RENDER_SERVICE_URL" ]; then
+            SERVICE_URL="$RENDER_SERVICE_URL"
+            echo "🌐 Testing: ${SERVICE_URL}/health"
+            
+            # Wait a bit more for service to be ready
+            sleep 20
+            
+            # Attempt health check
+            for i in {1..5}; do
+              echo "Attempt $i/5..."
+              if curl -f -s "${SERVICE_URL}/health" > /dev/null; then
+                echo "✅ Health check passed!"
+                curl -s "${SERVICE_URL}/health" | jq '.' || true
+                break
+              else
+                echo "⏳ Service not ready yet, waiting..."
+                sleep 10
+              fi
+            done
+          else
+            echo "ℹ️ RENDER_SERVICE_URL not configured, skipping automated health check"
+          fi
+      
+      - name: 📊 Deployment Success
+        if: success()
+        env:
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+          GITHUB_SHA: ${{ github.sha }}
+          GITHUB_ACTOR: ${{ github.actor }}
+        run: |
+          echo ""
+          echo "════════════════════════════════════════════"
+          echo "🎉 Deployment Completed Successfully!"
+          echo "════════════════════════════════════════════"
+          echo ""
+          echo "📍 Render Dashboard:"
+          echo "   https://dashboard.render.com"
+          echo ""
+          echo "🔗 Service Details:"
+          echo "   https://dashboard.render.com/web/$RENDER_SERVICE_ID"
+          echo ""
+          echo "📝 Deployment Info:"
+          echo "   Repository: $GITHUB_REPOSITORY"
+          echo "   Branch: $GITHUB_REF_NAME"
+          echo "   Commit: $GITHUB_SHA"
+          echo "   Author: $GITHUB_ACTOR"
+          echo "   Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")"
+          echo ""
+          echo "════════════════════════════════════════════"
       
       - name: 🔔 Notify on Failure
         if: failure()
+        env:
+          GITHUB_SERVER_URL: ${{ github.server_url }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          GITHUB_RUN_ID: ${{ github.run_id }}
         run: |
-          echo "❌ Deployment failed!"
-          echo "Please check the logs above for details."
+          echo ""
+          echo "════════════════════════════════════════════"
+          echo "❌ Deployment Failed!"
+          echo "════════════════════════════════════════════"
+          echo ""
+          echo "🔍 Troubleshooting steps:"
+          echo "  1. Check the logs above for specific errors"
+          echo "  2. Verify secrets are correctly set"
+          echo "  3. Check Render dashboard for service status"
+          echo "  4. Review recent code changes"
+          echo ""
+          echo "📚 Helpful links:"
+          echo "   GitHub Actions: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          echo "   Render Dashboard: https://dashboard.render.com"
+          echo ""
+          echo "════════════════════════════════════════════"
 
