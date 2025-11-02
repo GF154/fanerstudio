@@ -5,15 +5,20 @@
 Complete creative platform for Haitian Creole content
 """
 
-from fastapi import FastAPI, HTTPException, File, UploadFile
+from fastapi import FastAPI, HTTPException, File, UploadFile, Form
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 import httpx
 import os
+import sys
+import shutil
+import tempfile
 from pathlib import Path
-from typing import Optional
+from typing import Optional, List
+from datetime import datetime
+import uuid
 
 # ============================================================
 # APPLICATION SETUP
@@ -21,7 +26,7 @@ from typing import Optional
 
 app = FastAPI(
     title="🇭🇹 Faner Studio - Complete Platform", 
-    version="3.0.0",
+    version="3.1.0",
     description="Platfòm konplè pou kreyasyon kontni pwofesyonèl an Kreyòl Ayisyen",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -67,6 +72,37 @@ class TranslationResponse(BaseModel):
     source: str
     target: str
     error: Optional[str] = None
+
+class VoiceCreationRequest(BaseModel):
+    voice_name: str = Field(..., description="Nom de la voix personnalisée")
+    speaker_name: Optional[str] = Field(None, description="Nom du locuteur")
+    text_content: Optional[str] = Field(None, description="Texte prononcé dans l'échantillon")
+    language: str = Field("ht", description="Langue de la voix")
+    gender: Optional[str] = Field("unknown", description="Genre du locuteur")
+    age_range: Optional[str] = Field("adult", description="Tranche d'âge")
+    region: Optional[str] = Field("Haiti", description="Région d'origine")
+    notes: Optional[str] = Field("", description="Notes additionnelles")
+    enhance: bool = Field(True, description="Améliorer la qualité audio")
+    denoise: bool = Field(True, description="Réduire le bruit")
+    model: str = Field("standard", description="Modèle: standard ou premium")
+
+class VoiceCreationResponse(BaseModel):
+    success: bool
+    voice_id: Optional[str] = None
+    voice_name: str
+    status: str
+    message: str
+    error: Optional[str] = None
+
+class AudiobookRequest(BaseModel):
+    voice: str = Field("creole-native", description="Voix à utiliser")
+    max_pages: Optional[int] = Field(None, description="Nombre maximum de pages")
+    
+class PodcastRequest(BaseModel):
+    script: str = Field(..., description="Script du podcast")
+    voice: str = Field("creole-native", description="Voix à utiliser")
+    title: Optional[str] = Field("Mon Podcast", description="Titre du podcast")
+    add_intro: bool = Field(True, description="Ajouter une intro")
 
 # ============================================================
 # MAIN ROUTES
@@ -215,13 +251,13 @@ async def api_info():
     """API information"""
     return {
         "api_name": "Faner Studio Complete API",
-        "version": "3.0.0",
+        "version": "3.1.0",
         "description": "Complete creative platform for Haitian Creole",
         "features": {
-            "audio": ["audiobook", "podcast", "tts", "stt", "url-to-audio"],
+            "audio": ["audiobook", "podcast", "tts", "stt", "url-to-audio", "custom-voice"],
             "video": ["voiceover", "music", "captions", "noise-removal"],
             "translation": ["nllb", "pdf", "batch"],
-            "ai": ["music-generator", "script-generator"]
+            "ai": ["music-generator", "script-generator", "voice-cloning"]
         },
         "endpoints": {
             "root": "GET / - Main interface",
@@ -229,6 +265,10 @@ async def api_info():
             "info": "GET /api/info - API info",
             "status": "GET /api/status - System status",
             "translate": "POST /api/translate - Translation",
+            "voice_create": "POST /api/voice/create - Create custom voice",
+            "voices": "GET /api/voices - List all voices",
+            "audiobook": "POST /api/audiobook - Create audiobook",
+            "podcast": "POST /api/podcast - Create podcast",
             "docs": "GET /docs - Interactive docs",
             "redoc": "GET /redoc - Alternative docs"
         },
@@ -372,8 +412,280 @@ async def translate(request: TranslationRequest):
             translated=None,
             source=request.source,
             target=request.target,
+                    error=str(e)
+                )
+
+# ============================================================
+# VOICE CREATION API
+# ============================================================
+
+@app.post("/api/voice/create", response_model=VoiceCreationResponse)
+async def create_custom_voice(
+    voice_name: str = Form(...),
+    audio_file: UploadFile = File(...),
+    speaker_name: Optional[str] = Form(None),
+    text_content: Optional[str] = Form(None),
+    language: str = Form("ht"),
+    gender: str = Form("unknown"),
+    age_range: str = Form("adult"),
+    region: str = Form("Haiti"),
+    notes: str = Form(""),
+    enhance: bool = Form(True),
+    denoise: bool = Form(True),
+    model: str = Form("standard")
+):
+    """
+    🎤 Kreye yon vwa natirèl pèsonalize
+    
+    Create a custom natural voice from audio sample
+    
+    - **voice_name**: Nom de la voix (required)
+    - **audio_file**: Fichier audio (MP3, WAV, M4A)
+    - **speaker_name**: Nom du locuteur (optional)
+    - **text_content**: Texte prononcé dans l'audio (optional)
+    - **language**: Langue (default: ht)
+    - **gender**: Genre du locuteur (male, female, unknown)
+    - **age_range**: Tranche d'âge (child, teen, adult, senior)
+    - **region**: Région d'origine (default: Haiti)
+    - **notes**: Notes additionnelles
+    - **enhance**: Améliorer la qualité audio
+    - **denoise**: Réduire le bruit de fond
+    - **model**: Modèle à utiliser (standard, premium)
+    """
+    try:
+        # Validate file size (max 50MB)
+        MAX_SIZE = 50 * 1024 * 1024  # 50MB
+        content = await audio_file.read()
+        if len(content) > MAX_SIZE:
+            return VoiceCreationResponse(
+                success=False,
+                voice_name=voice_name,
+                status="error",
+                message="❌ Fichye twò gwo. Maksimòm 50MB.",
+                error="File too large"
+            )
+        
+        # Validate file format
+        allowed_formats = ['.mp3', '.wav', '.m4a', '.ogg', '.flac']
+        file_ext = Path(audio_file.filename).suffix.lower()
+        if file_ext not in allowed_formats:
+            return VoiceCreationResponse(
+                success=False,
+                voice_name=voice_name,
+                status="error",
+                message=f"❌ Fòma fichye pa aksepte. Itilize: {', '.join(allowed_formats)}",
+                error="Invalid file format"
+            )
+        
+        # Save audio file temporarily
+        temp_dir = Path("temp_uploads")
+        temp_dir.mkdir(exist_ok=True)
+        
+        temp_file = temp_dir / f"{uuid.uuid4()}{file_ext}"
+        temp_file.write_bytes(content)
+        
+        try:
+            # Initialize CustomVoiceManager
+            sys.path.insert(0, str(Path("projet_kreyol_IA/src")))
+            from custom_voice_manager import CustomVoiceManager
+            
+            voice_manager = CustomVoiceManager(
+                voices_dir=Path("projet_kreyol_IA/custom_voices")
+            )
+            
+            # Add voice
+            voice_id = voice_manager.add_voice(
+                audio_file=temp_file,
+                voice_name=voice_name,
+                speaker_name=speaker_name or voice_name,
+                text_content=text_content or "",
+                language=language,
+                gender=gender,
+                age_range=age_range,
+                region=region,
+                notes=notes
+            )
+            
+            # Cleanup temp file
+            temp_file.unlink()
+            
+            return VoiceCreationResponse(
+                success=True,
+                voice_id=voice_id,
+                voice_name=voice_name,
+                status="created",
+                message=f"✅ Vwa '{voice_name}' kreye avèk siksè! ID: {voice_id}"
+            )
+            
+        except Exception as e:
+            # Cleanup on error
+            if temp_file.exists():
+                temp_file.unlink()
+            raise e
+            
+    except Exception as e:
+        return VoiceCreationResponse(
+            success=False,
+            voice_name=voice_name,
+            status="error",
+            message=f"❌ Erè: {str(e)}",
             error=str(e)
         )
+
+@app.get("/api/voices")
+async def get_voices():
+    """
+    📋 Jwenn lis tout vwa disponib
+    
+    Get list of all available voices
+    """
+    try:
+        sys.path.insert(0, str(Path("projet_kreyol_IA/src")))
+        from custom_voice_manager import CustomVoiceManager
+        
+        voice_manager = CustomVoiceManager(
+            voices_dir=Path("projet_kreyol_IA/custom_voices")
+        )
+        
+        voices = voice_manager.list_voices()
+        
+        return {
+            "status": "success",
+            "total": len(voices),
+            "voices": voices
+        }
+    except Exception as e:
+        return {
+            "status": "error",
+            "message": str(e),
+            "voices": []
+        }
+
+# ============================================================
+# AUDIOBOOK API
+# ============================================================
+
+@app.post("/api/audiobook")
+async def create_audiobook(
+    file: UploadFile = File(...),
+    voice: str = Form("creole-native"),
+    max_pages: Optional[int] = Form(None)
+):
+    """
+    📚 Kreye yon liv odyo (Audiobook)
+    
+    Create an audiobook from document
+    
+    - **file**: Document file (PDF, TXT, DOCX, EPUB)
+    - **voice**: Voice to use (default: creole-native)
+    - **max_pages**: Maximum pages to process (optional)
+    """
+    try:
+        # Validate file format
+        allowed_formats = ['.pdf', '.txt', '.docx', '.epub', '.html']
+        file_ext = Path(file.filename).suffix.lower()
+        if file_ext not in allowed_formats:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Format not supported. Use: {', '.join(allowed_formats)}"
+            )
+        
+        # Save uploaded file temporarily
+        temp_dir = Path("temp_uploads")
+        temp_dir.mkdir(exist_ok=True)
+        
+        temp_file = temp_dir / f"{uuid.uuid4()}{file_ext}"
+        content = await file.read()
+        temp_file.write_bytes(content)
+        
+        try:
+            # Import services
+            sys.path.insert(0, str(Path("projet_kreyol_IA/app/services")))
+            from media_service import MediaService
+            
+            media_service = MediaService()
+            
+            # Create audiobook
+            result = await media_service.create_audiobook(
+                file_path=temp_file,
+                voice=voice
+            )
+            
+            # Cleanup
+            temp_file.unlink()
+            
+            return {
+                "status": "success",
+                "message": "✅ Audiobook kreye avèk siksè!",
+                "files": result,
+                "voice": voice
+            }
+            
+        except Exception as e:
+            # Cleanup on error
+            if temp_file.exists():
+                temp_file.unlink()
+            raise e
+            
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+# ============================================================
+# PODCAST API
+# ============================================================
+
+@app.post("/api/podcast")
+async def create_podcast(
+    script: str = Form(...),
+    voice: str = Form("creole-native"),
+    title: str = Form("Mon Podcast"),
+    add_intro: bool = Form(True)
+):
+    """
+    🎙️ Kreye yon podcast
+    
+    Create a podcast from script
+    
+    - **script**: Podcast script with speaker labels
+    - **voice**: Voice to use (default: creole-native)
+    - **title**: Podcast title
+    - **add_intro**: Add intro music/jingle
+    """
+    try:
+        if not script or len(script.strip()) < 10:
+            raise HTTPException(
+                status_code=400,
+                detail="Script tro kout. Minimum 10 characters."
+            )
+        
+        # Import services
+        sys.path.insert(0, str(Path("projet_kreyol_IA/app/services")))
+        from media_service import MediaService
+        
+        media_service = MediaService()
+        
+        # Create podcast
+        result = await media_service.create_podcast(
+            script=script,
+            voice=voice,
+            title=title,
+            add_intro=add_intro
+        )
+        
+        return {
+            "status": "success",
+            "message": "✅ Podcast kreye avèk siksè!",
+            "result": result,
+            "title": title,
+            "voice": voice
+        }
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
 
 # ============================================================
 # ERROR HANDLERS
@@ -423,9 +735,10 @@ async def startup_event():
     print("🇭🇹 Faner Studio - Complete Platform")
     print("="*60)
     print("✅ Service: ONLINE")
-    print("✅ Version: 3.0.0")
+    print("✅ Version: 3.1.0")
     print("✅ Mode: Unified Platform")
     print("✅ Features: ALL ACTIVE")
+    print("✅ New APIs: Voice Creation, Audiobook, Podcast")
     print("="*60)
 
 @app.on_event("shutdown")

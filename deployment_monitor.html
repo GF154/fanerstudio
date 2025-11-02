@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔄 Deployment Monitor - Faner Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeInDown 0.6s ease-out;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .status-bar {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            animation: fadeIn 0.8s ease-out;
+        }
+        
+        .status-item {
+            text-align: center;
+        }
+        
+        .status-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+        
+        .status-value {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+        
+        .monitors {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .monitor-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            animation: fadeInUp 1s ease-out;
+            transition: all 0.3s;
+        }
+        
+        .monitor-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.25);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        
+        .card-icon {
+            font-size: 2em;
+        }
+        
+        .card-title {
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        
+        .card-desc {
+            font-size: 0.9em;
+            opacity: 0.8;
+            margin-bottom: 15px;
+        }
+        
+        .card-iframe {
+            width: 100%;
+            height: 300px;
+            border: none;
+            border-radius: 10px;
+            background: white;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+        
+        .btn-primary {
+            background: rgba(76, 175, 80, 0.3);
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+        
+        .btn-primary:hover {
+            background: rgba(76, 175, 80, 0.5);
+        }
+        
+        .actions {
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .refresh-status {
+            text-align: center;
+            padding: 15px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+        
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        @media (max-width: 768px) {
+            .monitors {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 1.8em;
+            }
+            
+            .status-bar {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔄 Deployment Monitor</h1>
+            <p>Faner Studio - Auto-Refresh Dashboard</p>
+        </div>
+        
+        <div class="refresh-status">
+            <span class="spinner"></span>
+            <span id="refresh-text">Auto-refresh active - Updates every <strong>30 seconds</strong></span>
+            <br>
+            <small id="last-refresh">Last refresh: <span id="refresh-time">--:--:--</span></small>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-label">⏱️ Time Elapsed</div>
+                <div class="status-value" id="elapsed-time">00:00</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">🔄 Refreshes</div>
+                <div class="status-value" id="refresh-count">0</div>
+            </div>
+            <div class="status-item">
+                <div class="status-label">📊 Status</div>
+                <div class="status-value pulse">🟢 Active</div>
+            </div>
+        </div>
+        
+        <div class="monitors">
+            <div class="monitor-card">
+                <div class="card-header">
+                    <div class="card-icon">📊</div>
+                    <div>
+                        <div class="card-title">GitHub Actions</div>
+                    </div>
+                </div>
+                <div class="card-desc">Monitor workflow validation & deployment status</div>
+                <a href="https://github.com/GF154/fanerstudio/actions" target="_blank" class="btn btn-primary">
+                    🔗 Open GitHub Actions
+                </a>
+            </div>
+            
+            <div class="monitor-card">
+                <div class="card-header">
+                    <div class="card-icon">🚀</div>
+                    <div>
+                        <div class="card-title">Render Dashboard</div>
+                    </div>
+                </div>
+                <div class="card-desc">View build logs & deployment progress</div>
+                <a href="https://dashboard.render.com" target="_blank" class="btn btn-primary">
+                    🔗 Open Render Dashboard
+                </a>
+            </div>
+            
+            <div class="monitor-card">
+                <div class="card-header">
+                    <div class="card-icon">🌐</div>
+                    <div>
+                        <div class="card-title">Live Platform</div>
+                    </div>
+                </div>
+                <div class="card-desc">Test deployed features & new changes</div>
+                <a href="https://fanerstudio-1.onrender.com" target="_blank" class="btn btn-primary">
+                    🔗 Open Live Platform
+                </a>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button class="btn" onclick="refreshAll()">🔄 Refresh Now</button>
+            <button class="btn" onclick="toggleAutoRefresh()">⏸️ Pause Auto-Refresh</button>
+            <button class="btn" onclick="openAll()">🚀 Open All Links</button>
+        </div>
+    </div>
+    
+    <script>
+        let refreshCount = 0;
+        let startTime = Date.now();
+        let autoRefreshEnabled = true;
+        let autoRefreshInterval;
+        
+        // Update time display
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('refresh-time').textContent = now.toLocaleTimeString();
+        }
+        
+        // Update elapsed time
+        function updateElapsed() {
+            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(elapsed / 60);
+            const seconds = elapsed % 60;
+            document.getElementById('elapsed-time').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+        
+        // Refresh all links
+        function refreshAll() {
+            refreshCount++;
+            document.getElementById('refresh-count').textContent = refreshCount;
+            updateTime();
+            
+            // Flash effect
+            document.querySelectorAll('.monitor-card').forEach(card => {
+                card.style.animation = 'none';
+                setTimeout(() => {
+                    card.style.animation = 'fadeInUp 0.5s ease-out';
+                }, 10);
+            });
+        }
+        
+        // Toggle auto-refresh
+        function toggleAutoRefresh() {
+            autoRefreshEnabled = !autoRefreshEnabled;
+            const btn = event.target;
+            
+            if (autoRefreshEnabled) {
+                btn.textContent = '⏸️ Pause Auto-Refresh';
+                btn.style.background = 'rgba(255,255,255,0.2)';
+                document.getElementById('refresh-text').innerHTML = 
+                    'Auto-refresh active - Updates every <strong>30 seconds</strong>';
+                startAutoRefresh();
+            } else {
+                btn.textContent = '▶️ Resume Auto-Refresh';
+                btn.style.background = 'rgba(255, 193, 7, 0.3)';
+                document.getElementById('refresh-text').innerHTML = 
+                    'Auto-refresh <strong>paused</strong>';
+                clearInterval(autoRefreshInterval);
+            }
+        }
+        
+        // Open all links
+        function openAll() {
+            window.open('https://github.com/GF154/fanerstudio/actions', '_blank');
+            setTimeout(() => {
+                window.open('https://dashboard.render.com', '_blank');
+            }, 500);
+            setTimeout(() => {
+                window.open('https://fanerstudio-1.onrender.com', '_blank');
+            }, 1000);
+        }
+        
+        // Start auto-refresh
+        function startAutoRefresh() {
+            autoRefreshInterval = setInterval(() => {
+                if (autoRefreshEnabled) {
+                    refreshAll();
+                }
+            }, 30000); // 30 seconds
+        }
+        
+        // Initialize
+        updateTime();
+        setInterval(updateElapsed, 1000);
+        startAutoRefresh();
+        
+        // Initial refresh
+        refreshAll();
+    </script>
+</body>
+</html>
+
