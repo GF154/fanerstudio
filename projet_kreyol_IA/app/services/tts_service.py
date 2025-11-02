@@ -81,6 +81,8 @@ class TTSService:
                 return await self._tts_openai(text, output_file, voice)
             elif voice.startswith("elevenlabs-"):
                 return await self._tts_elevenlabs(text, output_file, voice)
+            elif voice == "gtts":
+                return await self._tts_gtts(text, output_file)
             else:
                 # Use native Creole TTS
                 return await self._tts_creole_native(text, output_file)
@@ -101,6 +103,29 @@ class TTSService:
         generer_audio_creole(text, output_file)
         print(f"✅ Audio saved (Creole native): {output_file}")
         return output_file
+    
+    async def _tts_gtts(self, text: str, output_file: Path) -> Path:
+        """
+        TTS ak Google Text-to-Speech (gTTS)
+        Gratis, sipòte plizyè lang
+        """
+        try:
+            from gtts import gTTS
+            
+            # Auto-detect language or default to French (close to Creole)
+            # gTTS doesn't have native Haitian Creole support
+            tts = gTTS(text=text, lang='fr', slow=False)
+            tts.save(str(output_file))
+            
+            print(f"✅ Audio saved (Google TTS): {output_file}")
+            return output_file
+            
+        except ImportError:
+            print("⚠️ gTTS not installed. Falling back to native Creole TTS")
+            return await self._tts_creole_native(text, output_file)
+        except Exception as e:
+            print(f"❌ gTTS error: {e}. Falling back to native Creole TTS")
+            return await self._tts_creole_native(text, output_file)
     
     async def _tts_openai(self, text: str, output_file: Path, voice: str) -> Path:
         """
@@ -179,31 +204,18 @@ class TTSService:
                 "language": "ht",
                 "gender": "neutral",
                 "engine": "native"
+            },
+            {
+                "id": "gtts",
+                "name": "🌐 Google TTS (Multilingual)",
+                "language": "multilingual",
+                "gender": "neutral",
+                "engine": "gtts"
             }
         ]
         
-        # Add OpenAI voices if API key is available
-        if OPENAI_API_KEY:
-            openai_voices = [
-                {"id": "openai-alloy", "name": "OpenAI Alloy", "language": "multilingual", "gender": "neutral", "engine": "openai"},
-                {"id": "openai-echo", "name": "OpenAI Echo", "language": "multilingual", "gender": "male", "engine": "openai"},
-                {"id": "openai-fable", "name": "OpenAI Fable", "language": "multilingual", "gender": "neutral", "engine": "openai"},
-                {"id": "openai-onyx", "name": "OpenAI Onyx", "language": "multilingual", "gender": "male", "engine": "openai"},
-                {"id": "openai-nova", "name": "OpenAI Nova", "language": "multilingual", "gender": "female", "engine": "openai"},
-                {"id": "openai-shimmer", "name": "OpenAI Shimmer", "language": "multilingual", "gender": "female", "engine": "openai"},
-            ]
-            voices.extend(openai_voices)
-        
-        # Add ElevenLabs info if API key is available
-        if ELEVENLABS_API_KEY:
-            voices.append({
-                "id": "elevenlabs-custom",
-                "name": "ElevenLabs (Custom Voice ID)",
-                "language": "multilingual",
-                "gender": "custom",
-                "engine": "elevenlabs",
-                "note": "Use format: elevenlabs-<voice_id>"
-            })
+        # Note: OpenAI TTS and ElevenLabs removed from default voices
+        # They can still be used programmatically if API keys are set
         
         return voices
 
