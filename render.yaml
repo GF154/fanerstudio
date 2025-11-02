@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: faner-ai-backend
+    name: faner-studio-complete
     env: python
     region: oregon
     plan: free
@@ -18,4 +18,5 @@ services:
       - key: ALLOWED_ORIGINS
         value: "*"
     healthCheckPath: /health
+
 

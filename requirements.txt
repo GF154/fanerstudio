@@ -1,25 +1,41 @@
-# 🇭🇹 Faner Studio - Production Dependencies
-# Optimized for Render Free Tier
+# 🇭🇹 Faner Studio - Complete Platform
+# Optimized for Render Free Tier with all features
 
-# Web Framework
+# ============================================================
+# CORE WEB FRAMEWORK (Required)
+# ============================================================
 fastapi==0.109.0
 uvicorn[standard]==0.27.0
 python-multipart==0.0.6
+pydantic==2.5.0
+python-dotenv==1.0.0
 
-# HTTP & Async
+# ============================================================
+# HTTP & ASYNC (Required)
+# ============================================================
 httpx==0.26.0
 aiofiles==24.1.0
 
-# Data Validation
-pydantic==2.5.0
+# ============================================================
+# AUDIO PROCESSING (For TTS, audiobook, podcast)
+# ============================================================
+pydub==0.25.1
+soundfile==0.12.1
+scipy==1.11.4
+numpy==1.24.3
 
-# Configuration
-python-dotenv==1.0.0
-
-# Optional: Uncomment if needed
-# Rate limiting (add if implementing)
+# ============================================================
+# OPTIONAL ENHANCEMENTS (Uncomment if needed)
+# ============================================================
+# Rate limiting
 # slowapi==0.1.9
 
-# Monitoring (add if needed)
+# Monitoring
 # prometheus-client==0.19.0
+
+# Redis cache
+# redis==5.0.1
+
+# Background tasks
+# celery==5.3.4
 
