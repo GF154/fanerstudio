@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎙️ Advanced Podcast Generator - Faner Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin-top: 10px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section-title {
+            font-size: 1.3em;
+            color: #667eea;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        textarea {
+            min-height: 150px;
+            font-family: 'Courier New', monospace;
+            resize: vertical;
+        }
+        
+        .speaker-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .speaker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .speaker-header h3 {
+            color: #667eea;
+        }
+        
+        .remove-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+        
+        .remove-btn:hover {
+            background: #c82333;
+        }
+        
+        .row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #218838;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .template-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+        
+        .template-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .template-card h4 {
+            margin-bottom: 8px;
+        }
+        
+        .template-card p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            cursor: pointer;
+        }
+        
+        .hint {
+            font-size: 0.9em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .result {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 40px;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        code {
+            background: #f8f9fa;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        .help-box {
+            background: #e7f3ff;
+            border-left: 4px solid #2196F3;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .help-box h4 {
+            color: #2196F3;
+            margin-bottom: 10px;
+        }
+        
+        .help-box ul {
+            margin-left: 20px;
+        }
+        
+        .help-box li {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎙️ Advanced Podcast Generator</h1>
+            <p>Inspired by Veed Fabric AI Technology</p>
+            <span class="badge">Multi-Speaker • Emotion Control • Professional Editing</span>
+        </div>
+
+        <!-- Templates Section -->
+        <div class="section">
+            <div class="section-title">
+                <span>📝</span>
+                <span>Quick Start Templates</span>
+            </div>
+            
+            <div class="template-card" onclick="loadTemplate('interview')">
+                <h4>🎤 Interview Podcast</h4>
+                <p>Perfect for conversations and interviews with guests</p>
+            </div>
+            
+            <div class="template-card" onclick="loadTemplate('news')">
+                <h4>📰 News Podcast</h4>
+                <p>Professional news broadcast style</p>
+            </div>
+            
+            <div class="template-card" onclick="loadTemplate('storytelling')">
+                <h4>📚 Storytelling Podcast</h4>
+                <p>Narrative-driven content with multiple characters</p>
+            </div>
+        </div>
+
+        <!-- Script Section -->
+        <div class="section">
+            <div class="section-title">
+                <span>✍️</span>
+                <span>Podcast Script</span>
+            </div>
+            
+            <div class="help-box">
+                <h4>📖 Script Format Guide</h4>
+                <ul>
+                    <li><code>[INTRO - Background: Corporate, Volume: 0.3]</code> - Segment markers</li>
+                    <li><code>Host (excited): Welcome!</code> - Speaker with emotion</li>
+                    <li><code>[SFX: intro_swoosh]</code> - Sound effects</li>
+                    <li><code>[Pause: 2.0]</code> - Add pauses</li>
+                </ul>
+            </div>
+            
+            <div class="form-group">
+                <label>Script</label>
+                <textarea id="script" placeholder="Enter your podcast script here..."></textarea>
+                <div class="hint">Use segment markers [INTRO], [MAIN], [OUTRO] and speaker names with emotions</div>
+            </div>
+        </div>
+
+        <!-- Speakers Section -->
+        <div class="section">
+            <div class="section-title">
+                <span>🎤</span>
+                <span>Speakers</span>
+            </div>
+            
+            <div id="speakers-container">
+                <!-- Speakers will be added here dynamically -->
+            </div>
+            
+            <button class="btn btn-success" onclick="addSpeaker()">
+                <span>➕</span>
+                <span>Add Speaker</span>
+            </button>
+        </div>
+
+        <!-- Settings Section -->
+        <div class="section">
+            <div class="section-title">
+                <span>⚙️</span>
+                <span>Podcast Settings</span>
+            </div>
+            
+            <div class="form-group">
+                <label>Title</label>
+                <input type="text" id="title" value="Faner Podcast" />
+            </div>
+            
+            <div class="form-group">
+                <label>Description</label>
+                <textarea id="description" style="min-height: 80px;">Generated with Faner Studio Advanced Podcast Generator</textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Export Format</label>
+                <select id="format">
+                    <option value="mp3">MP3 (Recommended)</option>
+                    <option value="wav">WAV (High Quality)</option>
+                    <option value="m4a">M4A (Apple)</option>
+                </select>
+            </div>
+            
+            <div class="form-group checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="intro_jingle" checked />
+                    <label for="intro_jingle">Add Intro Jingle</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="outro_jingle" checked />
+                    <label for="outro_jingle">Add Outro Jingle</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="background_music" checked />
+                    <label for="background_music">Background Music</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="normalize" checked />
+                    <label for="normalize">Normalize Audio</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="button-group">
+            <button class="btn btn-primary" onclick="generatePodcast()">
+                <span>🎙️</span>
+                <span>Generate Podcast</span>
+            </button>
+            <button class="btn btn-secondary" onclick="reset()">
+                <span>🔄</span>
+                <span>Reset</span>
+            </button>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Generating your podcast...</p>
+        </div>
+
+        <!-- Result -->
+        <div class="result" id="result"></div>
+        <div class="error" id="error"></div>
+    </div>
+
+    <script>
+        let speakerCount = 0;
+        
+        // Templates
+        const templates = {
+            interview: {
+                script: `[INTRO - Background: Corporate, Volume: 0.3]
+Host (excited): Welcome to the Faner Podcast!
+[SFX: intro_swoosh]
+Host (professional): Today we have an amazing guest!
+
+[MAIN - Background: Calm]
+Host: So, tell us about your work.
+Guest (professional): Well, it's quite interesting...
+[Pause: 1.0]
+Host: That's fascinating!
+
+[OUTRO - Background: Upbeat]
+Host (happy): Thanks for tuning in!
+[SFX: outro_fade]`,
+                speakers: [
+                    { id: 'host', name: 'Host', voice_id: 'creole-native', gender: 'female', emotion: 'friendly' },
+                    { id: 'guest', name: 'Guest', voice_id: 'creole-native', gender: 'male', emotion: 'professional' }
+                ]
+            },
+            news: {
+                script: `[INTRO - Background: Tech, Volume: 0.2]
+Anchor (professional): This is Faner News.
+[SFX: notification]
+
+[MAIN - Background: Corporate]
+Anchor (neutral): Today's top story...
+Reporter (excited): Breaking news from Haiti!
+
+[OUTRO - Background: Corporate]
+Anchor (professional): That's all for today.
+[SFX: outro_fade]`,
+                speakers: [
+                    { id: 'anchor', name: 'Anchor', voice_id: 'creole-native', gender: 'female', emotion: 'professional' },
+                    { id: 'reporter', name: 'Reporter', voice_id: 'creole-native', gender: 'male', emotion: 'excited' }
+                ]
+            },
+            storytelling: {
+                script: `[INTRO - Background: Dramatic, Volume: 0.4]
+Narrator (calm): Once upon a time...
+[SFX: intro_swoosh]
+
+[MAIN - Background: Calm]
+Narrator (excited): And then something amazing happened!
+[Pause: 2.0]
+Character1 (happy): I can't believe it!
+
+[OUTRO - Background: Calm]
+Narrator (calm): The end.
+[SFX: outro_fade]`,
+                speakers: [
+                    { id: 'narrator', name: 'Narrator', voice_id: 'creole-native', gender: 'female', emotion: 'calm' },
+                    { id: 'character1', name: 'Character1', voice_id: 'creole-native', gender: 'male', emotion: 'happy' }
+                ]
+            }
+        };
+        
+        function loadTemplate(type) {
+            const template = templates[type];
+            document.getElementById('script').value = template.script;
+            
+            // Clear existing speakers
+            document.getElementById('speakers-container').innerHTML = '';
+            speakerCount = 0;
+            
+            // Add template speakers
+            template.speakers.forEach(speaker => {
+                addSpeaker(speaker);
+            });
+        }
+        
+        function addSpeaker(data = null) {
+            speakerCount++;
+            const container = document.getElementById('speakers-container');
+            
+            const card = document.createElement('div');
+            card.className = 'speaker-card';
+            card.id = `speaker-${speakerCount}`;
+            
+            card.innerHTML = `
+                <div class="speaker-header">
+                    <h3>Speaker ${speakerCount}</h3>
+                    <button class="remove-btn" onclick="removeSpeaker(${speakerCount})">Remove</button>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>ID</label>
+                        <input type="text" class="speaker-id" value="${data?.id || `speaker${speakerCount}`}" />
+                    </div>
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="speaker-name" value="${data?.name || 'Speaker'}" />
+                    </div>
+                    <div class="form-group">
+                        <label>Voice</label>
+                        <select class="speaker-voice">
+                            <option value="creole-native" ${data?.voice_id === 'creole-native' ? 'selected' : ''}>Kreyòl Native</option>
+                            <option value="gtts" ${data?.voice_id === 'gtts' ? 'selected' : ''}>Google TTS</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label>Gender</label>
+                        <select class="speaker-gender">
+                            <option value="neutral" ${data?.gender === 'neutral' ? 'selected' : ''}>Neutral</option>
+                            <option value="male" ${data?.gender === 'male' ? 'selected' : ''}>Male</option>
+                            <option value="female" ${data?.gender === 'female' ? 'selected' : ''}>Female</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Emotion</label>
+                        <select class="speaker-emotion">
+                            <option value="neutral" ${data?.emotion === 'neutral' ? 'selected' : ''}>Neutral</option>
+                            <option value="happy" ${data?.emotion === 'happy' ? 'selected' : ''}>Happy</option>
+                            <option value="excited" ${data?.emotion === 'excited' ? 'selected' : ''}>Excited</option>
+                            <option value="sad" ${data?.emotion === 'sad' ? 'selected' : ''}>Sad</option>
+                            <option value="professional" ${data?.emotion === 'professional' ? 'selected' : ''}>Professional</option>
+                            <option value="friendly" ${data?.emotion === 'friendly' ? 'selected' : ''}>Friendly</option>
+                            <option value="calm" ${data?.emotion === 'calm' ? 'selected' : ''}>Calm</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Pitch (0.5-2.0)</label>
+                        <input type="number" class="speaker-pitch" value="${data?.pitch || 1.0}" min="0.5" max="2.0" step="0.1" />
+                    </div>
+                    <div class="form-group">
+                        <label>Speed (0.5-2.0)</label>
+                        <input type="number" class="speaker-speed" value="${data?.speed || 1.0}" min="0.5" max="2.0" step="0.1" />
+                    </div>
+                </div>
+            `;
+            
+            container.appendChild(card);
+        }
+        
+        function removeSpeaker(id) {
+            document.getElementById(`speaker-${id}`).remove();
+        }
+        
+        function getSpeakers() {
+            const speakers = [];
+            const cards = document.querySelectorAll('.speaker-card');
+            
+            cards.forEach(card => {
+                speakers.push({
+                    id: card.querySelector('.speaker-id').value,
+                    name: card.querySelector('.speaker-name').value,
+                    voice_id: card.querySelector('.speaker-voice').value,
+                    gender: card.querySelector('.speaker-gender').value,
+                    emotion: card.querySelector('.speaker-emotion').value,
+                    pitch: parseFloat(card.querySelector('.speaker-pitch').value),
+                    speed: parseFloat(card.querySelector('.speaker-speed').value),
+                    volume: 1.0
+                });
+            });
+            
+            return speakers;
+        }
+        
+        async function generatePodcast() {
+            const script = document.getElementById('script').value;
+            const speakers = getSpeakers();
+            
+            if (!script.trim()) {
+                showError('Please enter a podcast script');
+                return;
+            }
+            
+            if (speakers.length === 0) {
+                showError('Please add at least one speaker');
+                return;
+            }
+            
+            const data = {
+                script: script,
+                speakers: speakers,
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                add_intro_jingle: document.getElementById('intro_jingle').checked,
+                add_outro_jingle: document.getElementById('outro_jingle').checked,
+                background_music: document.getElementById('background_music').checked,
+                normalize_audio: document.getElementById('normalize').checked,
+                export_format: document.getElementById('format').value
+            };
+            
+            showLoading();
+            
+            try {
+                const response = await fetch('/api/podcast/advanced', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                hideLoading();
+                
+                if (response.ok) {
+                    showResult(result);
+                } else {
+                    showError(result.detail || 'Error generating podcast');
+                }
+            } catch (error) {
+                hideLoading();
+                showError('Network error: ' + error.message);
+            }
+        }
+        
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+        }
+        
+        function hideLoading() {
+            document.getElementById('loading').style.display = 'none';
+        }
+        
+        function showResult(data) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `
+                <h3>✅ Podcast Created Successfully!</h3>
+                <p><strong>Title:</strong> ${data.title}</p>
+                <p><strong>Speakers:</strong> ${data.speakers_count}</p>
+                <p><strong>Segments:</strong> ${data.segments_count}</p>
+                <h4>Features:</h4>
+                <ul>
+                    <li>Multi-Speaker: ${data.features.multi_speaker ? '✅' : '❌'}</li>
+                    <li>Emotion Control: ${data.features.emotion_control ? '✅' : '❌'}</li>
+                    <li>Background Music: ${data.features.background_music ? '✅' : '❌'}</li>
+                    <li>Sound Effects: ${data.features.sound_effects ? '✅' : '❌'}</li>
+                    <li>Professional Editing: ${data.features.professional_editing ? '✅' : '❌'}</li>
+                </ul>
+            `;
+            resultDiv.style.display = 'block';
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('error');
+            errorDiv.innerHTML = `<strong>Error:</strong> ${message}`;
+            errorDiv.style.display = 'block';
+        }
+        
+        function reset() {
+            document.getElementById('script').value = '';
+            document.getElementById('title').value = 'Faner Podcast';
+            document.getElementById('description').value = 'Generated with Faner Studio Advanced Podcast Generator';
+            document.getElementById('speakers-container').innerHTML = '';
+            document.getElementById('result').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            speakerCount = 0;
+        }
+        
+        // Initialize with one speaker
+        addSpeaker({ id: 'host', name: 'Host', voice_id: 'creole-native', gender: 'female', emotion: 'friendly' });
+    </script>
+</body>
+</html>
+

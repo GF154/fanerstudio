@@ -129,6 +129,17 @@ class PodcastRequest(BaseModel):
     title: Optional[str] = Field("Mon Podcast", description="Titre du podcast")
     add_intro: bool = Field(True, description="Ajouter une intro")
 
+class AdvancedPodcastRequest(BaseModel):
+    script: str = Field(..., description="Advanced script with markers")
+    speakers: List[dict] = Field(..., description="List of speakers with configurations")
+    title: str = Field("Faner Podcast", description="Podcast title")
+    description: Optional[str] = Field("", description="Podcast description")
+    add_intro_jingle: bool = Field(True, description="Add intro jingle")
+    add_outro_jingle: bool = Field(True, description="Add outro jingle")
+    background_music: bool = Field(True, description="Add background music")
+    normalize_audio: bool = Field(True, description="Normalize audio levels")
+    export_format: str = Field("mp3", description="Export format: mp3, wav, m4a")
+
 # ============================================================
 # MAIN ROUTES
 # ============================================================
@@ -885,6 +896,159 @@ async def create_podcast(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@app.post("/api/podcast/advanced")
+async def create_advanced_podcast(request: AdvancedPodcastRequest):
+    """
+    🎙️ Kreye yon podcast avanse (Veed Fabric style)
+    
+    Create advanced podcast with multiple speakers, emotions, and effects
+    
+    - **script**: Advanced script with segment markers [INTRO], [MAIN], [OUTRO]
+    - **speakers**: List of speaker configurations (name, voice_id, emotion, etc.)
+    - **title**: Podcast title
+    - **description**: Podcast description
+    - **add_intro_jingle**: Add intro music
+    - **add_outro_jingle**: Add outro music
+    - **background_music**: Add background music to segments
+    - **normalize_audio**: Normalize audio levels
+    - **export_format**: Output format (mp3, wav, m4a)
+    
+    ## Example Script Format:
+    ```
+    [INTRO - Background: Corporate, Volume: 0.3]
+    Host (excited): Welcome to the Faner Podcast!
+    [SFX: intro_swoosh]
+    
+    [MAIN - Background: Calm]
+    Host: Today we're discussing AI.
+    Guest (professional): That's fascinating!
+    [Pause: 2.0]
+    
+    [OUTRO - Background: Upbeat]
+    Host (happy): Thanks for listening!
+    [SFX: outro_fade]
+    ```
+    
+    ## Speaker Configuration:
+    ```json
+    {
+      "id": "host",
+      "name": "Host",
+      "voice_id": "creole-native",
+      "gender": "female",
+      "emotion": "friendly",
+      "pitch": 1.1,
+      "speed": 1.0,
+      "volume": 1.0
+    }
+    ```
+    """
+    try:
+        # Import podcast fabric
+        import sys
+        sys.path.insert(0, str(Path(".")))
+        from podcast_fabric import (
+            AdvancedPodcastGenerator, Speaker, PodcastConfig,
+            SpeakerGender, VoiceEmotion
+        )
+        
+        # Parse speakers
+        speakers = []
+        for speaker_data in request.speakers:
+            speaker = Speaker(
+                id=speaker_data.get("id", "speaker1"),
+                name=speaker_data.get("name", "Speaker"),
+                voice_id=speaker_data.get("voice_id", "creole-native"),
+                gender=SpeakerGender(speaker_data.get("gender", "neutral")),
+                emotion=VoiceEmotion(speaker_data.get("emotion", "neutral")),
+                pitch=speaker_data.get("pitch", 1.0),
+                speed=speaker_data.get("speed", 1.0),
+                volume=speaker_data.get("volume", 1.0)
+            )
+            speakers.append(speaker)
+        
+        # Create config
+        config = PodcastConfig(
+            title=request.title,
+            description=request.description or "Generated with Faner Studio",
+            speakers=speakers,
+            segments=[],  # Will be parsed from script
+            add_intro_jingle=request.add_intro_jingle,
+            add_outro_jingle=request.add_outro_jingle,
+            normalize_audio=request.normalize_audio,
+            export_format=request.export_format
+        )
+        
+        # Generate podcast
+        generator = AdvancedPodcastGenerator()
+        result = await generator.generate_from_script(
+            script=request.script,
+            speakers=speakers,
+            config=config
+        )
+        
+        return {
+            "status": "success",
+            "message": "✅ Advanced podcast kreye avèk siksè!",
+            "result": result,
+            "title": request.title,
+            "speakers_count": len(speakers),
+            "segments_count": len(result.get("segments", [])),
+            "features": {
+                "multi_speaker": len(speakers) > 1,
+                "emotion_control": True,
+                "background_music": request.background_music,
+                "sound_effects": True,
+                "professional_editing": True
+            }
+        }
+        
+    except HTTPException:
+        raise
+    except ImportError as e:
+        raise HTTPException(
+            status_code=500, 
+            detail=f"podcast_fabric module not available: {str(e)}"
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@app.get("/api/podcast/templates")
+async def get_podcast_templates():
+    """
+    📝 Jwenn modèl podcast
+    
+    Get podcast script templates
+    """
+    try:
+        from podcast_fabric import PodcastTemplates
+        
+        return {
+            "status": "success",
+            "templates": {
+                "interview": {
+                    "name": "Interview Podcast",
+                    "description": "Template for interview-style podcasts",
+                    "script": PodcastTemplates.interview_template()
+                },
+                "news": {
+                    "name": "News Podcast",
+                    "description": "Template for news podcasts",
+                    "script": PodcastTemplates.news_template()
+                },
+                "storytelling": {
+                    "name": "Storytelling Podcast",
+                    "description": "Template for storytelling podcasts",
+                    "script": PodcastTemplates.storytelling_template()
+                }
+            }
+        }
+    except ImportError:
+        return {
+            "status": "error",
+            "message": "Templates not available"
+        }
 
 # ============================================================
 # ERROR HANDLERS
