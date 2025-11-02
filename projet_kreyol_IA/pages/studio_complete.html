@@ -831,6 +831,11 @@
                                 <div class="card-title">URL an Odyo</div>
                                 <div class="card-desc">Kreye vwadeyò soti nan nenpòt paj wèb</div>
                             </div>
+                            <div class="feature-card card-green" onclick="openModal('custom-voice')">
+                                <div class="card-icon">🎤</div>
+                                <div class="card-title">Kreye Yon Vwa Natirèl</div>
+                                <div class="card-desc">Clone oswa kreye yon vwa pèsonalize ak IA</div>
+                            </div>
                             <div class="feature-card card-orange" onclick="openModal('ai-script')">
                                 <div class="card-icon">✨</div>
                                 <div class="card-title">Jeneratè Skrip IA</div>
@@ -1064,6 +1069,80 @@ Bonjou! Byenveni nan Kreyòl IA. Nou la pou ede w kreye kontni an kreyòl ayisye
             <div class="modal-footer">
                 <button class="btn-modal btn-modal-cancel" onclick="closeModal('ai-script')">Anile</button>
                 <button class="btn-modal btn-modal-primary" onclick="generateScript()">Jenere</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Custom Voice Creation -->
+    <div class="modal-overlay" id="modal-custom-voice">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">🎤 Kreye Yon Vwa Natirèl</div>
+                <button class="modal-close" onclick="closeModal('custom-voice')">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Non Vwa A</label>
+                    <input type="text" class="form-input" id="voice-name" placeholder="Egzanp: Vwa Mari, Vwa Jak..." />
+                    <div class="form-hint">Bay yon non inik pou vwa ou a</div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Upload Ekzanp Odyo (3-10 minit rekòmande)</label>
+                    <div class="upload-zone" onclick="document.getElementById('file-voice-sample').click()">
+                        <div class="upload-icon">🎙️</div>
+                        <div class="upload-text">Klike oswa drag & drop</div>
+                        <div class="upload-hint">.mp3, .wav, .m4a (max 50MB)</div>
+                        <input type="file" id="file-voice-sample" accept=".mp3,.wav,.m4a" style="display: none;" />
+                    </div>
+                    <div class="form-hint" style="margin-top: 12px;">
+                        <strong>💡 Tips pou bon rezilta:</strong>
+                        <ul style="margin-top: 8px; padding-left: 20px; font-size: 13px;">
+                            <li>Itilize odyo ki klè, san bri</li>
+                            <li>Menm moun ap pale pandan tout anrejistreman an</li>
+                            <li>Plis odyo ou bay, pi bon kalite vwa a</li>
+                            <li>Evite mizik oswa efè son nan background</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Opsyon Avanse</label>
+                    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="voice-enhance" checked />
+                            <span>Amelyore kalite otomatikman</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="voice-denoise" checked />
+                            <span>Retire bri</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Model</label>
+                    <select class="form-select" id="voice-model">
+                        <option value="standard">Standard (Rapid, bon kalite)</option>
+                        <option value="premium">Premium (Pi bon kalite, pi long)</option>
+                    </select>
+                </div>
+
+                <div style="padding: 16px; background: rgba(255, 193, 7, 0.15); border-radius: 12px; border-left: 4px solid #ffc107;">
+                    <div style="display: flex; align-items: start; gap: 12px;">
+                        <span style="font-size: 24px;">⚡</span>
+                        <div>
+                            <div style="font-weight: 600; margin-bottom: 4px; color: #ffc107;">Voice Cloning Beta</div>
+                            <div style="font-size: 13px; opacity: 0.8;">
+                                Feature sa a an devlopman. L ap itilize ElevenLabs Voice Design API pou kreye vwa natirèl yo.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-modal btn-modal-cancel" onclick="closeModal('custom-voice')">Anile</button>
+                <button class="btn-modal btn-modal-primary" onclick="createCustomVoice()">Kreye Vwa</button>
             </div>
         </div>
     </div>
