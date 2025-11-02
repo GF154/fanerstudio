@@ -5,10 +5,11 @@
 Complete creative platform for Haitian Creole content
 """
 
-from fastapi import FastAPI, HTTPException, File, UploadFile, Form
+from fastapi import FastAPI, HTTPException, File, UploadFile, Form, Depends
 from fastapi.responses import JSONResponse, FileResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, Field
 import httpx
 import os
@@ -20,13 +21,37 @@ from typing import Optional, List
 from datetime import datetime
 import uuid
 
+# Import database and auth
+try:
+    from database import get_db, init_db, UserCRUD, ProjectCRUD, VoiceCRUD
+    from auth import (
+        Token, UserRegister, UserLogin, UserResponse,
+        create_access_token, authenticate_user, create_user_account,
+        get_current_active_user, get_current_user, optional_auth
+    )
+    DB_ENABLED = True
+except ImportError:
+    DB_ENABLED = False
+    print("⚠️  Database not available. Running without DB support.")
+
+# Import performance utilities
+try:
+    from performance import (
+        cache, cached, rate_limiter, task_queue, perf_monitor,
+        format_bytes, format_duration, get_system_stats
+    )
+    PERF_ENABLED = True
+except ImportError:
+    PERF_ENABLED = False
+    print("⚠️  Performance utilities not available.")
+
 # ============================================================
 # APPLICATION SETUP
 # ============================================================
 
 app = FastAPI(
     title="🇭🇹 Faner Studio - Complete Platform", 
-    version="3.1.0",
+    version="3.2.0",
     description="Platfòm konplè pou kreyasyon kontni pwofesyonèl an Kreyòl Ayisyen",
     docs_url="/docs",
     redoc_url="/redoc"
@@ -312,6 +337,180 @@ async def status():
             "translation_models": ["nllb-200", "google"],
             "music_models": ["audiocraft", "musicgen"]
         }
+    }
+
+# ============================================================
+# AUTHENTICATION API
+# ============================================================
+
+@app.post("/api/auth/register", response_model=UserResponse)
+async def register(user: UserRegister):
+    """
+    📝 Enskri yon nouvo itilizatè
+    
+    Register a new user account
+    
+    - **username**: Unique username
+    - **email**: Valid email address
+    - **password**: Password (min 8 characters recommended)
+    - **full_name**: Full name (optional)
+    """
+    if not DB_ENABLED:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    try:
+        new_user = create_user_account(
+            username=user.username,
+            email=user.email,
+            password=user.password,
+            full_name=user.full_name
+        )
+        return new_user
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
+@app.post("/api/auth/login", response_model=Token)
+async def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    """
+    🔐 Konekte
+    
+    Login with username and password
+    
+    - **username**: Your username
+    - **password**: Your password
+    
+    Returns JWT access token
+    """
+    if not DB_ENABLED:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(
+            status_code=401,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    # Create access token
+    access_token = create_access_token(data={"sub": user.username, "user_id": user.id})
+    
+    return {"access_token": access_token, "token_type": "bearer"}
+
+@app.get("/api/auth/me", response_model=UserResponse)
+async def get_me(current_user = Depends(get_current_active_user)):
+    """
+    👤 Jwenn enfòmasyon itilizatè aktyèl
+    
+    Get current user information
+    """
+    return current_user
+
+@app.get("/api/auth/projects")
+async def get_my_projects(
+    limit: int = 50,
+    current_user = Depends(get_current_active_user),
+    db = Depends(get_db)
+):
+    """
+    📂 Jwenn tout pwojè mwen
+    
+    Get all user's projects
+    """
+    projects = ProjectCRUD.get_user_projects(db, user_id=current_user.id, limit=limit)
+    return {
+        "status": "success",
+        "total": len(projects),
+        "projects": projects
+    }
+
+@app.get("/api/auth/voices")
+async def get_my_voices(
+    current_user = Depends(get_current_active_user),
+    db = Depends(get_db)
+):
+    """
+    🎤 Jwenn tout vwa mwen
+    
+    Get all user's custom voices
+    """
+    voices = VoiceCRUD.get_user_voices(db, user_id=current_user.id)
+    return {
+        "status": "success",
+        "total": len(voices),
+        "voices": voices
+    }
+
+# ============================================================
+# PERFORMANCE & MONITORING API
+# ============================================================
+
+@app.get("/api/performance/stats")
+async def get_performance_stats(endpoint: Optional[str] = None):
+    """
+    📊 Jwenn estatistik pèfòmans
+    
+    Get performance statistics
+    """
+    if not PERF_ENABLED:
+        return {"status": "disabled", "message": "Performance monitoring not available"}
+    
+    return {
+        "status": "success",
+        "stats": perf_monitor.get_stats(endpoint)
+    }
+
+@app.get("/api/performance/cache")
+async def get_cache_info():
+    """
+    💾 Jwenn enfòmasyon cache
+    
+    Get cache information
+    """
+    if not PERF_ENABLED:
+        return {"status": "disabled", "message": "Cache not available"}
+    
+    return {
+        "status": "success",
+        "cache_size": len(cache.cache),
+        "items": list(cache.cache.keys())
+    }
+
+@app.post("/api/performance/cache/clear")
+async def clear_cache():
+    """
+    🗑️ Efase cache
+    
+    Clear all cache
+    """
+    if not PERF_ENABLED:
+        return {"status": "disabled", "message": "Cache not available"}
+    
+    cache.clear()
+    return {
+        "status": "success",
+        "message": "Cache cleared"
+    }
+
+@app.get("/api/performance/system")
+async def get_system_info():
+    """
+    🖥️ Jwenn enfòmasyon sistèm
+    
+    Get system information
+    """
+    if not PERF_ENABLED:
+        return {"status": "disabled", "message": "Performance monitoring not available"}
+    
+    system_stats = get_system_stats()
+    
+    return {
+        "status": "success",
+        "system": system_stats,
+        "cache_enabled": PERF_ENABLED,
+        "database_enabled": DB_ENABLED
     }
 
 # ============================================================
@@ -735,10 +934,19 @@ async def startup_event():
     print("🇭🇹 Faner Studio - Complete Platform")
     print("="*60)
     print("✅ Service: ONLINE")
-    print("✅ Version: 3.1.0")
-    print("✅ Mode: Unified Platform")
+    print("✅ Version: 3.2.0")
+    print("✅ Mode: Production Ready")
     print("✅ Features: ALL ACTIVE")
-    print("✅ New APIs: Voice Creation, Audiobook, Podcast")
+    print("✅ APIs: Voice, Audiobook, Podcast, Auth")
+    if DB_ENABLED:
+        print("✅ Database: SQLite (Enabled)")
+        init_db()  # Initialize database tables
+    else:
+        print("⚠️  Database: Disabled")
+    if PERF_ENABLED:
+        print("✅ Performance: Monitoring (Enabled)")
+    else:
+        print("⚠️  Performance: Disabled")
     print("="*60)
 
 @app.on_event("shutdown")
