@@ -1,0 +1,31 @@
+# Test files
+*.db
+test_*.db
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Coverage
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+*.cover
+.hypothesis/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
