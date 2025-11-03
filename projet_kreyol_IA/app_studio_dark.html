@@ -1051,10 +1051,41 @@
 
                     <div class="form-group">
                         <label class="form-label">Default voice</label>
-                        <select id="audiobook-voice">
+                        <select id="audiobook-voice" onchange="updateAudiobookVoiceOptions()">
                             <option value="creole-native">🇭🇹 Kreyòl Ayisyen (Natif)</option>
                             <option value="gtts">🌐 Google TTS (Multilingual)</option>
+                            <option value="custom">✨ Vwa Natirèl (Custom Voice)</option>
                         </select>
+                    </div>
+
+                    <!-- Custom Voice Section (Hidden by default) -->
+                    <div id="audiobook-custom-voice-section" style="display: none;">
+                        <div style="padding: 16px; background: rgba(76, 175, 80, 0.1); border-radius: 8px; margin: 16px 0; border-left: 4px solid #4caf50;">
+                            <div style="display: flex; align-items: start; gap: 12px;">
+                                <span style="font-size: 24px;">🎤</span>
+                                <div>
+                                    <div style="font-weight: 600; margin-bottom: 8px; color: #4caf50;">Itilize Vwa Natirèl Ou</div>
+                                    <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 12px;">
+                                        Chwazi yon vwa koutim ou te kreye deja, oswa kreye yon nouvo vwa rapidman.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Chwazi vwa koutim ou</label>
+                            <select id="audiobook-custom-voice-select">
+                                <option value="">-- Chwazi yon vwa --</option>
+                            </select>
+                            <div class="form-hint" id="custom-voice-count">Ou poko kreye vwa koutim</div>
+                        </div>
+
+                        <div style="text-align: center; margin: 16px 0;">
+                            <button class="btn btn-secondary" onclick="openCustomVoiceCreator()" style="display: inline-flex; align-items: center; gap: 8px;">
+                                <span>➕</span>
+                                <span>Kreye Nouvo Vwa Natirèl</span>
+                            </button>
+                        </div>
                     </div>
 
                     <div class="btn-group">
@@ -1540,6 +1571,168 @@
 
         setupFilePreview('file-audiobook', 'file-audiobook-preview');
 
+        // Custom Voice Management
+        let customVoices = [];
+
+        // Load custom voices from localStorage
+        function loadCustomVoices() {
+            const stored = localStorage.getItem('faner_custom_voices');
+            if (stored) {
+                try {
+                    customVoices = JSON.parse(stored);
+                } catch (e) {
+                    customVoices = [];
+                }
+            }
+            updateCustomVoicesList();
+        }
+
+        // Save custom voices to localStorage
+        function saveCustomVoices() {
+            localStorage.setItem('faner_custom_voices', JSON.stringify(customVoices));
+            updateCustomVoicesList();
+        }
+
+        // Update custom voices dropdown
+        function updateCustomVoicesList() {
+            const select = document.getElementById('audiobook-custom-voice-select');
+            const countDiv = document.getElementById('custom-voice-count');
+            
+            if (!select) return;
+            
+            // Clear and repopulate
+            select.innerHTML = '<option value="">-- Chwazi yon vwa --</option>';
+            
+            customVoices.forEach(voice => {
+                const option = document.createElement('option');
+                option.value = voice.id;
+                option.textContent = `${voice.icon || '🎤'} ${voice.name} (${voice.gender || 'neutral'})`;
+                select.appendChild(option);
+            });
+            
+            // Update count message
+            if (countDiv) {
+                if (customVoices.length === 0) {
+                    countDiv.textContent = 'Ou poko kreye vwa koutim';
+                    countDiv.style.color = 'var(--text-secondary)';
+                } else {
+                    countDiv.textContent = `${customVoices.length} vwa disponib`;
+                    countDiv.style.color = '#4caf50';
+                }
+            }
+        }
+
+        // Show/hide custom voice section
+        function updateAudiobookVoiceOptions() {
+            const voiceSelect = document.getElementById('audiobook-voice');
+            const customSection = document.getElementById('audiobook-custom-voice-section');
+            
+            if (voiceSelect.value === 'custom') {
+                customSection.style.display = 'block';
+                loadCustomVoices(); // Refresh list
+            } else {
+                customSection.style.display = 'none';
+            }
+        }
+
+        // Open custom voice creator modal
+        function openCustomVoiceCreator() {
+            closeModal('audiobook');
+            openModal('custom-voice');
+        }
+
+        // Enhanced createCustomVoice function
+        async function createCustomVoice() {
+            const nameInput = document.getElementById('voice-name');
+            const descInput = document.getElementById('voice-description');
+            const genderSelect = document.getElementById('voice-gender');
+            const modelSelect = document.getElementById('voice-model');
+            const sampleInput = document.getElementById('voice-sample');
+            
+            if (!nameInput.value.trim()) {
+                alert('❌ Tanpri antre non vwa a');
+                return;
+            }
+            
+            if (!sampleInput.files || sampleInput.files.length === 0) {
+                alert('❌ Tanpri upload echantiyon vwa');
+                return;
+            }
+            
+            showProgress('Kreye vwa natirèl...', 'Analyzing voice sample and creating custom voice');
+            
+            const formData = new FormData();
+            formData.append('name', nameInput.value.trim());
+            formData.append('description', descInput.value.trim() || 'Custom voice');
+            formData.append('gender', genderSelect.value);
+            formData.append('model', modelSelect.value);
+            formData.append('voice_sample', sampleInput.files[0]);
+            
+            try {
+                const response = await fetch('/api/voice/create', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to create voice');
+                }
+                
+                const result = await response.json();
+                hideProgress();
+                
+                // Add to custom voices list
+                const newVoice = {
+                    id: result.voice_id || `voice_${Date.now()}`,
+                    name: nameInput.value.trim(),
+                    description: descInput.value.trim() || 'Custom voice',
+                    gender: genderSelect.value,
+                    model: modelSelect.value,
+                    icon: genderSelect.value === 'male' ? '👨' : genderSelect.value === 'female' ? '👩' : '🎤',
+                    created: new Date().toISOString(),
+                    fileUrl: result.voice_url || null
+                };
+                
+                customVoices.push(newVoice);
+                saveCustomVoices();
+                
+                // Close modal and show success
+                closeModal('custom-voice');
+                
+                alert(`🎉 Vwa "${newVoice.name}" kreye avèk siksè!\n\n✅ Vwa a disponib nan:\n  • Audiobook\n  • Podcast\n  • Text-to-Speech\n  • Tout zouti odyo\n\n🎤 Total vwa koutim: ${customVoices.length}`);
+                
+                // Clear form
+                nameInput.value = '';
+                descInput.value = '';
+                genderSelect.value = 'neutral';
+                modelSelect.value = 'standard';
+                sampleInput.value = '';
+                
+                // Reopen audiobook modal if it was open before
+                const shouldReopenAudiobook = confirm('Vle retounen nan kreye audiobook?');
+                if (shouldReopenAudiobook) {
+                    openModal('audiobook');
+                    document.getElementById('audiobook-voice').value = 'custom';
+                    updateAudiobookVoiceOptions();
+                    
+                    // Auto-select the new voice
+                    setTimeout(() => {
+                        const customVoiceSelect = document.getElementById('audiobook-custom-voice-select');
+                        if (customVoiceSelect) {
+                            customVoiceSelect.value = newVoice.id;
+                        }
+                    }, 100);
+                }
+                
+            } catch (error) {
+                hideProgress();
+                alert(`❌ Error: ${error.message}\n\nPlease try again or contact support.`);
+            }
+        }
+
+        // Load custom voices on page load
+        loadCustomVoices();
+
         // Progress functions
         function showProgress(title, subtitle) {
             document.getElementById('progressTitle').textContent = title;
@@ -1561,11 +1754,31 @@
                 return;
             }
             
+            const voiceSelect = document.getElementById('audiobook-voice');
+            let voiceValue = voiceSelect.value;
+            
+            // If custom voice is selected, get the actual custom voice ID
+            if (voiceValue === 'custom') {
+                const customVoiceSelect = document.getElementById('audiobook-custom-voice-select');
+                const customVoiceId = customVoiceSelect.value;
+                
+                if (!customVoiceId) {
+                    alert('❌ Tanpri chwazi yon vwa koutim oswa kreye yon nouvo vwa');
+                    return;
+                }
+                
+                // Find the selected custom voice
+                const selectedVoice = customVoices.find(v => v.id === customVoiceId);
+                if (selectedVoice) {
+                    voiceValue = `custom:${customVoiceId}`;
+                }
+            }
+            
             showProgress('Creating audiobook...', 'Uploading and translating to Creole');
             
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('voice', document.getElementById('audiobook-voice').value);
+            formData.append('voice', voiceValue);
             
             try {
                 const response = await fetch('/api/audiobook', {
@@ -1580,10 +1793,15 @@
                 closeModal('audiobook');
                 
                 const wordCount = result.stats?.translated_words || result.stats?.word_count || 'N/A';
+                const voiceName = voiceValue.startsWith('custom:') ? 
+                    customVoices.find(v => v.id === voiceValue.split(':')[1])?.name || 'Custom Voice' :
+                    voiceValue === 'creole-native' ? 'Kreyòl Natif' : 'Google TTS';
+                
                 alert(`🎉 Audiobook created!
 
 📄 Translation: ${result.files.translation || 'N/A'}
 🎧 Audio: ${result.files.audio}
+🎤 Voice: ${voiceName}
 
 Words: ${wordCount}`);
                 
