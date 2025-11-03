@@ -1,0 +1,28 @@
+# 🔥 FANER STUDIO - ENVIRONMENT VARIABLES
+# Copy this file to .env and fill in your values
+
+# ============================================================
+# SUPABASE DATABASE
+# ============================================================
+DATABASE_URL=postgresql://postgres.afevjejftatumujdkxwz:[YOUR-PASSWORD]@aws-0-us-east-1.pooler.supabase.com:6543/postgres
+
+# ============================================================
+# AUTHENTICATION
+# ============================================================
+SECRET_KEY=faner-studio-super-secret-key-change-in-production-2025
+
+# ============================================================
+# API KEYS
+# ============================================================
+HUGGINGFACE_API_KEY=your-huggingface-key-here
+
+# ============================================================
+# CORS & SECURITY
+# ============================================================
+ALLOWED_ORIGINS=*
+
+# ============================================================
+# ENVIRONMENT
+# ============================================================
+ENVIRONMENT=production
+
