@@ -33,6 +33,43 @@ try:
 except ImportError:
     DB_ENABLED = False
     print("⚠️  Database not available. Running without DB support.")
+    # Define dummy models when DB not available
+    class UserResponse(BaseModel):
+        id: int
+        username: str
+        email: str
+        full_name: Optional[str] = None
+        is_active: bool = True
+    
+    class Token(BaseModel):
+        access_token: str
+        token_type: str
+    
+    class UserRegister(BaseModel):
+        username: str
+        email: str
+        password: str
+        full_name: Optional[str] = None
+    
+    class UserLogin(BaseModel):
+        username: str
+        password: str
+    
+    # Dummy functions
+    def get_db():
+        return None
+    
+    def init_db():
+        pass
+    
+    def get_current_user():
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    def get_current_active_user():
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    def optional_auth():
+        return None
 
 # Import performance utilities
 try:
