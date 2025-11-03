@@ -185,6 +185,9 @@ class AdvancedPodcastRequest(BaseModel):
 async def root():
     """Serve main interface"""
     
+    # Check if accessing admin dashboard
+    # This would need more sophisticated routing in production
+    
     # Try to serve app_studio_dark.html
     studio_html = Path("projet_kreyol_IA/app_studio_dark.html")
     if studio_html.exists():
@@ -300,6 +303,15 @@ async def root():
     </body>
     </html>
     """)
+
+@app.get("/admin", response_class=HTMLResponse)
+async def admin_dashboard():
+    """Serve admin dashboard"""
+    admin_html = Path("admin_dashboard.html")
+    if admin_html.exists():
+        return FileResponse(admin_html)
+    else:
+        raise HTTPException(status_code=404, detail="Admin dashboard not found")
 
 @app.get("/health")
 async def health_check():
@@ -489,6 +501,289 @@ async def get_my_voices(
         "status": "success",
         "total": len(voices),
         "voices": voices
+    }
+
+# ============================================================
+# ADMIN API
+# ============================================================
+
+@app.get("/api/admin/stats")
+async def get_admin_stats(
+    current_user = Depends(get_current_active_user),
+    db = Depends(get_db)
+):
+    """
+    📊 Get admin statistics
+    
+    Admin-only endpoint for dashboard statistics
+    """
+    if not DB_ENABLED:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    
+    from datetime import datetime, timedelta
+    from database import User, Project, CustomVoice, ActivityLog
+    
+    # Get counts
+    total_users = db.query(User).count()
+    total_projects = db.query(Project).count()
+    total_voices = db.query(CustomVoice).count()
+    
+    # Get weekly stats
+    week_ago = datetime.utcnow() - timedelta(days=7)
+    users_this_week = db.query(User).filter(User.created_at >= week_ago).count()
+    projects_this_week = db.query(Project).filter(Project.created_at >= week_ago).count()
+    voices_this_week = db.query(CustomVoice).filter(CustomVoice.created_at >= week_ago).count()
+    
+    return {
+        "status": "success",
+        "total_users": total_users,
+        "total_projects": total_projects,
+        "total_voices": total_voices,
+        "users_this_week": users_this_week,
+        "projects_this_week": projects_this_week,
+        "voices_this_week": voices_this_week,
+        "timestamp": datetime.utcnow().isoformat()
+    }
+
+@app.get("/api/admin/users")
+async def get_all_users(
+    limit: int = 100,
+    offset: int = 0,
+    current_user = Depends(get_current_active_user),
+    db = Depends(get_db)
+):
+    """
+    👥 Get all users (Admin only)
+    
+    List all users in the system
+    """
+    if not DB_ENABLED:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    
+    from database import User
+    
+    users = db.query(User).order_by(User.created_at.desc()).offset(offset).limit(limit).all()
+    total = db.query(User).count()
+    
+    return {
+        "status": "success",
+        "total": total,
+        "users": [
+            {
+                "id": user.id,
+                "username": user.username,
+                "email": user.email,
+                "full_name": user.full_name,
+                "is_active": user.is_active,
+                "is_admin": user.is_admin,
+                "created_at": user.created_at.isoformat(),
+                "last_login": user.last_login.isoformat() if user.last_login else None
+            }
+            for user in users
+        ]
+    }
+
+@app.get("/api/admin/projects")
+async def get_all_projects(
+    limit: int = 100,
+    offset: int = 0,
+    current_user = Depends(get_current_active_user),
+    db = Depends(get_db)
+):
+    """
+    📁 Get all projects (Admin only)
+    
+    List all projects in the system
+    """
+    if not DB_ENABLED:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    
+    from database import Project
+    
+    projects = db.query(Project).order_by(Project.created_at.desc()).offset(offset).limit(limit).all()
+    total = db.query(Project).count()
+    
+    return {
+        "status": "success",
+        "total": total,
+        "projects": [
+            {
+                "id": project.id,
+                "user_id": project.user_id,
+                "project_type": project.project_type,
+                "title": project.title,
+                "description": project.description,
+                "status": project.status,
+                "progress": project.progress,
+                "created_at": project.created_at.isoformat(),
+                "updated_at": project.updated_at.isoformat(),
+                "completed_at": project.completed_at.isoformat() if project.completed_at else None
+            }
+            for project in projects
+        ]
+    }
+
+@app.get("/api/admin/voices")
+async def get_all_voices(
+    limit: int = 100,
+    offset: int = 0,
+    current_user = Depends(get_current_active_user),
+    db = Depends(get_db)
+):
+    """
+    🎤 Get all custom voices (Admin only)
+    
+    List all custom voices in the system
+    """
+    if not DB_ENABLED:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    
+    from database import CustomVoice
+    
+    voices = db.query(CustomVoice).order_by(CustomVoice.created_at.desc()).offset(offset).limit(limit).all()
+    total = db.query(CustomVoice).count()
+    
+    return {
+        "status": "success",
+        "total": total,
+        "voices": [
+            {
+                "id": voice.id,
+                "user_id": voice.user_id,
+                "voice_id": voice.voice_id,
+                "voice_name": voice.voice_name,
+                "speaker_name": voice.speaker_name,
+                "language": voice.language,
+                "gender": voice.gender,
+                "times_used": voice.times_used,
+                "rating": voice.rating,
+                "is_public": voice.is_public,
+                "created_at": voice.created_at.isoformat()
+            }
+            for voice in voices
+        ]
+    }
+
+@app.put("/api/admin/user/{user_id}")
+async def update_user(
+    user_id: int,
+    is_active: Optional[bool] = None,
+    is_admin: Optional[bool] = None,
+    current_user = Depends(get_current_active_user),
+    db = Depends(get_db)
+):
+    """
+    ✏️ Update user (Admin only)
+    
+    Update user status or role
+    """
+    if not DB_ENABLED:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    
+    from database import User
+    
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    if is_active is not None:
+        user.is_active = is_active
+    if is_admin is not None:
+        user.is_admin = is_admin
+    
+    db.commit()
+    db.refresh(user)
+    
+    return {
+        "status": "success",
+        "message": f"User {user_id} updated",
+        "user": {
+            "id": user.id,
+            "username": user.username,
+            "is_active": user.is_active,
+            "is_admin": user.is_admin
+        }
+    }
+
+@app.delete("/api/admin/user/{user_id}")
+async def delete_user(
+    user_id: int,
+    current_user = Depends(get_current_active_user),
+    db = Depends(get_db)
+):
+    """
+    🗑️ Delete user (Admin only)
+    
+    Permanently delete a user and all their data
+    """
+    if not DB_ENABLED:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    
+    from database import User
+    
+    # Prevent deleting yourself
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Cannot delete your own account")
+    
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    db.delete(user)
+    db.commit()
+    
+    return {
+        "status": "success",
+        "message": f"User {user_id} deleted"
+    }
+
+@app.delete("/api/admin/project/{project_id}")
+async def delete_project(
+    project_id: int,
+    current_user = Depends(get_current_active_user),
+    db = Depends(get_db)
+):
+    """
+    🗑️ Delete project (Admin only)
+    
+    Permanently delete a project
+    """
+    if not DB_ENABLED:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    if not current_user.is_admin:
+        raise HTTPException(status_code=403, detail="Admin privileges required")
+    
+    from database import Project
+    
+    project = db.query(Project).filter(Project.id == project_id).first()
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    db.delete(project)
+    db.commit()
+    
+    return {
+        "status": "success",
+        "message": f"Project {project_id} deleted"
     }
 
 # ============================================================
