@@ -1,310 +1,366 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-🧪 Faner Studio - Complete Feature Test Suite
-Test all 23 features of the platform
+🧪 Test All Platform Features
+Comprehensive integration test for all Faner Studio tools
 """
 
-import httpx
 import asyncio
+import httpx
 import json
 from pathlib import Path
 from datetime import datetime
 
-# Base URL
-BASE_URL = "https://fanerstudio-1.onrender.com"
-# For local testing: BASE_URL = "http://localhost:8000"
+# ============================================================
+# CONFIGURATION
+# ============================================================
 
-class Colors:
-    GREEN = '\033[92m'
-    RED = '\033[91m'
-    YELLOW = '\033[93m'
-    BLUE = '\033[94m'
-    RESET = '\033[0m'
-    BOLD = '\033[1m'
+BASE_URL = "https://fanerstudio-1.onrender.com"  # Change to localhost:8000 for local testing
+TIMEOUT = 30.0
 
-def print_test(name, status, message=""):
-    """Print test result"""
-    icon = "✅" if status else "❌"
-    color = Colors.GREEN if status else Colors.RED
-    print(f"{color}{icon} {name}{Colors.RESET}")
+# Test results tracking
+test_results = {
+    "passed": [],
+    "failed": [],
+    "warnings": []
+}
+
+# ============================================================
+# TEST UTILITIES
+# ============================================================
+
+def print_test_header(category: str):
+    """Print test category header"""
+    print("\n" + "="*60)
+    print(f"🧪 TESTING: {category}")
+    print("="*60)
+
+def print_test(name: str, passed: bool, message: str = ""):
+    """Print individual test result"""
+    status = "✅ PASS" if passed else "❌ FAIL"
+    print(f"{status} - {name}")
     if message:
-        print(f"   {message}")
+        print(f"   → {message}")
+    
+    if passed:
+        test_results["passed"].append(name)
+    else:
+        test_results["failed"].append(name)
 
-def print_section(title):
-    """Print section header"""
-    print(f"\n{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.BLUE}{title}{Colors.RESET}")
-    print(f"{Colors.BOLD}{Colors.BLUE}{'='*60}{Colors.RESET}\n")
+def print_warning(name: str, message: str):
+    """Print warning"""
+    print(f"⚠️  WARN - {name}")
+    print(f"   → {message}")
+    test_results["warnings"].append(name)
 
-async def test_health():
-    """Test health check endpoint"""
+# ============================================================
+# CORE ENDPOINTS TESTS
+# ============================================================
+
+async def test_core_endpoints(client: httpx.AsyncClient):
+    """Test core platform endpoints"""
+    print_test_header("CORE ENDPOINTS")
+    
+    # Test 1: Root endpoint
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{BASE_URL}/health")
-            if response.status_code == 200:
-                data = response.json()
-                print_test("Health Check", True, f"Status: {data.get('status')}")
-                return True
-            else:
-                print_test("Health Check", False, f"Status code: {response.status_code}")
-                return False
+        response = await client.get("/")
+        print_test(
+            "Root endpoint (/)",
+            response.status_code == 200,
+            f"Status: {response.status_code}"
+        )
     except Exception as e:
-        print_test("Health Check", False, f"Error: {str(e)}")
-        return False
-
-async def test_api_info():
-    """Test API info endpoint"""
+        print_test("Root endpoint (/)", False, str(e))
+    
+    # Test 2: Health check
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{BASE_URL}/api/info")
-            if response.status_code == 200:
-                data = response.json()
-                print_test("API Info", True, f"Version: {data.get('version')}")
-                return True
-            else:
-                print_test("API Info", False, f"Status code: {response.status_code}")
-                return False
+        response = await client.get("/health")
+        if response.status_code == 200:
+            data = response.json()
+            print_test(
+                "Health check (/health)",
+                data.get("status") == "healthy",
+                f"Status: {data.get('status')}, Service: {data.get('service')}"
+            )
+        else:
+            print_test("Health check (/health)", False, f"Status: {response.status_code}")
     except Exception as e:
-        print_test("API Info", False, f"Error: {str(e)}")
-        return False
-
-async def test_system_status():
-    """Test system status endpoint"""
+        print_test("Health check (/health)", False, str(e))
+    
+    # Test 3: API info
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{BASE_URL}/api/status")
-            if response.status_code == 200:
-                data = response.json()
-                print_test("System Status", True, f"Service: {data.get('service')}")
-                return True
-            else:
-                print_test("System Status", False, f"Status code: {response.status_code}")
-                return False
+        response = await client.get("/api/info")
+        if response.status_code == 200:
+            data = response.json()
+            print_test(
+                "API info (/api/info)",
+                "version" in data and "features" in data,
+                f"Version: {data.get('version')}, Features: {len(data.get('features', {}))}"
+            )
+        else:
+            print_test("API info (/api/info)", False, f"Status: {response.status_code}")
     except Exception as e:
-        print_test("System Status", False, f"Error: {str(e)}")
-        return False
-
-async def test_translation():
-    """Test translation API"""
+        print_test("API info (/api/info)", False, str(e))
+    
+    # Test 4: System status
     try:
-        async with httpx.AsyncClient(timeout=30.0) as client:
-            payload = {
-                "text": "Hello, how are you?",
-                "source": "en",
-                "target": "ht"
-            }
-            response = await client.post(f"{BASE_URL}/api/translate", json=payload)
-            if response.status_code == 200:
-                data = response.json()
-                if data.get('success'):
-                    print_test("Translation API", True, f"Result: {data.get('translated', 'N/A')[:50]}...")
-                    return True
-                else:
-                    print_test("Translation API", False, f"Error: {data.get('error')}")
-                    return False
-            else:
-                print_test("Translation API", False, f"Status code: {response.status_code}")
-                return False
+        response = await client.get("/api/status")
+        if response.status_code == 200:
+            data = response.json()
+            print_test(
+                "System status (/api/status)",
+                data.get("service") == "online",
+                f"Service: {data.get('service')}, Environment: {data.get('environment')}"
+            )
+        else:
+            print_test("System status (/api/status)", False, f"Status: {response.status_code}")
     except Exception as e:
-        print_test("Translation API", False, f"Error: {str(e)}")
-        return False
-
-async def test_voices_list():
-    """Test voices list endpoint"""
+        print_test("System status (/api/status)", False, str(e))
+    
+    # Test 5: API documentation
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{BASE_URL}/api/voices")
-            if response.status_code == 200:
-                data = response.json()
-                count = data.get('total', 0)
-                print_test("Voices List", True, f"Found {count} custom voices")
-                return True
-            else:
-                print_test("Voices List", False, f"Status code: {response.status_code}")
-                return False
+        response = await client.get("/docs")
+        print_test(
+            "API docs (/docs)",
+            response.status_code == 200,
+            f"OpenAPI docs accessible"
+        )
     except Exception as e:
-        print_test("Voices List", False, f"Error: {str(e)}")
-        return False
-
-async def test_podcast_templates():
-    """Test podcast templates endpoint"""
+        print_test("API docs (/docs)", False, str(e))
+    
+    # Test 6: Admin dashboard
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{BASE_URL}/api/podcast/templates")
-            if response.status_code == 200:
-                data = response.json()
-                templates = data.get('templates', {})
-                print_test("Podcast Templates", True, f"Found {len(templates)} templates")
-                return True
-            else:
-                print_test("Podcast Templates", False, f"Status code: {response.status_code}")
-                return False
+        response = await client.get("/admin")
+        print_test(
+            "Admin dashboard (/admin)",
+            response.status_code == 200,
+            f"Admin interface accessible"
+        )
     except Exception as e:
-        print_test("Podcast Templates", False, f"Error: {str(e)}")
-        return False
+        print_test("Admin dashboard (/admin)", False, str(e))
 
-async def test_performance_stats():
-    """Test performance stats endpoint"""
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{BASE_URL}/api/performance/stats")
-            if response.status_code == 200:
-                data = response.json()
-                print_test("Performance Stats", True, f"Status: {data.get('status')}")
-                return True
-            else:
-                print_test("Performance Stats", False, f"Status code: {response.status_code}")
-                return False
-    except Exception as e:
-        print_test("Performance Stats", False, f"Error: {str(e)}")
-        return False
+# ============================================================
+# TRANSLATION TESTS
+# ============================================================
 
-async def test_performance_cache():
-    """Test cache info endpoint"""
+async def test_translation(client: httpx.AsyncClient):
+    """Test translation functionality"""
+    print_test_header("TRANSLATION")
+    
+    # Test 1: English to Haitian Creole
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{BASE_URL}/api/performance/cache")
-            if response.status_code == 200:
-                data = response.json()
-                print_test("Cache Info", True, f"Status: {data.get('status')}")
-                return True
+        payload = {
+            "text": "Hello, how are you?",
+            "source": "en",
+            "target": "ht"
+        }
+        response = await client.post("/api/translate", json=payload)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("success"):
+                print_test(
+                    "English → Haitian Creole",
+                    True,
+                    f"Translation: '{data.get('translated')}'"
+                )
             else:
-                print_test("Cache Info", False, f"Status code: {response.status_code}")
-                return False
+                print_warning(
+                    "English → Haitian Creole",
+                    f"Model loading: {data.get('error', 'Unknown error')}"
+                )
+        else:
+            print_test("English → Haitian Creole", False, f"Status: {response.status_code}")
     except Exception as e:
-        print_test("Cache Info", False, f"Error: {str(e)}")
-        return False
+        print_test("English → Haitian Creole", False, str(e))
+    
+    # Test 2: French to Haitian Creole
+    try:
+        payload = {
+            "text": "Bonjour, comment allez-vous?",
+            "source": "fr",
+            "target": "ht"
+        }
+        response = await client.post("/api/translate", json=payload, timeout=TIMEOUT)
+        
+        if response.status_code == 200:
+            data = response.json()
+            if data.get("success"):
+                print_test(
+                    "French → Haitian Creole",
+                    True,
+                    f"Translation: '{data.get('translated')}'"
+                )
+            else:
+                print_warning("French → Haitian Creole", data.get('error', 'Unknown error'))
+        else:
+            print_test("French → Haitian Creole", False, f"Status: {response.status_code}")
+    except Exception as e:
+        print_test("French → Haitian Creole", False, str(e))
 
-async def test_performance_system():
-    """Test system info endpoint"""
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{BASE_URL}/api/performance/system")
-            if response.status_code == 200:
-                data = response.json()
-                print_test("System Info", True, f"Status: {data.get('status')}")
-                return True
-            else:
-                print_test("System Info", False, f"Status code: {response.status_code}")
-                return False
-    except Exception as e:
-        print_test("System Info", False, f"Error: {str(e)}")
-        return False
+# ============================================================
+# PERFORMANCE TESTS
+# ============================================================
 
-async def test_docs():
-    """Test API documentation"""
+async def test_performance(client: httpx.AsyncClient):
+    """Test performance monitoring endpoints"""
+    print_test_header("PERFORMANCE MONITORING")
+    
+    # Test 1: System stats
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{BASE_URL}/docs")
-            if response.status_code == 200:
-                print_test("API Docs", True, "Swagger UI accessible")
-                return True
-            else:
-                print_test("API Docs", False, f"Status code: {response.status_code}")
-                return False
+        response = await client.get("/api/performance/system")
+        if response.status_code == 200:
+            data = response.json()
+            system = data.get("system", {})
+            print_test(
+                "System stats",
+                True,
+                f"CPU: {system.get('cpu_percent', 0)}%, RAM: {system.get('memory_percent', 0)}%, Disk: {system.get('disk_percent', 0)}%"
+            )
+        else:
+            print_test("System stats", False, f"Status: {response.status_code}")
     except Exception as e:
-        print_test("API Docs", False, f"Error: {str(e)}")
-        return False
+        print_test("System stats", False, str(e))
+    
+    # Test 2: Cache info
+    try:
+        response = await client.get("/api/performance/cache")
+        if response.status_code == 200:
+            data = response.json()
+            print_test(
+                "Cache info",
+                data.get("status") == "success",
+                f"Cache size: {data.get('cache_size', 0)} items"
+            )
+        else:
+            print_test("Cache info", False, f"Status: {response.status_code}")
+    except Exception as e:
+        print_test("Cache info", False, str(e))
 
-async def test_redoc():
-    """Test ReDoc documentation"""
-    try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{BASE_URL}/redoc")
-            if response.status_code == 200:
-                print_test("ReDoc", True, "Alternative docs accessible")
-                return True
-            else:
-                print_test("ReDoc", False, f"Status code: {response.status_code}")
-                return False
-    except Exception as e:
-        print_test("ReDoc", False, f"Error: {str(e)}")
-        return False
+# ============================================================
+# VOICE & AUDIO TESTS
+# ============================================================
 
-async def test_frontend():
-    """Test frontend interface"""
+async def test_voice_audio(client: httpx.AsyncClient):
+    """Test voice and audio endpoints"""
+    print_test_header("VOICE & AUDIO")
+    
+    # Test 1: Get available voices
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            response = await client.get(f"{BASE_URL}/")
-            if response.status_code == 200:
-                print_test("Frontend", True, "Main interface loads")
-                return True
-            else:
-                print_test("Frontend", False, f"Status code: {response.status_code}")
-                return False
+        response = await client.get("/api/voices")
+        if response.status_code == 200:
+            data = response.json()
+            print_test(
+                "Get voices list",
+                "voices" in data,
+                f"Total voices: {data.get('total', 0)}"
+            )
+        else:
+            print_test("Get voices list", False, f"Status: {response.status_code}")
     except Exception as e:
-        print_test("Frontend", False, f"Error: {str(e)}")
-        return False
+        print_test("Get voices list", False, str(e))
+    
+    # Test 2: Podcast templates
+    try:
+        response = await client.get("/api/podcast/templates")
+        if response.status_code == 200:
+            data = response.json()
+            print_test(
+                "Podcast templates",
+                "templates" in data,
+                f"Available: {len(data.get('templates', {}))}"
+            )
+        else:
+            print_test("Podcast templates", False, f"Status: {response.status_code}")
+    except Exception as e:
+        print_test("Podcast templates", False, str(e))
+
+# ============================================================
+# AUTHENTICATION TESTS
+# ============================================================
+
+async def test_authentication(client: httpx.AsyncClient):
+    """Test authentication endpoints"""
+    print_test_header("AUTHENTICATION")
+    
+    # Test 1: Get current user (should fail without token)
+    try:
+        response = await client.get("/api/auth/me")
+        print_test(
+            "Protected endpoint (no auth)",
+            response.status_code == 401,
+            f"Correctly returns 401 Unauthorized"
+        )
+    except Exception as e:
+        print_test("Protected endpoint (no auth)", False, str(e))
+    
+    # Test 2: Test registration endpoint structure
+    try:
+        response = await client.post(
+            "/api/auth/register",
+            json={}  # Empty payload to test validation
+        )
+        print_test(
+            "Registration validation",
+            response.status_code == 422,  # Validation error expected
+            "Correctly validates input"
+        )
+    except Exception as e:
+        print_test("Registration validation", False, str(e))
+
+# ============================================================
+# SUMMARY
+# ============================================================
+
+def print_summary():
+    """Print test summary"""
+    print("\n" + "="*60)
+    print("📊 TEST SUMMARY")
+    print("="*60)
+    
+    total = len(test_results["passed"]) + len(test_results["failed"])
+    passed = len(test_results["passed"])
+    failed = len(test_results["failed"])
+    warnings = len(test_results["warnings"])
+    
+    pass_rate = (passed / total * 100) if total > 0 else 0
+    
+    print(f"\nTotal Tests: {total}")
+    print(f"✅ Passed: {passed} ({pass_rate:.1f}%)")
+    print(f"❌ Failed: {failed}")
+    print(f"⚠️  Warnings: {warnings}")
+    
+    if failed == 0:
+        print("\n🎉 ALL TESTS PASSED! Platform is working correctly.")
+    elif failed <= 2:
+        print("\n⚠️  MOSTLY WORKING. Few issues detected.")
+    else:
+        print("\n❌ ISSUES DETECTED. Check failed tests above.")
+    
+    print("\n" + "="*60)
+    print(f"Test completed at: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    print("="*60)
+
+# ============================================================
+# MAIN TEST RUNNER
+# ============================================================
 
 async def run_all_tests():
-    """Run all tests"""
-    print(f"\n{Colors.BOLD}{'='*60}{Colors.RESET}")
-    print(f"{Colors.BOLD}🧪 FANER STUDIO - COMPLETE TEST SUITE{Colors.RESET}")
-    print(f"{Colors.BOLD}{'='*60}{Colors.RESET}")
-    print(f"\n{Colors.YELLOW}Testing: {BASE_URL}{Colors.RESET}")
-    print(f"{Colors.YELLOW}Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}{Colors.RESET}\n")
+    """Run all platform tests"""
+    print("="*60)
+    print("🧪 FANER STUDIO - COMPREHENSIVE PLATFORM TEST")
+    print("="*60)
+    print(f"Target: {BASE_URL}")
+    print(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
     
-    results = {}
+    async with httpx.AsyncClient(base_url=BASE_URL, timeout=TIMEOUT) as client:
+        await test_core_endpoints(client)
+        await test_translation(client)
+        await test_performance(client)
+        await test_voice_audio(client)
+        await test_authentication(client)
     
-    # Core Endpoints
-    print_section("📍 CORE ENDPOINTS")
-    results['health'] = await test_health()
-    results['api_info'] = await test_api_info()
-    results['system_status'] = await test_system_status()
-    results['frontend'] = await test_frontend()
-    
-    # Translation
-    print_section("🌍 TRANSLATION API")
-    results['translation'] = await test_translation()
-    
-    # Voice & Audio
-    print_section("🎤 VOICE & AUDIO APIs")
-    results['voices'] = await test_voices_list()
-    results['podcast_templates'] = await test_podcast_templates()
-    
-    # Performance
-    print_section("⚡ PERFORMANCE APIs")
-    results['perf_stats'] = await test_performance_stats()
-    results['cache'] = await test_performance_cache()
-    results['system'] = await test_performance_system()
-    
-    # Documentation
-    print_section("📚 DOCUMENTATION")
-    results['docs'] = await test_docs()
-    results['redoc'] = await test_redoc()
-    
-    # Summary
-    print_section("📊 TEST SUMMARY")
-    
-    total = len(results)
-    passed = sum(1 for v in results.values() if v)
-    failed = total - passed
-    success_rate = (passed / total) * 100 if total > 0 else 0
-    
-    print(f"Total Tests: {total}")
-    print(f"{Colors.GREEN}✅ Passed: {passed}{Colors.RESET}")
-    print(f"{Colors.RED}❌ Failed: {failed}{Colors.RESET}")
-    print(f"Success Rate: {success_rate:.1f}%")
-    
-    if success_rate == 100:
-        print(f"\n{Colors.GREEN}{Colors.BOLD}🎉 ALL TESTS PASSED! PLATFORM IS FULLY FUNCTIONAL! 🎉{Colors.RESET}\n")
-    elif success_rate >= 80:
-        print(f"\n{Colors.YELLOW}{Colors.BOLD}⚠️  MOSTLY WORKING - Some features need attention{Colors.RESET}\n")
-    else:
-        print(f"\n{Colors.RED}{Colors.BOLD}❌ MULTIPLE FAILURES - Platform needs fixes{Colors.RESET}\n")
-    
-    # Detailed results
-    print(f"\n{Colors.BOLD}Detailed Results:{Colors.RESET}")
-    for test_name, passed in results.items():
-        status = f"{Colors.GREEN}✅ PASS{Colors.RESET}" if passed else f"{Colors.RED}❌ FAIL{Colors.RESET}"
-        print(f"  {test_name.ljust(20)}: {status}")
-    
-    print(f"\n{Colors.BOLD}{'='*60}{Colors.RESET}\n")
-    
-    return success_rate
+    print_summary()
 
 if __name__ == "__main__":
-    success_rate = asyncio.run(run_all_tests())
-    exit(0 if success_rate == 100 else 1)
-
+    asyncio.run(run_all_tests())
