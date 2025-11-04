@@ -27,3 +27,7 @@ python-dotenv==1.0.0
 # CORS
 starlette==0.35.1
 
+# Database - Supabase
+supabase==2.3.0
+postgrest==0.13.0
+
