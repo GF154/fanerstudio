@@ -146,10 +146,8 @@ async def test_endpoint():
 
 
 # ============================================================
-# VERCEL HANDLER - ASGI Application
+# VERCEL HANDLER - Direct ASGI Application
 # ============================================================
 
-# Vercel needs an ASGI app
-from mangum import Mangum
-
-handler = Mangum(app)
+# Vercel can handle FastAPI directly
+app = app
