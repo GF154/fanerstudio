@@ -146,8 +146,10 @@ async def test_endpoint():
 
 
 # ============================================================
-# VERCEL HANDLER
+# VERCEL HANDLER - ASGI Application
 # ============================================================
 
-# This is what Vercel will call
-handler = app
+# Vercel needs an ASGI app
+from mangum import Mangum
+
+handler = Mangum(app)
