@@ -1395,6 +1395,258 @@ async def get_podcast_templates():
         }
 
 # ============================================================
+# PROFESSIONAL AUDIO MANAGEMENT SYSTEM
+# ============================================================
+
+# Import audio management system
+try:
+    from audio_manager import audio_manager, AudioFile
+    from audio_processor import audio_processor
+    from audio_metadata import metadata_extractor
+    AUDIO_SYSTEM_ENABLED = True
+except ImportError:
+    AUDIO_SYSTEM_ENABLED = False
+    print("⚠️  Audio Management System not available")
+
+if AUDIO_SYSTEM_ENABLED:
+    @app.post("/api/audio/store")
+    async def store_audio_file(
+        file: UploadFile = File(...),
+        project_type: str = Form("general"),
+        tags: str = Form(""),
+        current_user = Depends(optional_auth)
+    ):
+        """
+        📥 Store audio file with metadata
+        Sove fichye odyo ak metadata
+        """
+        # Save uploaded file temporarily
+        temp_path = Path("temp_uploads") / file.filename
+        temp_path.parent.mkdir(exist_ok=True)
+        
+        content = await file.read()
+        temp_path.write_bytes(content)
+        
+        try:
+            # Get user ID if authenticated
+            user_id = str(current_user.id) if current_user else None
+            
+            # Store with audio manager
+            audio_file = audio_manager.store_audio(
+                audio_path=temp_path,
+                project_type=project_type,
+                user_id=user_id,
+                tags=tags.split(",") if tags else [],
+                is_public=False
+            )
+            
+            # Clean up temp file
+            temp_path.unlink()
+            
+            return {
+                "status": "success",
+                "message": "✅ Audio stored successfully!",
+                "audio": audio_file.to_dict()
+            }
+        except Exception as e:
+            if temp_path.exists():
+                temp_path.unlink()
+            raise HTTPException(500, str(e))
+    
+    
+    @app.get("/api/audio/{file_id}")
+    async def get_audio_file(file_id: str):
+        """
+        🎵 Get audio file info
+        Jwenn enfòmasyon sou fichye odyo
+        """
+        audio = audio_manager.get_audio(file_id)
+        if not audio:
+            raise HTTPException(404, "Audio not found")
+        
+        return audio.to_dict()
+    
+    
+    @app.get("/api/audio/{file_id}/metadata")
+    async def get_audio_metadata(file_id: str):
+        """
+        📊 Get detailed audio metadata
+        Jwenn metadata detaye sou odyo
+        """
+        audio = audio_manager.get_audio(file_id)
+        if not audio:
+            raise HTTPException(404, "Audio not found")
+        
+        # Extract detailed metadata
+        metadata = metadata_extractor.extract(Path(audio.file_path))
+        
+        return metadata.to_dict()
+    
+    
+    @app.get("/api/my-audios")
+    async def list_my_audios(
+        project_type: Optional[str] = None,
+        current_user = Depends(get_current_user)
+    ):
+        """
+        📂 List user's audio files
+        Lis tout fichye odyo itilizatè a
+        """
+        audios = audio_manager.list_audios(
+            project_type=project_type,
+            user_id=str(current_user.id),
+            limit=100
+        )
+        
+        return {
+            "audios": [a.to_dict() for a in audios],
+            "count": len(audios)
+        }
+    
+    
+    @app.delete("/api/audio/{file_id}")
+    async def delete_audio(
+        file_id: str,
+        current_user = Depends(get_current_user)
+    ):
+        """
+        🗑️ Delete audio file
+        Efase fichye odyo
+        """
+        audio = audio_manager.get_audio(file_id)
+        if not audio:
+            raise HTTPException(404, "Audio not found")
+        
+        # Check ownership
+        if audio.created_by != str(current_user.id) and not current_user.is_admin:
+            raise HTTPException(403, "Not authorized")
+        
+        success = audio_manager.delete_audio(file_id)
+        
+        return {
+            "status": "success" if success else "failed",
+            "message": "Audio deleted" if success else "Failed to delete"
+        }
+    
+    
+    @app.post("/api/audio/{file_id}/process")
+    async def process_audio(
+        file_id: str,
+        action: str = Form(...),  # normalize, remove_silence, optimize_web, convert
+        output_format: Optional[str] = Form(None),
+        current_user = Depends(optional_auth)
+    ):
+        """
+        ⚙️ Process audio file
+        Trete fichye odyo
+        
+        Actions:
+        - normalize: Normalize volume
+        - remove_silence: Remove silent parts
+        - optimize_web: Optimize for streaming
+        - convert: Convert format
+        """
+        audio = audio_manager.get_audio(file_id)
+        if not audio:
+            raise HTTPException(404, "Audio not found")
+        
+        input_path = Path(audio.file_path)
+        
+        try:
+            if action == "normalize":
+                output_path = audio_processor.normalize_audio(input_path)
+            elif action == "remove_silence":
+                output_path = audio_processor.remove_silence(input_path)
+            elif action == "optimize_web":
+                output_path = audio_processor.optimize_for_web(input_path)
+            elif action == "convert":
+                if not output_format:
+                    raise HTTPException(400, "output_format required for convert")
+                output_path = audio_processor.convert_format(input_path, output_format)
+            else:
+                raise HTTPException(400, f"Unknown action: {action}")
+            
+            # Store processed audio
+            user_id = str(current_user.id) if current_user else audio.created_by
+            processed_audio = audio_manager.store_audio(
+                audio_path=output_path,
+                project_type=audio.project_type,
+                user_id=user_id,
+                tags=audio.tags + [f"processed_{action}"],
+                is_public=audio.is_public
+            )
+            
+            return {
+                "status": "success",
+                "original": audio.to_dict(),
+                "processed": processed_audio.to_dict()
+            }
+        
+        except Exception as e:
+            raise HTTPException(500, str(e))
+    
+    
+    @app.get("/api/audio/stats")
+    async def get_audio_stats():
+        """
+        📈 Get storage statistics
+        Jwenn estatistik depo
+        """
+        stats = audio_manager.get_storage_stats()
+        return stats
+    
+    
+    @app.post("/api/audio/cleanup")
+    async def cleanup_temp_files(
+        older_than_hours: int = 24,
+        current_user = Depends(get_current_user)
+    ):
+        """
+        🧹 Cleanup old temporary files (Admin only)
+        Netwaye fichye tanporè
+        """
+        # Check if admin
+        if not current_user.is_admin:
+            raise HTTPException(403, "Admin access required")
+        
+        deleted = audio_manager.cleanup_temp_files(older_than_hours)
+        
+        return {
+            "status": "success",
+            "deleted_files": deleted
+        }
+    
+    
+    @app.get("/audio/{file_path:path}")
+    async def serve_audio(file_path: str):
+        """
+        🎧 Serve audio file
+        Sèvi fichye odyo
+        """
+        full_path = audio_manager.base_dir / file_path
+        if not full_path.exists():
+            raise HTTPException(404, "Audio not found")
+        
+        return FileResponse(
+            full_path,
+            media_type="audio/mpeg",
+            headers={"Accept-Ranges": "bytes"}
+        )
+    
+    
+    @app.get("/player")
+    async def audio_player(audio: Optional[str] = None):
+        """
+        🎵 Audio player page
+        Paj jwè odyo
+        """
+        player_html = Path("templates/audio_player.html")
+        if not player_html.exists():
+            raise HTTPException(404, "Audio player not found")
+        
+        return HTMLResponse(content=player_html.read_text())
+
+# ============================================================
 # ERROR HANDLERS
 # ============================================================
 
