@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "main.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "main.py"
+    }
+  ],
+  "env": {
+    "PYTHON_VERSION": "3.11",
+    "DATABASE_URL": "@database_url",
+    "SECRET_KEY": "@secret_key",
+    "HUGGINGFACE_API_KEY": "@huggingface_api_key",
+    "OPENAI_API_KEY": "@openai_api_key",
+    "ELEVENLABS_API_KEY": "@elevenlabs_api_key",
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_KEY": "@supabase_key"
+  },
+  "build": {
+    "env": {
+      "PYTHONUNBUFFERED": "1"
+    }
+  },
+  "functions": {
+    "main.py": {
+      "memory": 3008,
+      "maxDuration": 300
+    }
+  }
+}
+

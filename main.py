@@ -315,21 +315,33 @@ async def admin_dashboard():
 
 @app.get("/health")
 async def health_check():
-    """Health check endpoint"""
-    return {
-        "status": "healthy",
+    """Health check endpoint with detailed status"""
+    from environment_validator import check_deployment_readiness
+    
+    # Check deployment readiness
+    readiness = check_deployment_readiness()
+    
+    status = {
+        "status": "healthy" if readiness["ready"] else "degraded",
         "service": "Faner Studio Complete",
-        "version": "3.0.0",
+        "version": "3.2.0",
         "deployment": "Unified Platform",
+        "timestamp": datetime.utcnow().isoformat(),
         "features": {
             "translation": "active",
-            "audio_tools": "active",
+            "audio_tools": "active" if readiness["checks"]["tts_available"] else "degraded",
             "video_tools": "ready",
             "music_ai": "ready",
             "api": "active",
-            "auto_deploy": "active"
-        }
+            "auto_deploy": "active",
+            "database": "active" if DB_ENABLED else "disabled",
+            "performance": "active" if PERF_ENABLED else "disabled"
+        },
+        "checks": readiness["checks"],
+        "warnings": readiness["warnings"][:5] if readiness["warnings"] else []
     }
+    
+    return status
 
 @app.get("/api/info")
 async def api_info():

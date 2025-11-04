@@ -1,0 +1,85 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Local development
+.env
+.env.local
+*.log
+
+# Output directories (large files)
+output/
+temp_uploads/
+custom_voices/
+audio_library/music/*.mp3
+audio_library/sfx/*.mp3
+audio_library/jingles/*.mp3
+
+# Database
+*.db
+*.db-journal
+data/*.db
+
+# Test files
+test_*.mp3
+test_*.wav
+test_output.*
+
+# Documentation builds
+docs/_build/
+
+# Render specific
+.render/
+
+# Deployment files (keep on GitHub, ignore on Vercel)
+render.yaml
+Procfile
+runtime.txt
+
+# Old files
+*.bak
+*_OLD.*
+main_OLD.py
+
+# Large files
+*.zip
+*.tar.gz
+*.7z
+

@@ -14,6 +14,9 @@ import json
 import re
 import uuid
 from datetime import datetime
+import logging
+
+logger = logging.getLogger('KreyolAI.PodcastFabric')
 
 # ============================================================
 # ENUMS & CONSTANTS
@@ -361,18 +364,69 @@ class AdvancedPodcastGenerator:
         dialogue_idx: int
     ) -> Dict:
         """Generate audio for single dialogue line"""
-        # This would integrate with TTS service
-        # For now, return placeholder
+        import sys
+        from pathlib import Path as PathLib
         
         filename = f"seg{segment_idx}_dlg{dialogue_idx}_{speaker.id}.mp3"
         output_file = self.output_dir / filename
         
-        # TODO: Integrate with TTS service
-        # - Apply speaker voice
-        # - Apply emotion
-        # - Apply pitch/speed/volume
-        # - Add sound effects
-        # - Add pauses
+        try:
+            # Import TTS service
+            sys.path.insert(0, str(PathLib(__file__).parent))
+            from generer_audio_huggingface import generer_audio_creole
+            
+            # Generate basic audio
+            generer_audio_creole(dialogue.text, str(output_file))
+            
+            # Apply voice modifications if pydub available
+            try:
+                from pydub import AudioSegment
+                from pydub.effects import speedup
+                
+                audio = AudioSegment.from_file(str(output_file))
+                
+                # Apply pitch shift
+                if speaker.pitch != 1.0:
+                    # Change pitch by changing frame rate
+                    new_sample_rate = int(audio.frame_rate * speaker.pitch)
+                    audio = audio._spawn(audio.raw_data, overrides={
+                        "frame_rate": new_sample_rate
+                    })
+                    audio = audio.set_frame_rate(audio.frame_rate)
+                
+                # Apply speed
+                if speaker.speed != 1.0:
+                    if speaker.speed > 1.0:
+                        audio = speedup(audio, playback_speed=speaker.speed)
+                    elif speaker.speed < 1.0:
+                        # Slow down by stretching
+                        audio = audio._spawn(
+                            audio.raw_data,
+                            overrides={"frame_rate": int(audio.frame_rate * speaker.speed)}
+                        ).set_frame_rate(audio.frame_rate)
+                
+                # Apply volume
+                if speaker.volume != 1.0:
+                    db_change = 20 * (speaker.volume - 1.0)
+                    audio = audio.apply_gain(db_change)
+                
+                # Add pause after
+                if dialogue.pause_after > 0:
+                    silence = AudioSegment.silent(duration=int(dialogue.pause_after * 1000))
+                    audio = audio + silence
+                
+                # Export modified audio
+                audio.export(str(output_file), format="mp3")
+                
+                actual_duration = len(audio) / 1000.0
+            except ImportError:
+                # No pydub, use estimated duration
+                actual_duration = len(dialogue.text) / 15.0 + dialogue.pause_after
+        
+        except Exception as e:
+            logger.error(f"Failed to generate dialogue audio: {e}")
+            # Create placeholder data
+            actual_duration = len(dialogue.text) / 15.0 + dialogue.pause_after
         
         return {
             "type": "dialogue",
@@ -380,7 +434,7 @@ class AdvancedPodcastGenerator:
             "text": dialogue.text,
             "emotion": dialogue.emotion.value if dialogue.emotion else speaker.emotion.value,
             "file": str(output_file),
-            "duration": len(dialogue.text) / 15.0,  # Estimate: 15 chars/second
+            "duration": actual_duration,
             "sound_effect": dialogue.sound_effect.value if dialogue.sound_effect else None
         }
     
@@ -390,18 +444,32 @@ class AdvancedPodcastGenerator:
         duration: float
     ) -> Optional[Dict]:
         """Add background music to segment"""
-        # This would integrate with music library
-        # For now, return placeholder
+        import sys
+        from pathlib import Path as PathLib
         
-        music_file = self.output_dir / f"music_{segment.background_music.value}.mp3"
+        try:
+            # Import music library
+            sys.path.insert(0, str(PathLib(__file__).parent))
+            from audio_library import MusicLibrary
+            
+            library = MusicLibrary()
+            music_file = library.get_music(segment.background_music.value)
+            
+            if not music_file or not music_file.exists():
+                logger.warning(f"Background music not found: {segment.background_music.value}")
+                return None
+            
+            return {
+                "type": "background_music",
+                "genre": segment.background_music.value,
+                "file": str(music_file),
+                "volume": segment.music_volume,
+                "duration": duration
+            }
         
-        return {
-            "type": "background_music",
-            "genre": segment.background_music.value,
-            "file": str(music_file),
-            "volume": segment.music_volume,
-            "duration": duration
-        }
+        except Exception as e:
+            logger.error(f"Failed to load background music: {e}")
+            return None
     
     async def _combine_segments(
         self,
@@ -409,18 +477,94 @@ class AdvancedPodcastGenerator:
         config: PodcastConfig
     ) -> str:
         """Combine all segments into final podcast"""
-        # This would use pydub or ffmpeg to combine audio
-        # For now, return placeholder
+        import sys
+        from pathlib import Path as PathLib
         
-        final_file = self.output_dir / f"{config.title.replace(' ', '_')}_final.mp3"
+        try:
+            from pydub import AudioSegment
+            from audio_library import MusicLibrary, AudioMixer
+            
+            library = MusicLibrary()
+            mixer = AudioMixer()
+            
+            combined = AudioSegment.empty()
+            
+            # Add intro jingle if requested
+            if config.add_intro_jingle:
+                intro_jingle = library.get_jingle("intro")
+                if intro_jingle and intro_jingle.exists():
+                    jingle = AudioSegment.from_file(str(intro_jingle))
+                    combined += jingle
+                    # Add small pause after jingle
+                    combined += AudioSegment.silent(duration=500)
+            
+            # Process each segment
+            for segment_data in segments:
+                # Collect all audio files in segment
+                segment_audio = AudioSegment.empty()
+                background_music = None
+                
+                for file_data in segment_data.get("files", []):
+                    file_path = PathLib(file_data["file"])
+                    
+                    if file_data["type"] == "dialogue" and file_path.exists():
+                        audio = AudioSegment.from_file(str(file_path))
+                        segment_audio += audio
+                    
+                    elif file_data["type"] == "background_music" and file_path.exists():
+                        background_music = file_path
+                
+                # Mix background music if available
+                if background_music and len(segment_audio) > 0:
+                    music = AudioSegment.from_file(str(background_music))
+                    
+                    # Loop music to match segment length
+                    if len(music) < len(segment_audio):
+                        music = music * (len(segment_audio) // len(music) + 1)
+                    
+                    music = music[:len(segment_audio)]
+                    
+                    # Get volume from segment data
+                    music_volume = segment_data.get("volume", 0.3)
+                    db_reduction = -20 * (1 - music_volume)
+                    music = music.apply_gain(db_reduction)
+                    
+                    # Mix
+                    segment_audio = segment_audio.overlay(music)
+                
+                # Add segment to combined
+                if len(segment_audio) > 0:
+                    combined += segment_audio
+            
+            # Add outro jingle if requested
+            if config.add_outro_jingle:
+                outro_jingle = library.get_jingle("outro")
+                if outro_jingle and outro_jingle.exists():
+                    # Add small pause before jingle
+                    combined += AudioSegment.silent(duration=500)
+                    jingle = AudioSegment.from_file(str(outro_jingle))
+                    combined += jingle
+            
+            # Normalize if requested
+            if config.normalize_audio:
+                combined = combined.normalize()
+            
+            # Export
+            final_file = self.output_dir / f"{config.title.replace(' ', '_')}_final.{config.export_format}"
+            combined.export(
+                str(final_file),
+                format=config.export_format,
+                bitrate="192k" if config.export_format == "mp3" else None
+            )
+            
+            logger.info(f"✅ Final podcast saved: {final_file}")
+            return str(final_file)
         
-        # TODO: 
-        # - Combine all segment files
-        # - Apply normalization
-        # - Add intro/outro jingles
-        # - Export in specified format
-        
-        return str(final_file)
+        except Exception as e:
+            logger.error(f"Failed to combine segments: {e}")
+            # Return placeholder path
+            final_file = self.output_dir / f"{config.title.replace(' ', '_')}_final.mp3"
+            return str(final_file)
     
     def _estimate_segment_duration(self, segment: PodcastSegment) -> float:
         """Estimate segment duration in seconds"""
