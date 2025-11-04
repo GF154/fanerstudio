@@ -13,7 +13,7 @@
         
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             min-height: 100vh;
             padding: 20px;
@@ -28,6 +28,18 @@
             text-align: center;
             margin-bottom: 40px;
             animation: fadeIn 0.8s ease-in;
+        }
+        
+        .flag-container {
+            width: 80px;
+            margin: 0 auto 20px auto;
+        }
+        
+        .flag-img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
         
         @keyframes fadeIn {
@@ -160,7 +172,7 @@
         }
         
         .file-input-label {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 15px 40px;
             border-radius: 30px;
             cursor: pointer;
@@ -168,12 +180,13 @@
             transition: all 0.3s;
             font-size: 1.1em;
             font-weight: bold;
-            color: #333;
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
         }
         
         .file-input-label:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
         }
         
         .recording-section {
@@ -423,14 +436,14 @@
         
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #fa709a 0%, #fee140 100%);
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
             width: 0%;
             transition: width 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            color: #333;
+            color: white;
         }
         
         .result-section {
@@ -511,6 +524,9 @@
         <a href="/" class="back-btn">← Retounen Akèy</a>
         
         <header>
+            <div class="flag-container">
+                <img src="/assets/Flag_of_Haiti.webp" alt="🇭🇹" class="flag-img">
+            </div>
             <h1>🗣️ Kreye Vwa Kustom</h1>
             <p class="subtitle">Klone vwa ou oswa kreye nouvo vwa inyk</p>
         </header>
