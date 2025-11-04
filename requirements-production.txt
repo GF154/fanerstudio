@@ -1,0 +1,23 @@
+# ============================================================
+# OPTIONAL ENHANCEMENTS (Uncomment if needed)
+# ============================================================
+# Rate limiting
+# slowapi==0.1.9
+
+# Monitoring
+# prometheus-client==0.19.0
+
+# Redis cache
+redis==5.0.1
+
+# Background tasks
+celery==5.3.4
+
+# Advanced voice cloning
+# elevenlabs==0.2.27     # ElevenLabs API for premium voice cloning
+# rvc-python==1.0.0      # RVC voice conversion (medium quality)
+
+# Production monitoring
+sentry-sdk[fastapi]==1.40.0  # Error tracking
+python-multipart==0.0.6  # File uploads
+

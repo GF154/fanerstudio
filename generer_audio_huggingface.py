@@ -84,12 +84,22 @@ def generer_audio_creole(
 
 
 def _generate_with_gtts(text: str, output_path: Path, lang: str = "ht") -> Path:
-    """Generate audio using Google Text-to-Speech"""
+    """Generate audio using Google Text-to-Speech with Creole optimization"""
     from gtts import gTTS
     
     # gTTS doesn't support 'ht' directly, use 'fr' (French) as closest
     # Haitian Creole shares many phonetic features with French
     tts_lang = "fr" if lang == "ht" else lang
+    
+    # Apply Creole pronunciation optimization
+    if lang == "ht":
+        try:
+            from creole_pronunciation_dictionary import CreolePronunciationDictionary
+            dict = CreolePronunciationDictionary()
+            text = dict.process_text(text)
+            logger.info("✅ Applied Creole pronunciation optimization")
+        except Exception as e:
+            logger.warning(f"Creole pronunciation optimization failed: {e}")
     
     logger.info(f"Generating audio with gTTS (lang={tts_lang})")
     tts = gTTS(text=text, lang=tts_lang, slow=False)
