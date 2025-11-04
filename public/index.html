@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🇭🇹 Faner Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 60px 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 700px;
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            font-size: 3.5em;
+            margin: 0 0 20px 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .subtitle {
+            font-size: 1.4em;
+            margin: 15px 0 30px 0;
+            opacity: 0.95;
+        }
+        
+        .status {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        
+        .status p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        
+        .status strong {
+            color: #ffd700;
+        }
+        
+        .links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            color: #fff;
+            text-decoration: none;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 35px;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1em;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:active {
+            transform: translateY(-1px);
+        }
+        
+        .features {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        
+        .feature:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .feature-title {
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        
+        .feature-desc {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+        
+        footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🇭🇹 Faner Studio</h1>
+        <p class="subtitle">Platfòm Pwofesyonèl pou Kreyasyon Kontni an Kreyòl Ayisyen</p>
+        
+        <div class="status">
+            <p>✅ <strong>Status:</strong> LIVE on Vercel!</p>
+            <p>🚀 <strong>Version:</strong> 3.0.0</p>
+            <p>🌍 <strong>Platform:</strong> Production</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">📚</div>
+                <div class="feature-title">Audiobook</div>
+                <div class="feature-desc">Konvèti dokiman an odyo</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎙️</div>
+                <div class="feature-title">Podcast</div>
+                <div class="feature-desc">Kreye podcast pwofesyonèl</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎬</div>
+                <div class="feature-title">Video</div>
+                <div class="feature-desc">Edit ak pwodwi videyo</div>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🗣️</div>
+                <div class="feature-title">Custom Voice</div>
+                <div class="feature-desc">Kreye vwa pèsonalize</div>
+            </div>
+        </div>
+        
+        <div class="links">
+            <a href="/api/index" class="btn">
+                📚 API Docs
+            </a>
+            <a href="/api/health" class="btn">
+                💚 Health Check
+            </a>
+            <a href="https://github.com/GF154/fanerstudio" class="btn" target="_blank">
+                💻 GitHub
+            </a>
+        </div>
+        
+        <footer>
+            <p>Made with ❤️ for Haitian Creole Creators</p>
+            <p style="font-size: 0.9em; margin-top: 10px;">© 2025 Faner Studio</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Test API connection
+        fetch('/api/health')
+            .then(response => response.json())
+            .then(data => {
+                console.log('✅ API Connected:', data);
+            })
+            .catch(error => {
+                console.log('⚠️ API not responding:', error);
+            });
+    </script>
+</body>
+</html>
+
