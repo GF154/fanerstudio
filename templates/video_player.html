@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faner Studio Video Player</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .player-container {
+            background: #1a1a1a;
+            border-radius: 20px;
+            padding: 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-width: 900px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .player-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .player-header h1 {
+            color: white;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .player-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 14px;
+        }
+
+        .video-wrapper {
+            position: relative;
+            background: #000;
+        }
+
+        video {
+            width: 100%;
+            display: block;
+        }
+
+        .video-info {
+            background: #2a2a2a;
+            padding: 20px;
+        }
+
+        .video-info h2 {
+            color: white;
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .video-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .detail-item {
+            background: #333;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .custom-controls {
+            background: #2a2a2a;
+            padding: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .progress-container {
+            margin-bottom: 15px;
+        }
+
+        .time-display {
+            display: flex;
+            justify-content: space-between;
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #444;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .control-btn {
+            background: #444;
+            border: none;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            background: #667eea;
+            transform: scale(1.1);
+        }
+
+        .control-btn.play-pause {
+            width: 50px;
+            height: 50px;
+            font-size: 22px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .control-btn.play-pause:hover {
+            transform: scale(1.15);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .volume-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex: 1;
+        }
+
+        .volume-icon {
+            color: white;
+            font-size: 20px;
+        }
+
+        .volume-slider {
+            flex: 1;
+            max-width: 100px;
+            height: 6px;
+            background: #444;
+            border-radius: 3px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .volume-fill {
+            height: 100%;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border-radius: 3px;
+            width: 100%;
+        }
+
+        .settings-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .setting-btn {
+            background: #444;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .setting-btn:hover,
+        .setting-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .fullscreen-btn {
+            background: #444;
+            border: none;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .fullscreen-btn:hover {
+            background: #667eea;
+        }
+
+        .download-section {
+            background: #2a2a2a;
+            padding: 20px;
+            border-top: 1px solid #333;
+        }
+
+        .download-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="player-container">
+        <div class="player-header">
+            <h1>🎬 Faner Studio Video Player</h1>
+            <p>Jwè Videyo Pwofesyonèl</p>
+        </div>
+
+        <div class="video-wrapper">
+            <video id="video-player" preload="metadata">
+                <source src="" type="video/mp4">
+                Your browser doesn't support video playback.
+            </video>
+        </div>
+
+        <div class="video-info">
+            <h2 id="video-title">Mon Videyo Kreyòl</h2>
+            <div class="video-details">
+                <div class="detail-item">
+                    <div class="detail-label">Rezolisyon</div>
+                    <div class="detail-value" id="resolution">1920x1080</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Dire</div>
+                    <div class="detail-value" id="duration">00:05:30</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Gwosè</div>
+                    <div class="detail-value" id="size">25.5 MB</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Format</div>
+                    <div class="detail-value" id="format">MP4</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="custom-controls">
+            <div class="progress-container">
+                <div class="time-display">
+                    <span id="current-time">00:00</span>
+                    <span id="total-time">05:30</span>
+                </div>
+                <div class="progress-bar" id="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="control-btn" id="rewind-btn" title="Tounen 10s">⏪</button>
+                <button class="control-btn play-pause" id="play-pause-btn">▶️</button>
+                <button class="control-btn" id="forward-btn" title="Avanse 10s">⏩</button>
+                
+                <div class="volume-container">
+                    <span class="volume-icon">🔊</span>
+                    <div class="volume-slider" id="volume-slider">
+                        <div class="volume-fill" id="volume-fill"></div>
+                    </div>
+                </div>
+
+                <div class="settings-container">
+                    <button class="setting-btn" data-speed="0.5">0.5x</button>
+                    <button class="setting-btn active" data-speed="1">1x</button>
+                    <button class="setting-btn" data-speed="1.5">1.5x</button>
+                    <button class="setting-btn" data-speed="2">2x</button>
+                </div>
+
+                <button class="fullscreen-btn" id="fullscreen-btn">⛶ Fullscreen</button>
+            </div>
+        </div>
+
+        <div class="download-section">
+            <button class="download-btn" id="download-btn">⬇️ Telechaje Videyo</button>
+        </div>
+    </div>
+
+    <script>
+        class VideoPlayer {
+            constructor() {
+                this.video = document.getElementById('video-player');
+                this.playPauseBtn = document.getElementById('play-pause-btn');
+                this.rewindBtn = document.getElementById('rewind-btn');
+                this.forwardBtn = document.getElementById('forward-btn');
+                this.progressBar = document.getElementById('progress-bar');
+                this.progressFill = document.getElementById('progress-fill');
+                this.currentTimeEl = document.getElementById('current-time');
+                this.totalTimeEl = document.getElementById('total-time');
+                this.volumeSlider = document.getElementById('volume-slider');
+                this.volumeFill = document.getElementById('volume-fill');
+                this.fullscreenBtn = document.getElementById('fullscreen-btn');
+                this.downloadBtn = document.getElementById('download-btn');
+                
+                this.isPlaying = false;
+                
+                this.initializePlayer();
+                this.attachEvents();
+            }
+
+            initializePlayer() {
+                const urlParams = new URLSearchParams(window.location.search);
+                const videoUrl = urlParams.get('video') || '/video/sample.mp4';
+                this.video.src = videoUrl;
+                
+                this.loadVideoMetadata(videoUrl);
+            }
+
+            async loadVideoMetadata(videoUrl) {
+                try {
+                    const fileId = videoUrl.split('/').pop().split('.')[0];
+                    const response = await fetch(`/api/video/${fileId}/metadata`);
+                    const metadata = await response.json();
+                    
+                    document.getElementById('video-title').textContent = metadata.title || metadata.filename;
+                    document.getElementById('resolution').textContent = metadata.resolution;
+                    document.getElementById('duration').textContent = metadata.duration_formatted;
+                    document.getElementById('size').textContent = metadata.size_formatted;
+                    document.getElementById('format').textContent = metadata.format.toUpperCase();
+                } catch (error) {
+                    console.error('Failed to load metadata:', error);
+                }
+            }
+
+            attachEvents() {
+                this.playPauseBtn.addEventListener('click', () => this.togglePlay());
+                this.rewindBtn.addEventListener('click', () => this.skip(-10));
+                this.forwardBtn.addEventListener('click', () => this.skip(10));
+                this.progressBar.addEventListener('click', (e) => this.seek(e));
+                this.volumeSlider.addEventListener('click', (e) => this.setVolume(e));
+                this.fullscreenBtn.addEventListener('click', () => this.toggleFullscreen());
+                this.downloadBtn.addEventListener('click', () => this.download());
+                
+                document.querySelectorAll('.setting-btn').forEach(btn => {
+                    btn.addEventListener('click', () => this.setSpeed(btn));
+                });
+                
+                this.video.addEventListener('timeupdate', () => this.updateProgress());
+                this.video.addEventListener('loadedmetadata', () => this.updateDuration());
+                this.video.addEventListener('ended', () => this.onEnded());
+            }
+
+            togglePlay() {
+                if (this.isPlaying) {
+                    this.video.pause();
+                    this.playPauseBtn.textContent = '▶️';
+                } else {
+                    this.video.play();
+                    this.playPauseBtn.textContent = '⏸️';
+                }
+                this.isPlaying = !this.isPlaying;
+            }
+
+            skip(seconds) {
+                this.video.currentTime += seconds;
+            }
+
+            seek(e) {
+                const rect = this.progressBar.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const percentage = x / rect.width;
+                this.video.currentTime = percentage * this.video.duration;
+            }
+
+            setVolume(e) {
+                const rect = this.volumeSlider.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const percentage = x / rect.width;
+                this.video.volume = percentage;
+                this.volumeFill.style.width = `${percentage * 100}%`;
+            }
+
+            setSpeed(btn) {
+                const speed = parseFloat(btn.dataset.speed);
+                this.video.playbackRate = speed;
+                
+                document.querySelectorAll('.setting-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            }
+
+            toggleFullscreen() {
+                const container = document.querySelector('.player-container');
+                if (!document.fullscreenElement) {
+                    container.requestFullscreen();
+                    this.fullscreenBtn.textContent = '⛶ Exit Fullscreen';
+                } else {
+                    document.exitFullscreen();
+                    this.fullscreenBtn.textContent = '⛶ Fullscreen';
+                }
+            }
+
+            updateProgress() {
+                const percentage = (this.video.currentTime / this.video.duration) * 100;
+                this.progressFill.style.width = `${percentage}%`;
+                this.currentTimeEl.textContent = this.formatTime(this.video.currentTime);
+            }
+
+            updateDuration() {
+                this.totalTimeEl.textContent = this.formatTime(this.video.duration);
+            }
+
+            formatTime(seconds) {
+                const mins = Math.floor(seconds / 60);
+                const secs = Math.floor(seconds % 60);
+                return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+            }
+
+            onEnded() {
+                this.isPlaying = false;
+                this.playPauseBtn.textContent = '▶️';
+                this.video.currentTime = 0;
+            }
+
+            download() {
+                const a = document.createElement('a');
+                a.href = this.video.src;
+                a.download = document.getElementById('video-title').textContent + '.mp4';
+                a.click();
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            new VideoPlayer();
+        });
+    </script>
+</body>
+</html>
+

@@ -30,13 +30,19 @@ python-jose[cryptography]==3.3.0
 bcrypt==4.1.2
 
 # ============================================================
-# AUDIO PROCESSING (For TTS, audiobook, podcast)
+# AUDIO & VIDEO PROCESSING (For TTS, audiobook, podcast, video editing)
 # ============================================================
 pydub==0.25.1
 soundfile==0.12.1
 scipy==1.11.4
 numpy==1.24.3
 mutagen==1.47.0         # ID3 tags and metadata
+
+# VIDEO PROCESSING (Requires ffmpeg installed on system)
+# Install ffmpeg: https://ffmpeg.org/download.html
+# - Windows: choco install ffmpeg
+# - Mac: brew install ffmpeg
+# - Linux: apt-get install ffmpeg
 
 # ============================================================
 # TEXT-TO-SPEECH ENGINES
