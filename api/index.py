@@ -163,11 +163,6 @@ async def root():
                 <p>🗄️ <strong>Database:</strong> Supabase</p>
                 <p>🔌 <strong>Endpoints:</strong> 15+ Active</p>
             </div>
-            
-            <div>
-                <a href="/docs">📚 API Docs</a>
-                <a href="/health">💚 Health Check</a>
-            </div>
         </div>
     </body>
     </html>
