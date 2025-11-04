@@ -37,11 +37,19 @@
             font-size: 5em;
             margin-bottom: 20px;
             animation: wave 2s ease-in-out infinite;
+            display: block;
+            line-height: 1;
         }
         
         @keyframes wave {
             0%, 100% { transform: rotate(-5deg); }
             50% { transform: rotate(5deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .flag {
+                font-size: 4em;
+            }
         }
         
         @keyframes fadeIn {
