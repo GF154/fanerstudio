@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📚 Audiobook - Faner Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+        
+        .main-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .upload-section {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 30px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            text-align: center;
+            transition: all 0.3s;
+        }
+        
+        .upload-section:hover {
+            border-color: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .upload-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 20px 0;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .file-input-label {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 40px;
+            border-radius: 30px;
+            cursor: pointer;
+            display: inline-block;
+            transition: all 0.3s;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+        
+        .file-input-label:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+        }
+        
+        .options-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .option-group {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .option-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        select, input[type="text"], textarea {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 1em;
+            margin-top: 5px;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .voice-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .voice-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .voice-card:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+        }
+        
+        .voice-card.selected {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.2);
+        }
+        
+        .voice-icon {
+            font-size: 2.5em;
+            margin-bottom: 8px;
+        }
+        
+        .generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .generate-btn:disabled {
+            background: gray;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress-section {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+        
+        .progress-section.active {
+            display: block;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .result-section {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+        }
+        
+        .result-section.active {
+            display: block;
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        
+        .download-btn {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .info-box {
+            background: rgba(66, 153, 225, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .file-info {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+        
+        .file-info.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">← Retounen Akèy</a>
+        
+        <header>
+            <h1>📚 Kreye Audiobook</h1>
+            <p class="subtitle">Konvèti dokiman ou yo an odyo pwofesyonèl</p>
+        </header>
+        
+        <div class="main-content">
+            <div class="info-box">
+                <strong>ℹ️ Fòma ki sipòte:</strong> PDF, DOCX, TXT, EPUB
+            </div>
+            
+            <!-- Upload Section -->
+            <div class="upload-section" id="uploadSection">
+                <div class="upload-icon">📄</div>
+                <h2>Upload Dokiman Ou</h2>
+                <p>Chwazi yon fichye pou konvèti an audiobook</p>
+                
+                <div class="file-input-wrapper">
+                    <input type="file" id="fileInput" accept=".pdf,.docx,.txt,.epub">
+                    <label for="fileInput" class="file-input-label">
+                        📁 Chwazi Fichye
+                    </label>
+                </div>
+                
+                <div class="file-info" id="fileInfo">
+                    <strong>Fichye chwazi:</strong> <span id="fileName"></span><br>
+                    <strong>Gwosè:</strong> <span id="fileSize"></span>
+                </div>
+            </div>
+            
+            <!-- Options Section -->
+            <div class="options-section">
+                <div class="option-group">
+                    <label>🗣️ Chwazi Vwa</label>
+                    <select id="voiceSelect">
+                        <option value="natural">Natural Voice (Default)</option>
+                        <option value="male">Vwa Gason</option>
+                        <option value="female">Vwa Fanm</option>
+                        <option value="custom">Vwa Kustom</option>
+                    </select>
+                </div>
+                
+                <div class="option-group">
+                    <label>⚡ Vitès Lekti</label>
+                    <select id="speedSelect">
+                        <option value="0.75">Ralanti (0.75x)</option>
+                        <option value="1.0" selected>Nòmal (1.0x)</option>
+                        <option value="1.25">Rapid (1.25x)</option>
+                        <option value="1.5">Tre Rapid (1.5x)</option>
+                    </select>
+                </div>
+                
+                <div class="option-group">
+                    <label>🎵 Ton Vwa</label>
+                    <select id="pitchSelect">
+                        <option value="-2">Tre Ba</option>
+                        <option value="-1">Ba</option>
+                        <option value="0" selected>Nòmal</option>
+                        <option value="1">Wo</option>
+                        <option value="2">Tre Wo</option>
+                    </select>
+                </div>
+                
+                <div class="option-group">
+                    <label>📖 Fòma Sòti</label>
+                    <select id="formatSelect">
+                        <option value="mp3" selected>MP3</option>
+                        <option value="wav">WAV</option>
+                        <option value="ogg">OGG</option>
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Voice Selection Grid -->
+            <div class="option-group">
+                <label>🎤 Style Vwa (Opsyonèl)</label>
+                <div class="voice-grid" id="voiceGrid">
+                    <div class="voice-card" data-voice="neutral">
+                        <div class="voice-icon">😐</div>
+                        <div>Nèt</div>
+                    </div>
+                    <div class="voice-card" data-voice="friendly">
+                        <div class="voice-icon">😊</div>
+                        <div>Zanmitay</div>
+                    </div>
+                    <div class="voice-card" data-voice="professional">
+                        <div class="voice-icon">👔</div>
+                        <div>Pwofesyonèl</div>
+                    </div>
+                    <div class="voice-card" data-voice="storytelling">
+                        <div class="voice-icon">📖</div>
+                        <div>Kontè</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Advanced Options -->
+            <div class="option-group">
+                <label>⚙️ Opsyon Avanse (Opsyonèl)</label>
+                <textarea id="customInstructions" placeholder="Ekri enstriksyon espesyal... (pa egzanp: 'Li ak emosyon', 'Fè poz nan peryòd')"></textarea>
+            </div>
+            
+            <!-- Generate Button -->
+            <button class="generate-btn" id="generateBtn" disabled>
+                🎯 Jenere Audiobook
+            </button>
+            
+            <!-- Progress Section -->
+            <div class="progress-section" id="progressSection">
+                <h3>⏳ Ap pwosese...</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill">0%</div>
+                </div>
+                <p id="progressText">Inisyalizasyon...</p>
+            </div>
+            
+            <!-- Result Section -->
+            <div class="result-section" id="resultSection">
+                <h2>✅ Audiobook Pare!</h2>
+                <audio class="audio-player" id="audioPlayer" controls></audio>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="download-btn" id="downloadBtn">
+                        ⬇️ Telechaje Audiobook
+                    </button>
+                    <button class="download-btn" id="newAudiobookBtn">
+                        🔄 Kreye Nouvo Audiobook
+                    </button>
+                </div>
+                
+                <div class="info-box" style="margin-top: 20px;">
+                    <strong>📊 Enfòmasyon:</strong><br>
+                    Dire: <span id="audioDuration">--:--</span><br>
+                    Fòma: <span id="audioFormat">MP3</span><br>
+                    Gwosè: <span id="audioSize">-- MB</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Elements
+        const fileInput = document.getElementById('fileInput');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const generateBtn = document.getElementById('generateBtn');
+        const progressSection = document.getElementById('progressSection');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const resultSection = document.getElementById('resultSection');
+        const audioPlayer = document.getElementById('audioPlayer');
+        const voiceCards = document.querySelectorAll('.voice-card');
+        
+        let selectedFile = null;
+        let selectedVoiceStyle = 'neutral';
+        
+        // File input handler
+        fileInput.addEventListener('change', (e) => {
+            selectedFile = e.target.files[0];
+            if (selectedFile) {
+                fileName.textContent = selectedFile.name;
+                fileSize.textContent = formatFileSize(selectedFile.size);
+                fileInfo.classList.add('active');
+                generateBtn.disabled = false;
+            }
+        });
+        
+        // Voice style selection
+        voiceCards.forEach(card => {
+            card.addEventListener('click', () => {
+                voiceCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+                selectedVoiceStyle = card.dataset.voice;
+            });
+        });
+        
+        // Generate audiobook
+        generateBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+            
+            // Show progress
+            progressSection.classList.add('active');
+            resultSection.classList.remove('active');
+            generateBtn.disabled = true;
+            
+            // Simulate progress
+            await simulateProgress();
+            
+            // In real implementation, this would call the API
+            // For now, show demo result
+            showResult();
+        });
+        
+        // Simulate progress
+        async function simulateProgress() {
+            const stages = [
+                { progress: 20, text: 'Ap li dokiman an...' },
+                { progress: 40, text: 'Ap ekstrè tèks...' },
+                { progress: 60, text: 'Ap jenere odyo...' },
+                { progress: 80, text: 'Ap trete vwa...' },
+                { progress: 100, text: 'Prèske fini...' }
+            ];
+            
+            for (const stage of stages) {
+                await sleep(1000);
+                progressFill.style.width = stage.progress + '%';
+                progressFill.textContent = stage.progress + '%';
+                progressText.textContent = stage.text;
+            }
+        }
+        
+        // Show result
+        function showResult() {
+            progressSection.classList.remove('active');
+            resultSection.classList.add('active');
+            generateBtn.disabled = false;
+            
+            // In real implementation, set actual audio source
+            // audioPlayer.src = audioUrl;
+            
+            document.getElementById('audioDuration').textContent = '05:30';
+            document.getElementById('audioFormat').textContent = document.getElementById('formatSelect').value.toUpperCase();
+            document.getElementById('audioSize').textContent = '8.5 MB';
+        }
+        
+        // Download button
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            alert('⬇️ Telechajman ap kòmanse... (Demo mode)');
+        });
+        
+        // New audiobook button
+        document.getElementById('newAudiobookBtn').addEventListener('click', () => {
+            resultSection.classList.remove('active');
+            fileInfo.classList.remove('active');
+            fileInput.value = '';
+            selectedFile = null;
+            generateBtn.disabled = true;
+        });
+        
+        // Helper functions
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(2) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+        }
+        
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html>
+
