@@ -1,0 +1,94 @@
+# 🇭🇹 Faner Studio - Complete Platform
+# Optimized for Render Free Tier with all features
+
+# ============================================================
+# CORE WEB FRAMEWORK (Required)
+# ============================================================
+fastapi==0.109.0
+uvicorn[standard]==0.27.0
+python-multipart==0.0.6
+pydantic==2.5.0
+python-dotenv==1.0.0
+
+# ============================================================
+# HTTP & ASYNC (Required)
+# ============================================================
+httpx==0.26.0
+aiofiles==24.1.0
+
+# ============================================================
+# DATABASE (SQLite with SQLAlchemy)
+# ============================================================
+sqlalchemy==2.0.23
+alembic==1.13.0
+
+# ============================================================
+# AUTHENTICATION & SECURITY
+# ============================================================
+passlib[bcrypt]==1.7.4
+python-jose[cryptography]==3.3.0
+bcrypt==4.1.2
+
+# ============================================================
+# AUDIO & VIDEO PROCESSING (For TTS, audiobook, podcast, video editing)
+# ============================================================
+pydub==0.25.1
+soundfile==0.12.1
+scipy==1.11.4
+numpy==1.24.3
+mutagen==1.47.0         # ID3 tags and metadata
+
+# VIDEO PROCESSING (Requires ffmpeg installed on system)
+# Install ffmpeg: https://ffmpeg.org/download.html
+# - Windows: choco install ffmpeg
+# - Mac: brew install ffmpeg
+# - Linux: apt-get install ffmpeg
+
+# ============================================================
+# TEXT-TO-SPEECH ENGINES
+# ============================================================
+gtts==2.5.0              # Google TTS - Simple and reliable
+gTTS-token==1.1.4        # Token support for gTTS
+
+# Optional: Advanced TTS (uncomment if needed)
+# TTS==0.22.0            # Coqui TTS - High quality (WARNING: Large ~2GB)
+# pyttsx3==2.90          # Offline TTS
+
+# ============================================================
+# VOICE ANALYSIS & CLONING (Optional)
+# ============================================================
+# librosa==0.10.1        # Audio analysis (WARNING: Large ~100MB)
+# praat-parselmouth==0.4.3  # Pitch detection
+# sounddevice==0.4.6     # Audio recording
+
+# ============================================================
+# PERFORMANCE & MONITORING (Optional)
+# ============================================================
+psutil==5.9.6
+
+# ============================================================
+# TESTING
+# ============================================================
+pytest==7.4.3
+pytest-asyncio==0.21.1
+httpx==0.26.0
+pytest-cov==4.1.0
+
+# ============================================================
+# OPTIONAL ENHANCEMENTS (Uncomment if needed)
+# ============================================================
+# Rate limiting
+# slowapi==0.1.9
+
+# Monitoring
+# prometheus-client==0.19.0
+
+# Redis cache
+# redis==5.0.1
+
+# Background tasks
+# celery==5.3.4
+
+# Advanced voice cloning
+# elevenlabs==0.2.27     # ElevenLabs API for premium voice cloning
+# rvc-python==1.0.0      # RVC voice conversion (medium quality)

@@ -58,3 +58,4 @@ Thumbs.db
 # Test outputs
 test_voices_output/
 
+.vercel
