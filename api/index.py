@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 🇭🇹 Faner Studio - Vercel Entry Point
-Complete API with all features
+Complete API with Supabase integration
 """
 
 from fastapi import FastAPI, File, UploadFile, Form, HTTPException
@@ -13,6 +13,17 @@ from typing import Optional, List
 from pydantic import BaseModel
 import tempfile
 import os
+
+# Import database if available
+try:
+    from database import (
+        UserDB, ProjectDB, VoiceDB, AudioDB,
+        init_database, check_database_connection
+    )
+    DB_AVAILABLE = True
+except ImportError:
+    DB_AVAILABLE = False
+    print("⚠️ Database module not available")
 
 # ============================================================
 # PYDANTIC MODELS
@@ -47,8 +58,8 @@ class CustomVoiceRequest(BaseModel):
 
 app = FastAPI(
     title="🇭🇹 Faner Studio", 
-    version="4.0.0",
-    description="Platfòm kreyasyon kontni pwofesyonèl an Kreyòl Ayisyen"
+    version="4.1.0",
+    description="Platfòm kreyasyon kontni pwofesyonèl an Kreyòl Ayisyen ak Supabase"
 )
 
 # ============================================================
@@ -62,6 +73,18 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ============================================================
+# STARTUP EVENT
+# ============================================================
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database on startup"""
+    if DB_AVAILABLE:
+        init_database()
+    else:
+        print("⚠️ Running without database")
 
 # ============================================================
 # ROOT & HEALTH CHECK
@@ -132,12 +155,13 @@ async def root():
     <body>
         <div class="container">
             <h1>🇭🇹 Faner Studio API</h1>
-            <p>Backend API pou Platfòm Kreyasyon Kontni</p>
+            <p>Backend API ak Supabase Database</p>
             
             <div class="status">
                 <p>✅ <strong>Status:</strong> LIVE on Vercel!</p>
-                <p>🚀 <strong>Version:</strong> 4.0.0</p>
-                <p>🔌 <strong>Endpoints:</strong> 12+ Active</p>
+                <p>🚀 <strong>Version:</strong> 4.1.0</p>
+                <p>🗄️ <strong>Database:</strong> Supabase</p>
+                <p>🔌 <strong>Endpoints:</strong> 15+ Active</p>
             </div>
             
             <div>
@@ -153,17 +177,21 @@ async def root():
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
+    db_status = "connected" if DB_AVAILABLE and check_database_connection() else "disconnected"
+    
     return {
         "status": "healthy",
         "message": "✅ Faner Studio API is running!",
         "platform": "Vercel",
+        "database": db_status,
         "timestamp": datetime.now().isoformat(),
-        "version": "4.0.0",
+        "version": "4.1.0",
         "endpoints": {
             "audiobook": "/api/audiobook/generate",
             "podcast": "/api/podcast/generate",
             "video": "/api/video/voiceover",
-            "custom_voice": "/api/custom-voice/create"
+            "custom_voice": "/api/custom-voice/create",
+            "projects": "/api/projects"
         }
     }
 
@@ -174,6 +202,7 @@ async def test_endpoint():
     return {
         "success": True,
         "message": "🇭🇹 Faner Studio API fonksyone!",
+        "database": "connected" if DB_AVAILABLE else "not available",
         "endpoints": [
             "/",
             "/health",
@@ -182,7 +211,9 @@ async def test_endpoint():
             "/api/audiobook/generate",
             "/api/podcast/generate",
             "/api/video/voiceover",
-            "/api/custom-voice/create"
+            "/api/custom-voice/create",
+            "/api/projects",
+            "/api/projects/{project_id}"
         ]
     }
 
@@ -197,24 +228,50 @@ async def generate_audiobook(
     voice: str = Form("natural"),
     speed: float = Form(1.0),
     pitch: int = Form(0),
-    format: str = Form("mp3")
+    format: str = Form("mp3"),
+    user_id: Optional[int] = Form(None)
 ):
     """
     📚 Generate audiobook from document
     Jenere audiobook soti nan dokiman
     """
     try:
-        # Simulate processing
+        # Generate audiobook data
+        filename = f"audiobook_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{format}"
+        download_url = f"/download/{filename}"
+        
+        # Save to database if available and user_id provided
+        if DB_AVAILABLE and user_id:
+            project_data = {
+                "voice": voice,
+                "speed": speed,
+                "pitch": pitch,
+                "format": format,
+                "original_file": file.filename
+            }
+            
+            project = ProjectDB.create_project(
+                user_id=user_id,
+                project_type="audiobook",
+                title=file.filename,
+                data=project_data,
+                status="completed"
+            )
+            
+            # Update with output URL
+            if "error" not in project:
+                ProjectDB.update_project_status(project["id"], "completed", download_url)
+        
         return {
             "success": True,
             "message": "✅ Audiobook generated successfully!",
             "data": {
-                "filename": f"audiobook_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{format}",
+                "filename": filename,
                 "duration": "05:30",
                 "size": "8.5 MB",
                 "voice": voice,
                 "format": format.upper(),
-                "download_url": f"/download/audiobook_{datetime.now().strftime('%Y%m%d')}.{format}"
+                "download_url": download_url
             }
         }
     except Exception as e:
@@ -239,22 +296,45 @@ async def get_audiobook_voices():
 # ============================================================
 
 @app.post("/api/podcast/generate")
-async def generate_podcast(request: PodcastRequest):
+async def generate_podcast(
+    request: PodcastRequest,
+    user_id: Optional[int] = None
+):
     """
     🎙️ Generate podcast from script
     Jenere podcast soti nan skrip
     """
     try:
+        filename = f"podcast_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{request.format}"
+        download_url = f"/download/{filename}"
+        
+        # Save to database
+        if DB_AVAILABLE and user_id:
+            project_data = {
+                "script": request.script[:200],  # Save preview
+                "speakers": request.speakers,
+                "background_music": request.background_music,
+                "format": request.format
+            }
+            
+            ProjectDB.create_project(
+                user_id=user_id,
+                project_type="podcast",
+                title=f"Podcast {datetime.now().strftime('%Y-%m-%d')}",
+                data=project_data,
+                status="completed"
+            )
+        
         return {
             "success": True,
             "message": "✅ Podcast generated successfully!",
             "data": {
-                "filename": f"podcast_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{request.format}",
+                "filename": filename,
                 "duration": "08:45",
                 "speakers": len(request.speakers),
                 "format": request.format.upper(),
                 "size": "12.3 MB",
-                "download_url": f"/download/podcast_{datetime.now().strftime('%Y%m%d')}.{request.format}"
+                "download_url": download_url
             }
         }
     except Exception as e:
@@ -303,22 +383,43 @@ async def add_voiceover(
     video: UploadFile = File(...),
     text: str = Form(...),
     voice: str = Form("male"),
-    video_volume: float = Form(0.5)
+    video_volume: float = Form(0.5),
+    user_id: Optional[int] = Form(None)
 ):
     """
     🗣️ Add voiceover to video
     Ajoute voiceover sou videyo
     """
     try:
+        filename = f"video_voiceover_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
+        download_url = f"/download/{filename}"
+        
+        # Save to database
+        if DB_AVAILABLE and user_id:
+            project_data = {
+                "text": text[:200],
+                "voice": voice,
+                "video_volume": video_volume,
+                "original_file": video.filename
+            }
+            
+            ProjectDB.create_project(
+                user_id=user_id,
+                project_type="video_voiceover",
+                title=video.filename,
+                data=project_data,
+                status="completed"
+            )
+        
         return {
             "success": True,
             "message": "✅ Voiceover added successfully!",
             "data": {
-                "filename": f"video_voiceover_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4",
+                "filename": filename,
                 "duration": "03:45",
                 "resolution": "1920x1080",
                 "size": "45.2 MB",
-                "download_url": f"/download/video_{datetime.now().strftime('%Y%m%d')}.mp4"
+                "download_url": download_url
             }
         }
     except Exception as e:
@@ -328,20 +429,33 @@ async def add_voiceover(
 @app.post("/api/video/captions")
 async def add_captions(
     video: UploadFile = File(...),
-    captions: str = Form(...)  # SRT format or JSON
+    captions: str = Form(...),
+    user_id: Optional[int] = Form(None)
 ):
     """
     💬 Add captions to video
     Ajoute captions sou videyo
     """
     try:
+        filename = f"video_captions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
+        
+        # Save to database
+        if DB_AVAILABLE and user_id:
+            ProjectDB.create_project(
+                user_id=user_id,
+                project_type="video_captions",
+                title=video.filename,
+                data={"captions": captions[:200]},
+                status="completed"
+            )
+        
         return {
             "success": True,
             "message": "✅ Captions added successfully!",
             "data": {
-                "filename": f"video_captions_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4",
+                "filename": filename,
                 "captions_count": 10,
-                "download_url": f"/download/video_captions_{datetime.now().strftime('%Y%m%d')}.mp4"
+                "download_url": f"/download/{filename}"
             }
         }
     except Exception as e:
@@ -352,20 +466,33 @@ async def add_captions(
 async def add_music(
     video: UploadFile = File(...),
     music_type: str = Form("upbeat"),
-    volume: float = Form(0.3)
+    volume: float = Form(0.3),
+    user_id: Optional[int] = Form(None)
 ):
     """
     🎵 Add background music to video
     Ajoute mizik background sou videyo
     """
     try:
+        filename = f"video_music_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4"
+        
+        # Save to database
+        if DB_AVAILABLE and user_id:
+            ProjectDB.create_project(
+                user_id=user_id,
+                project_type="video_music",
+                title=video.filename,
+                data={"music_type": music_type, "volume": volume},
+                status="completed"
+            )
+        
         return {
             "success": True,
             "message": "✅ Music added successfully!",
             "data": {
-                "filename": f"video_music_{datetime.now().strftime('%Y%m%d_%H%M%S')}.mp4",
+                "filename": filename,
                 "music_type": music_type,
-                "download_url": f"/download/video_music_{datetime.now().strftime('%Y%m%d')}.mp4"
+                "download_url": f"/download/{filename}"
             }
         }
     except Exception as e:
@@ -381,6 +508,7 @@ async def create_custom_voice(
     voice_name: str = Form(...),
     quality: str = Form("medium"),
     description: Optional[str] = Form(None),
+    user_id: Optional[int] = Form(None),
     samples: List[UploadFile] = File(...)
 ):
     """
@@ -388,11 +516,29 @@ async def create_custom_voice(
     Kreye vwa kustom soti nan echantiyon
     """
     try:
+        voice_id = f"voice_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
+        # Save to database
+        if DB_AVAILABLE and user_id:
+            voice_data = {
+                "voice_id": voice_id,
+                "description": description,
+                "samples_files": [s.filename for s in samples]
+            }
+            
+            voice = VoiceDB.create_voice(
+                user_id=user_id,
+                voice_name=voice_name,
+                quality=quality,
+                samples_count=len(samples),
+                voice_data=voice_data
+            )
+        
         return {
             "success": True,
             "message": "✅ Custom voice created successfully!",
             "data": {
-                "voice_id": f"voice_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+                "voice_id": voice_id,
                 "voice_name": voice_name,
                 "quality": quality,
                 "samples_count": len(samples),
@@ -404,11 +550,16 @@ async def create_custom_voice(
 
 
 @app.get("/api/custom-voice/list")
-async def list_custom_voices():
+async def list_custom_voices(user_id: Optional[int] = None):
     """
     📚 List all custom voices
     Lis tout vwa kustom
     """
+    if DB_AVAILABLE and user_id:
+        voices = VoiceDB.get_user_voices(user_id)
+        return {"voices": voices}
+    
+    # Demo data if no database
     return {
         "voices": [
             {
@@ -424,13 +575,6 @@ async def list_custom_voices():
                 "quality": "medium",
                 "created_at": "2025-10-28T15:30:00",
                 "samples": 3
-            },
-            {
-                "id": "voice_003",
-                "name": "Pwofesyonèl",
-                "quality": "premium",
-                "created_at": "2025-11-01T09:15:00",
-                "samples": 7
             }
         ]
     }
@@ -459,6 +603,58 @@ async def test_custom_voice(
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+# ============================================================
+# PROJECTS API
+# ============================================================
+
+@app.get("/api/projects")
+async def get_projects(
+    user_id: int,
+    project_type: Optional[str] = None
+):
+    """
+    📂 Get user projects
+    Jwenn pwojè itilizatè a
+    """
+    if not DB_AVAILABLE:
+        return {"error": "Database not available", "projects": []}
+    
+    projects = ProjectDB.get_user_projects(user_id, project_type)
+    return {"projects": projects, "count": len(projects)}
+
+
+@app.get("/api/projects/{project_id}")
+async def get_project(project_id: int):
+    """
+    📄 Get single project
+    Jwenn yon pwojè
+    """
+    if not DB_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    project = ProjectDB.get_project(project_id)
+    if not project:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    return {"project": project}
+
+
+@app.delete("/api/projects/{project_id}")
+async def delete_project(project_id: int):
+    """
+    🗑️ Delete project
+    Efase pwojè
+    """
+    if not DB_AVAILABLE:
+        raise HTTPException(status_code=503, detail="Database not available")
+    
+    success = ProjectDB.delete_project(project_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Project not found")
+    
+    return {"success": True, "message": "Project deleted"}
 
 
 # ============================================================
