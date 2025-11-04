@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ht">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎙️ Podcast - Faner Studio</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            padding: 10px 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            text-decoration: none;
+            color: white;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateX(-5px);
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 25px;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        .tab.active {
+            background: rgba(255, 255, 255, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.6);
+        }
+        
+        .main-content {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+            animation: slideIn 0.3s ease-in;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        .script-editor {
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1em;
+            resize: vertical;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .speakers-section {
+            margin: 30px 0;
+        }
+        
+        .speaker-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 15px 0;
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        .speaker-icon {
+            font-size: 3em;
+        }
+        
+        .speaker-info {
+            flex-grow: 1;
+        }
+        
+        .speaker-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        select, input[type="text"], input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            color: #333;
+            font-size: 1em;
+            margin-top: 5px;
+        }
+        
+        .add-speaker-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+            margin-top: 15px;
+        }
+        
+        .add-speaker-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+        }
+        
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        
+        .option-group {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+        }
+        
+        .option-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+        }
+        
+        .music-library {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .music-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .music-card:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+        }
+        
+        .music-card.selected {
+            border-color: #ffd700;
+            background: rgba(255, 215, 0, 0.2);
+        }
+        
+        .music-icon {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .template-card {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid transparent;
+        }
+        
+        .template-card:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+        
+        .template-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .template-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .template-desc {
+            font-size: 0.95em;
+            opacity: 0.9;
+        }
+        
+        .generate-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 30px;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        }
+        
+        .generate-btn:disabled {
+            background: gray;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .progress-section {
+            display: none;
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+        }
+        
+        .progress-section.active {
+            display: block;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 30px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 15px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .result-section {
+            display: none;
+            margin-top: 30px;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+        }
+        
+        .result-section.active {
+            display: block;
+        }
+        
+        .audio-player {
+            width: 100%;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+        
+        .download-btn {
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 30px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 10px;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .info-box {
+            background: rgba(66, 153, 225, 0.3);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #4299e1;
+        }
+        
+        .remove-btn {
+            background: rgba(255, 0, 0, 0.6);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .remove-btn:hover {
+            background: rgba(255, 0, 0, 0.8);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="/" class="back-btn">← Retounen Akèy</a>
+        
+        <header>
+            <h1>🎙️ Kreye Podcast</h1>
+            <p class="subtitle">Pwodwi podcast pwofesyonèl ak multi-speaker</p>
+        </header>
+        
+        <div class="tabs">
+            <button class="tab active" data-tab="basic">📝 Basic</button>
+            <button class="tab" data-tab="advanced">🚀 Advanced</button>
+            <button class="tab" data-tab="templates">📋 Templates</button>
+        </div>
+        
+        <div class="main-content">
+            <!-- BASIC TAB -->
+            <div class="tab-content active" id="basic">
+                <div class="info-box">
+                    <strong>💡 Tip:</strong> Ekri skrip podcast ou a. Itilize [Speaker1], [Speaker2] pou endike ki moun ap pale.
+                </div>
+                
+                <div class="script-editor">
+                    <label><strong>📝 Skrip Podcast</strong></label>
+                    <textarea id="basicScript" placeholder="Egzanp:
+
+[Speaker1]: Byenvini nan podcast nou an! Jodi a n ap pale sou Kreyòl Ayisyen.
+
+[Speaker2]: Wi, se yon sijè enteresan anpil! Kreyòl la se yon lang rik ak bèl.
+
+[Speaker1]: Egzakteman! Ann kòmanse...">
+                    </textarea>
+                </div>
+                
+                <div class="options-grid">
+                    <div class="option-group">
+                        <label>🗣️ Vwa Speaker 1</label>
+                        <select id="voice1">
+                            <option value="male">Gason</option>
+                            <option value="female">Fanm</option>
+                            <option value="natural">Natural</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label>🗣️ Vwa Speaker 2</label>
+                        <select id="voice2">
+                            <option value="female">Fanm</option>
+                            <option value="male">Gason</option>
+                            <option value="natural">Natural</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label>🎵 Mizik Background</label>
+                        <select id="bgMusic">
+                            <option value="none">Pa gen</option>
+                            <option value="upbeat">Upbeat</option>
+                            <option value="chill">Chill</option>
+                            <option value="corporate">Corporate</option>
+                        </select>
+                    </div>
+                    
+                    <div class="option-group">
+                        <label>📖 Fòma</label>
+                        <select id="format">
+                            <option value="mp3">MP3</option>
+                            <option value="wav">WAV</option>
+                            <option value="ogg">OGG</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <button class="generate-btn" id="generateBasic">
+                    🎯 Jenere Podcast
+                </button>
+            </div>
+            
+            <!-- ADVANCED TAB -->
+            <div class="tab-content" id="advanced">
+                <div class="info-box">
+                    <strong>🚀 Advanced Mode:</strong> Kontwole chak aspè podcast ou a - speakers, mizik, efè son...
+                </div>
+                
+                <div class="speakers-section">
+                    <h2>🎤 Speakers</h2>
+                    <div id="speakersList">
+                        <div class="speaker-card" data-speaker="1">
+                            <div class="speaker-icon">👨</div>
+                            <div class="speaker-info">
+                                <div class="speaker-name">Speaker 1</div>
+                                <div class="options-grid">
+                                    <div>
+                                        <label>Vwa</label>
+                                        <select>
+                                            <option>Gason 1</option>
+                                            <option>Gason 2</option>
+                                            <option>Fanm 1</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label>Vitès</label>
+                                        <input type="number" value="1.0" step="0.1" min="0.5" max="2.0">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="remove-btn">✕</button>
+                        </div>
+                        
+                        <div class="speaker-card" data-speaker="2">
+                            <div class="speaker-icon">👩</div>
+                            <div class="speaker-info">
+                                <div class="speaker-name">Speaker 2</div>
+                                <div class="options-grid">
+                                    <div>
+                                        <label>Vwa</label>
+                                        <select>
+                                            <option>Fanm 1</option>
+                                            <option>Fanm 2</option>
+                                            <option>Gason 1</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label>Vitès</label>
+                                        <input type="number" value="1.0" step="0.1" min="0.5" max="2.0">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="remove-btn">✕</button>
+                        </div>
+                    </div>
+                    
+                    <button class="add-speaker-btn">
+                        ➕ Ajoute Speaker
+                    </button>
+                </div>
+                
+                <div class="script-editor">
+                    <label><strong>📝 Skrip Detaye</strong></label>
+                    <textarea id="advancedScript" placeholder="Ekri skrip ou a ak emosyon:
+
+[Speaker1|happy]: Bonjou tout moun! Mwen kontan anpil!
+[Speaker2|calm]: Wi, nou kontan wè w tou.
+[SFX:applause]
+[Music:intro|fade_in]
+">
+                    </textarea>
+                </div>
+                
+                <h3>🎵 Mizik Background</h3>
+                <div class="music-library">
+                    <div class="music-card" data-music="upbeat">
+                        <div class="music-icon">🎸</div>
+                        <div>Upbeat</div>
+                    </div>
+                    <div class="music-card" data-music="chill">
+                        <div class="music-icon">🎹</div>
+                        <div>Chill</div>
+                    </div>
+                    <div class="music-card" data-music="corporate">
+                        <div class="music-icon">💼</div>
+                        <div>Corporate</div>
+                    </div>
+                    <div class="music-card" data-music="jazz">
+                        <div class="music-icon">🎷</div>
+                        <div>Jazz</div>
+                    </div>
+                </div>
+                
+                <button class="generate-btn" id="generateAdvanced">
+                    🚀 Jenere Podcast Avanse
+                </button>
+            </div>
+            
+            <!-- TEMPLATES TAB -->
+            <div class="tab-content" id="templates">
+                <div class="info-box">
+                    <strong>📋 Templates:</strong> Kòmanse ak yon template pou kreye podcast ou a pi rapid!
+                </div>
+                
+                <div class="template-grid">
+                    <div class="template-card" data-template="interview">
+                        <div class="template-icon">🎤</div>
+                        <div class="template-title">Entèvyou</div>
+                        <div class="template-desc">2 speakers - Yon animatè ak yon envite</div>
+                    </div>
+                    
+                    <div class="template-card" data-template="news">
+                        <div class="template-icon">📰</div>
+                        <div class="template-title">Nouvèl</div>
+                        <div class="template-desc">1 speaker - Style pwofesyonèl</div>
+                    </div>
+                    
+                    <div class="template-card" data-template="storytelling">
+                        <div class="template-icon">📖</div>
+                        <div class="template-title">Kontè Istwa</div>
+                        <div class="template-desc">1 speaker - Ak efè son</div>
+                    </div>
+                    
+                    <div class="template-card" data-template="debate">
+                        <div class="template-icon">⚖️</div>
+                        <div class="template-title">Deba</div>
+                        <div class="template-desc">3+ speakers - Diskisyon</div>
+                    </div>
+                    
+                    <div class="template-card" data-template="educational">
+                        <div class="template-icon">🎓</div>
+                        <div class="template-title">Edikatif</div>
+                        <div class="template-desc">1 speaker - Aprann yon bagay</div>
+                    </div>
+                    
+                    <div class="template-card" data-template="comedy">
+                        <div class="template-icon">😂</div>
+                        <div class="template-title">Komedi</div>
+                        <div class="template-desc">2+ speakers - Blague ak komedi</div>
+                    </div>
+                </div>
+                
+                <div class="script-editor" style="margin-top: 30px;">
+                    <label><strong>📝 Preview Template</strong></label>
+                    <textarea id="templatePreview" readonly placeholder="Chwazi yon template pou wè yon egzanp..."></textarea>
+                </div>
+                
+                <button class="generate-btn" id="generateTemplate" disabled>
+                    📋 Itilize Template sa a
+                </button>
+            </div>
+            
+            <!-- Progress Section -->
+            <div class="progress-section" id="progressSection">
+                <h3>⏳ Ap kreye podcast...</h3>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill">0%</div>
+                </div>
+                <p id="progressText">Inisyalizasyon...</p>
+            </div>
+            
+            <!-- Result Section -->
+            <div class="result-section" id="resultSection">
+                <h2>✅ Podcast Ou a Pare!</h2>
+                <audio class="audio-player" id="audioPlayer" controls></audio>
+                
+                <div style="text-align: center; margin-top: 20px;">
+                    <button class="download-btn" id="downloadBtn">
+                        ⬇️ Telechaje Podcast
+                    </button>
+                    <button class="download-btn" id="shareBtn">
+                        📤 Pataje
+                    </button>
+                    <button class="download-btn" id="newPodcastBtn">
+                        🔄 Kreye Nouvo Podcast
+                    </button>
+                </div>
+                
+                <div class="info-box" style="margin-top: 20px;">
+                    <strong>📊 Enfòmasyon:</strong><br>
+                    Dire: <span id="audioDuration">--:--</span><br>
+                    Speakers: <span id="speakerCount">2</span><br>
+                    Fòma: <span id="audioFormat">MP3</span><br>
+                    Gwosè: <span id="audioSize">-- MB</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Tab switching
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+        
+        // Music selection
+        const musicCards = document.querySelectorAll('.music-card');
+        musicCards.forEach(card => {
+            card.addEventListener('click', () => {
+                musicCards.forEach(c => c.classList.remove('selected'));
+                card.classList.add('selected');
+            });
+        });
+        
+        // Template selection
+        const templates = {
+            interview: `[Speaker1]: Bonjou epi byenvini nan podcast nou an! Jodi a nou gen yon envite espesyal.
+
+[Speaker2]: Mèsi anpil pou envitasyon an! Mwen kontan la.
+
+[Speaker1]: Ki sa w ka di nou sou pwojè w ap travay sou a?
+
+[Speaker2]: Nou ap travay sou...`,
+            
+            news: `[Speaker1]: Bonjou, mwen se [Non], epi sa se nouvèl jodi a.
+
+[Music:news_intro]
+
+[Speaker1]: Premye nouvèl la...`,
+            
+            storytelling: `[Speaker1|calm]: Li te genyen yon fwa...
+
+[SFX:wind]
+
+[Speaker1|dramatic]: Yon granmoun ki te viv nan yon ti vil...`,
+            
+            debate: `[Speaker1]: Byenvini nan deba jodi a!
+
+[Speaker2]: Mwen panse ke...
+
+[Speaker3]: Men mwen pa dakò...`,
+            
+            educational: `[Speaker1]: Jodi a n ap aprann...
+
+[Music:educational]
+
+[Speaker1]: Premye pwen an se...`,
+            
+            comedy: `[Speaker1]: Ou tande sa?
+
+[Speaker2]: Kisa?
+
+[Speaker1]: [blague]
+
+[SFX:laughter]`
+        };
+        
+        const templateCards = document.querySelectorAll('.template-card');
+        const templatePreview = document.getElementById('templatePreview');
+        const generateTemplateBtn = document.getElementById('generateTemplate');
+        
+        templateCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const template = card.dataset.template;
+                templatePreview.value = templates[template];
+                generateTemplateBtn.disabled = false;
+            });
+        });
+        
+        // Add speaker
+        let speakerCount = 2;
+        document.querySelector('.add-speaker-btn').addEventListener('click', () => {
+            speakerCount++;
+            const speakersListconst = document.getElementById('speakersList');
+            const newSpeaker = document.createElement('div');
+            newSpeaker.className = 'speaker-card';
+            newSpeaker.innerHTML = `
+                <div class="speaker-icon">${speakerCount % 2 === 0 ? '👩' : '👨'}</div>
+                <div class="speaker-info">
+                    <div class="speaker-name">Speaker ${speakerCount}</div>
+                    <div class="options-grid">
+                        <div>
+                            <label>Vwa</label>
+                            <select>
+                                <option>Vwa ${speakerCount}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Vitès</label>
+                            <input type="number" value="1.0" step="0.1" min="0.5" max="2.0">
+                        </div>
+                    </div>
+                </div>
+                <button class="remove-btn">✕</button>
+            `;
+            speakersList.appendChild(newSpeaker);
+        });
+        
+        // Remove speaker
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('remove-btn')) {
+                if (speakerCount > 2) {
+                    e.target.closest('.speaker-card').remove();
+                    speakerCount--;
+                } else {
+                    alert('Ou bezwen omwen 2 speakers!');
+                }
+            }
+        });
+        
+        // Generate functions
+        const generateBtns = document.querySelectorAll('.generate-btn');
+        const progressSection = document.getElementById('progressSection');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+        const resultSection = document.getElementById('resultSection');
+        
+        generateBtns.forEach(btn => {
+            btn.addEventListener('click', async () => {
+                progressSection.classList.add('active');
+                resultSection.classList.remove('active');
+                
+                await simulateProgress();
+                showResult();
+            });
+        });
+        
+        async function simulateProgress() {
+            const stages = [
+                { progress: 20, text: 'Ap analyze skrip la...' },
+                { progress: 40, text: 'Ap jenere vwa yo...' },
+                { progress: 60, text: 'Ap ajoute mizik...' },
+                { progress: 80, text: 'Ap melanje audio...' },
+                { progress: 100, text: 'Prèske fini...' }
+            ];
+            
+            for (const stage of stages) {
+                await sleep(1000);
+                progressFill.style.width = stage.progress + '%';
+                progressFill.textContent = stage.progress + '%';
+                progressText.textContent = stage.text;
+            }
+        }
+        
+        function showResult() {
+            progressSection.classList.remove('active');
+            resultSection.classList.add('active');
+            
+            document.getElementById('audioDuration').textContent = '08:45';
+            document.getElementById('speakerCount').textContent = speakerCount;
+            document.getElementById('audioFormat').textContent = 'MP3';
+            document.getElementById('audioSize').textContent = '12.3 MB';
+        }
+        
+        // New podcast
+        document.getElementById('newPodcastBtn').addEventListener('click', () => {
+            resultSection.classList.remove('active');
+            document.getElementById('basicScript').value = '';
+            document.getElementById('advancedScript').value = '';
+        });
+        
+        // Download & Share
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            alert('⬇️ Telechajman ap kòmanse... (Demo mode)');
+        });
+        
+        document.getElementById('shareBtn').addEventListener('click', () => {
+            alert('📤 Opsyon pataj ap vini byento!');
+        });
+        
+        function sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+    </script>
+</body>
+</html>
+
