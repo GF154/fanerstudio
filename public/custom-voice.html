@@ -517,6 +517,118 @@
             font-size: 0.85em;
             opacity: 0.9;
         }
+        
+        .feature-highlight {
+            background: rgba(255, 255, 255, 0.15);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 4px solid #ffd700;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .feature-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+        }
+        
+        .feature-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateX(5px);
+        }
+        
+        .feature-icon-small {
+            font-size: 2em;
+        }
+        
+        .stats-bar {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #ffd700;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 5px;
+        }
+        
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .export-btn {
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            color: white;
+        }
+        
+        .export-btn:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+            border-color: #ffd700;
+        }
+        
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: rgba(0, 0, 0, 0.9);
+            color: #fff;
+            text-align: center;
+            border-radius: 8px;
+            padding: 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -542,6 +654,28 @@
             <div class="tab-content active" id="create">
                 <div class="info-box">
                     <strong>ℹ️ Kijan sa fonksyone:</strong> Upload 3-5 fichye odyo (omwen 30 segonn chak) pou kreye yon vwa kustom ki sanble ak vwa ou upload la.
+                </div>
+                
+                <div class="feature-highlight">
+                    <strong>✨ NOUVO: Features Avanse!</strong><br>
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon-small">🎯</div>
+                            <div>AI Voice Matching</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon-small">🌍</div>
+                            <div>Multi-Language Support</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon-small">🎭</div>
+                            <div>Emotion Control</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon-small">⚡</div>
+                            <div>Real-time Preview</div>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="warning-box">
@@ -625,6 +759,28 @@
                     <textarea id="voiceDescription" placeholder="Deskri vwa sa a... (pa egzanp: vwa kalm, pwofesyonèl, etc.)"></textarea>
                 </div>
                 
+                <div class="option-group">
+                    <label>🎭 Emosyon Default <span class="tooltip">ℹ️<span class="tooltiptext">Emosyon ki pral itilize pa default pou vwa sa a</span></span></label>
+                    <select id="voiceEmotion">
+                        <option>Nòmal - Vwa regilye</option>
+                        <option>Kontan - Vwa avèk lajwa</option>
+                        <option>Kalm - Vwa trankil</option>
+                        <option>Pwofesyonèl - Fòmèl</option>
+                        <option>Enèjik - Plen lavi</option>
+                    </select>
+                </div>
+                
+                <div class="option-group">
+                    <label>🌍 Lang Prensipal</label>
+                    <select id="voiceLanguage">
+                        <option selected>Kreyòl Ayisyen</option>
+                        <option>Angle (English)</option>
+                        <option>Fransè (French)</option>
+                        <option>Panyòl (Spanish)</option>
+                        <option>Multi-lang</option>
+                    </select>
+                </div>
+                
                 <button class="generate-btn" id="createVoiceBtn" disabled>
                     🎯 Kreye Vwa Kustom
                 </button>
@@ -634,6 +790,25 @@
             <div class="tab-content" id="library">
                 <div class="info-box">
                     <strong>📚 Bibliyotèk Vwa:</strong> Tout vwa kustom ou kreye yo
+                </div>
+                
+                <div class="stats-bar">
+                    <div class="stat-item">
+                        <div class="stat-number">3</div>
+                        <div class="stat-label">Total Vwa</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">8.5</div>
+                        <div class="stat-label">Min Odyo</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Echantiyon</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">Premium</div>
+                    </div>
                 </div>
                 
                 <div class="voice-library" id="voiceLibrary">
@@ -680,6 +855,26 @@
                 
                 <div class="info-box" style="margin-top: 30px;">
                     <strong>💡 Tip:</strong> Ou ka itilize vwa sa yo nan Audiobook, Podcast, ak Video!
+                </div>
+                
+                <h3 style="margin-top: 30px;">📤 Ekspòte Vwa</h3>
+                <div class="export-options">
+                    <div class="export-btn">
+                        <div style="font-size: 2em;">📦</div>
+                        <div>ZIP Archive</div>
+                    </div>
+                    <div class="export-btn">
+                        <div style="font-size: 2em;">☁️</div>
+                        <div>Cloud Backup</div>
+                    </div>
+                    <div class="export-btn">
+                        <div style="font-size: 2em;">🔗</div>
+                        <div>Share Link</div>
+                    </div>
+                    <div class="export-btn">
+                        <div style="font-size: 2em;">📱</div>
+                        <div>Mobile App</div>
+                    </div>
                 </div>
             </div>
             
