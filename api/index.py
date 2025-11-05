@@ -58,9 +58,10 @@ try:
         init_database, check_database_connection
     )
     DB_AVAILABLE = True
-except ImportError:
+    print("✅ Database module loaded!")
+except Exception as e:
     DB_AVAILABLE = False
-    print("⚠️ Database module not available")
+    print(f"⚠️ Database module not available: {e}")
 
 # ============================================================
 # PYDANTIC MODELS
