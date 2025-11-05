@@ -487,44 +487,74 @@
             resultSection.classList.remove('active');
             generateBtn.disabled = true;
             
-            // Simulate progress
-            await simulateProgress();
-            
-            // In real implementation, this would call the API
-            // For now, show demo result
-            showResult();
+            try {
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('file', selectedFile);
+                formData.append('voice', document.getElementById('voiceSelect').value);
+                formData.append('speed', document.getElementById('speedSelect').value);
+                formData.append('pitch', document.getElementById('pitchSelect').value);
+                formData.append('format', document.getElementById('formatSelect').value);
+                formData.append('voice_style', selectedVoiceStyle);
+                formData.append('custom_instructions', document.getElementById('customInstructions').value);
+                
+                // Update progress
+                updateProgress(20, 'Ap voye fichye a...');
+                
+                // Call API
+                const response = await fetch('/api/audiobook/generate', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Erè nan pwosesis la');
+                }
+                
+                updateProgress(50, 'Ap pwosese dokiman an...');
+                
+                const result = await response.json();
+                
+                updateProgress(100, 'Fini!');
+                
+                // Show result
+                setTimeout(() => {
+                    showResult(result);
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Erè: ' + error.message + '\n\n💡 Backend API pa konekte. Tcheke:\n- Vercel deployment\n- API endpoint\n- Database connection');
+                progressSection.classList.remove('active');
+                generateBtn.disabled = false;
+            }
         });
         
-        // Simulate progress
-        async function simulateProgress() {
-            const stages = [
-                { progress: 20, text: 'Ap li dokiman an...' },
-                { progress: 40, text: 'Ap ekstrè tèks...' },
-                { progress: 60, text: 'Ap jenere odyo...' },
-                { progress: 80, text: 'Ap trete vwa...' },
-                { progress: 100, text: 'Prèske fini...' }
-            ];
-            
-            for (const stage of stages) {
-                await sleep(1000);
-                progressFill.style.width = stage.progress + '%';
-                progressFill.textContent = stage.progress + '%';
-                progressText.textContent = stage.text;
-            }
+        // Update progress
+        function updateProgress(percent, text) {
+            progressFill.style.width = percent + '%';
+            progressFill.textContent = percent + '%';
+            progressText.textContent = text;
         }
         
         // Show result
-        function showResult() {
+        function showResult(data = null) {
             progressSection.classList.remove('active');
             resultSection.classList.add('active');
             generateBtn.disabled = false;
             
-            // In real implementation, set actual audio source
-            // audioPlayer.src = audioUrl;
+            if (data && data.audio_url) {
+                // Set real audio from API
+                audioPlayer.src = data.audio_url;
+                document.getElementById('audioDuration').textContent = data.duration || '--:--';
+                document.getElementById('audioSize').textContent = data.size || '-- MB';
+            } else {
+                // Demo mode fallback
+                document.getElementById('audioDuration').textContent = '05:30';
+                document.getElementById('audioSize').textContent = '8.5 MB';
+            }
             
-            document.getElementById('audioDuration').textContent = '05:30';
             document.getElementById('audioFormat').textContent = document.getElementById('formatSelect').value.toUpperCase();
-            document.getElementById('audioSize').textContent = '8.5 MB';
         }
         
         // Download button
