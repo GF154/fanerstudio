@@ -11,22 +11,44 @@ from datetime import datetime
 from typing import Optional, List, Dict, Any
 
 # ============================================================
-# SUPABASE CONNECTION
+# SUPABASE CONNECTION (LAZY INITIALIZATION)
 # ============================================================
 
 # Get Supabase credentials from environment
-SUPABASE_URL = os.getenv("SUPABASE_URL", "https://your-project.supabase.co")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY", "your-anon-key")
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
-# Create Supabase client
-try:
-    supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-    DATABASE_ENABLED = True
-    print("✅ Supabase connected!")
-except Exception as e:
-    print(f"⚠️  Supabase connection failed: {e}")
-    DATABASE_ENABLED = False
-    supabase = None
+# Global client (will be initialized on first use)
+_supabase_client: Optional[Client] = None
+_connection_attempted = False
+
+def get_supabase_client() -> Optional[Client]:
+    """
+    Get Supabase client with lazy initialization.
+    Only connects when first called, not on module import.
+    This is important for Vercel serverless functions.
+    """
+    global _supabase_client, _connection_attempted
+    
+    if _supabase_client is not None:
+        return _supabase_client
+    
+    if _connection_attempted:
+        return None
+    
+    _connection_attempted = True
+    
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        print("⚠️ Supabase credentials not set in environment")
+        return None
+    
+    try:
+        _supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        print(f"✅ Supabase connected! URL: {SUPABASE_URL[:30]}...")
+        return _supabase_client
+    except Exception as e:
+        print(f"❌ Supabase connection failed: {e}")
+        return None
 
 
 # ============================================================
@@ -39,7 +61,8 @@ class UserDB:
     @staticmethod
     def create_user(username: str, email: str, password_hash: str, full_name: Optional[str] = None) -> Dict[str, Any]:
         """Create new user"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return {"error": "Database not available"}
         
         try:
@@ -60,7 +83,8 @@ class UserDB:
     @staticmethod
     def get_user_by_email(email: str) -> Optional[Dict[str, Any]]:
         """Get user by email"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return None
         
         try:
@@ -73,7 +97,8 @@ class UserDB:
     @staticmethod
     def get_user_by_username(username: str) -> Optional[Dict[str, Any]]:
         """Get user by username"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return None
         
         try:
@@ -86,7 +111,8 @@ class UserDB:
     @staticmethod
     def get_user_by_id(user_id: int) -> Optional[Dict[str, Any]]:
         """Get user by ID"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return None
         
         try:
@@ -113,7 +139,8 @@ class ProjectDB:
         status: str = "processing"
     ) -> Dict[str, Any]:
         """Create new project"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return {"error": "Database not available"}
         
         try:
@@ -134,7 +161,8 @@ class ProjectDB:
     @staticmethod
     def get_user_projects(user_id: int, project_type: Optional[str] = None) -> List[Dict[str, Any]]:
         """Get all projects for a user"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return []
         
         try:
@@ -152,7 +180,8 @@ class ProjectDB:
     @staticmethod
     def get_project(project_id: int) -> Optional[Dict[str, Any]]:
         """Get project by ID"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return None
         
         try:
@@ -165,7 +194,8 @@ class ProjectDB:
     @staticmethod
     def update_project_status(project_id: int, status: str, output_url: Optional[str] = None) -> bool:
         """Update project status"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return False
         
         try:
@@ -182,7 +212,8 @@ class ProjectDB:
     @staticmethod
     def delete_project(project_id: int) -> bool:
         """Delete project"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return False
         
         try:
@@ -209,7 +240,8 @@ class VoiceDB:
         voice_data: Dict[str, Any]
     ) -> Dict[str, Any]:
         """Create custom voice"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return {"error": "Database not available"}
         
         try:
@@ -231,7 +263,8 @@ class VoiceDB:
     @staticmethod
     def get_user_voices(user_id: int) -> List[Dict[str, Any]]:
         """Get all voices for a user"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return []
         
         try:
@@ -244,7 +277,8 @@ class VoiceDB:
     @staticmethod
     def get_voice(voice_id: int) -> Optional[Dict[str, Any]]:
         """Get voice by ID"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return None
         
         try:
@@ -257,7 +291,8 @@ class VoiceDB:
     @staticmethod
     def delete_voice(voice_id: int) -> bool:
         """Delete voice (soft delete)"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return False
         
         try:
@@ -286,7 +321,8 @@ class AudioDB:
         size_mb: Optional[float] = None
     ) -> Dict[str, Any]:
         """Save audio file metadata"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return {"error": "Database not available"}
         
         try:
@@ -309,7 +345,8 @@ class AudioDB:
     @staticmethod
     def get_user_audios(user_id: int) -> List[Dict[str, Any]]:
         """Get all audios for a user"""
-        if not DATABASE_ENABLED:
+        supabase = get_supabase_client()
+        if not supabase:
             return []
         
         try:
@@ -326,7 +363,8 @@ class AudioDB:
 
 def init_database():
     """Initialize database tables"""
-    if not DATABASE_ENABLED:
+    supabase = get_supabase_client()
+    if not supabase:
         print("⚠️  Database not enabled, skipping initialization")
         return False
     
@@ -350,4 +388,4 @@ def init_database():
 
 def check_database_connection() -> bool:
     """Check if database is connected"""
-    return DATABASE_ENABLED and supabase is not None
+    return get_supabase_client() is not None
