@@ -1,0 +1,12 @@
+Bonjou tout moun!
+
+Sa se yon tès pou audiobook Faner Studio.
+
+Mwen ap teste si TTS engine la ap travay kòrèkteman.
+
+Platform sa a kreye sou Vercel ak FastAPI.
+
+Li gen sipò pou Kreyòl Ayisyen.
+
+Mèsi pou w ap teste l!
+
