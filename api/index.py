@@ -210,13 +210,30 @@ async def root():
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
-    db_status = "connected" if DB_AVAILABLE and check_database_connection() else "disconnected"
+    
+    # Try to get Supabase client and capture any error
+    db_connected = False
+    db_error = None
+    
+    if DB_AVAILABLE:
+        try:
+            from database import get_supabase_client
+            client = get_supabase_client()
+            db_connected = client is not None
+            if not db_connected:
+                db_error = "Client returned None"
+        except Exception as e:
+            db_error = str(e)
+            db_connected = False
+    
+    db_status = "connected" if db_connected else "disconnected"
     
     # Debug info
     debug_info = {
         "DB_AVAILABLE": DB_AVAILABLE,
         "SUPABASE_URL_SET": bool(os.getenv("SUPABASE_URL")),
         "SUPABASE_KEY_SET": bool(os.getenv("SUPABASE_KEY")),
+        "db_error": db_error
     }
     
     return {
