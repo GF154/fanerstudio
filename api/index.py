@@ -766,6 +766,9 @@ async def create_custom_voice_endpoint(
                 detail="Voice cloner not available. Install: pip install gtts pydub"
             )
         
+        # Convert Haitian Creole to French for gTTS compatibility
+        tts_language = "fr" if language in ["ht", "Kreyòl Ayisyen", "Haitian Creole"] else language
+        
         # Create voice cloner
         cloner = CustomVoiceCloner()
         
