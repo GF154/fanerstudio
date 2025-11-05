@@ -212,11 +212,19 @@ async def health_check():
     """Health check endpoint"""
     db_status = "connected" if DB_AVAILABLE and check_database_connection() else "disconnected"
     
+    # Debug info
+    debug_info = {
+        "DB_AVAILABLE": DB_AVAILABLE,
+        "SUPABASE_URL_SET": bool(os.getenv("SUPABASE_URL")),
+        "SUPABASE_KEY_SET": bool(os.getenv("SUPABASE_KEY")),
+    }
+    
     return {
         "status": "healthy",
         "message": "✅ Faner Studio API is running!",
         "platform": "Vercel",
         "database": db_status,
+        "debug": debug_info,
         "timestamp": datetime.now().isoformat(),
         "version": "4.1.0",
         "endpoints": {
