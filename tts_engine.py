@@ -302,7 +302,7 @@ class TTSEngine:
         return final_chunks if final_chunks else [text[:max_length]]
     
     @staticmethod
-    def combine_audio_files(file_paths: List[str]) -> AudioSegment:
+    def combine_audio_files(file_paths: List[str]):
         """
         Combine multiple audio files into one
         
@@ -315,6 +315,8 @@ class TTSEngine:
         if not PYDUB_AVAILABLE:
             raise ImportError("pydub not installed. Install with: pip install pydub")
         
+        from pydub import AudioSegment
+        
         combined = AudioSegment.empty()
         
         for file_path in file_paths:
@@ -325,7 +327,7 @@ class TTSEngine:
         return combined
     
     @staticmethod
-    def adjust_speed(audio: AudioSegment, speed: float) -> AudioSegment:
+    def adjust_speed(audio, speed: float):
         """
         Adjust audio playback speed
         
