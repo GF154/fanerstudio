@@ -488,14 +488,21 @@ async def check_database_connection() -> bool:
         return False
     
     try:
-        # Test connection with a simple query
-        async with httpx.AsyncClient() as client:
+        # Test connection with a simple query to users table
+        async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.get(
                 f"{SUPABASE_URL}/rest/v1/users",
                 headers=get_headers(),
                 params={"select": "id", "limit": "0"}
             )
-            return response.status_code == 200
+            
+            # Success if status is 200 (even if no data)
+            if response.status_code == 200:
+                print(f"✅ Database connection successful! Status: {response.status_code}")
+                return True
+            else:
+                print(f"⚠️ Database connection failed. Status: {response.status_code}, Response: {response.text}")
+                return False
     except Exception as e:
-        print(f"Database connection test failed: {e}")
+        print(f"❌ Database connection test failed: {type(e).__name__}: {str(e)}")
         return False
