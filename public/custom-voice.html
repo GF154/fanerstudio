@@ -1384,10 +1384,19 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
         document.getElementById('testVoiceBtn').addEventListener('click', async () => {
             const testResult = document.getElementById('testResult');
             const testText = document.getElementById('testText').value;
-            const testVoiceSelect = document.getElementById('testVoiceSelect').value;
+            const testVoiceSelect = document.getElementById('testVoiceSelect');
+            const selectedVoiceId = testVoiceSelect.value;
             
             if (!testText || testText.trim().length === 0) {
                 alert('❌ Tanpri ekri yon tèks pou teste!');
+                return;
+            }
+            
+            // Find selected voice
+            const selectedVoice = createdVoices.find(v => v.id === selectedVoiceId);
+            
+            if (!selectedVoice || !selectedVoice.sample_url) {
+                alert('❌ Tanpri kreye yon vwa anvan w teste!');
                 return;
             }
             
@@ -1397,19 +1406,20 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
             testVoiceBtn.textContent = '⏳ Ap jenere...';
             
             try {
-                // For now, use gTTS to generate test audio
-                // In production, this would use the actual custom voice
-                const formData = new FormData();
-                formData.append('text', testText);
-                formData.append('voice', testVoiceSelect);
-                formData.append('language', 'ht');
-                
-                // Call a test endpoint (we'll create a simple one)
-                // For demo, just show success message
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
+                // For now, play the existing sample audio
+                // In production, this would generate new audio with the test text
                 testResult.style.display = 'block';
-                alert('✅ Fonksyon test vwa ap vini byento! Pou kounye a, ou ka kreye vwa epi koute echantiyon an.');
+                
+                const audioPlayer = testResult.querySelector('audio');
+                if (audioPlayer) {
+                    audioPlayer.src = selectedVoice.sample_url;
+                    audioPlayer.play();
+                }
+                
+                // Show info message
+                setTimeout(() => {
+                    alert(`🎧 Kounye a w ap koute echantiyon vwa "${selectedVoice.name}".\n\n💡 Pou jenere nouvo odyo ak tèks ou ekri a, sa mande yon sistèm TTS avanse. Pou kounye a, w ka koute echantiyon vwa a.`);
+                }, 500);
                 
             } catch (error) {
                 console.error('Error:', error);
