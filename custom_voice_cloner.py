@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-🗣️ Custom Voice Cloner - Basic Implementation
-Klonè Vwa Kòstòm - Enplemantasyon Bazik
+🗣️ Custom Voice Cloner - Vercel Compatible (No FFmpeg)
+Klonè Vwa Kòstòm - Konpatib ak Vercel (San FFmpeg)
 """
 
 import os
@@ -18,26 +18,17 @@ except ImportError:
     GTTS_AVAILABLE = False
     print("⚠️ gTTS not available")
 
-try:
-    from pydub import AudioSegment
-    from pydub.effects import normalize
-    PYDUB_AVAILABLE = True
-except ImportError:
-    PYDUB_AVAILABLE = False
-    print("⚠️ pydub not available")
-
 
 class CustomVoiceCloner:
     """
-    Basic custom voice cloning using audio analysis
-    Note: This is a simplified version. Real voice cloning requires AI models.
+    Basic custom voice cloning using gTTS
+    Note: This is a simplified version for serverless deployment.
+    Real voice cloning requires AI models and FFmpeg.
     """
     
     def __init__(self):
         if not GTTS_AVAILABLE:
             raise ImportError("gTTS required. Install: pip install gtts")
-        if not PYDUB_AVAILABLE:
-            raise ImportError("pydub required. Install: pip install pydub")
     
     def analyze_voice_samples(self, audio_files: List[str]) -> Dict:
         """
@@ -52,18 +43,14 @@ class CustomVoiceCloner:
         if not audio_files:
             raise ValueError("No audio files provided")
         
-        total_duration = 0
-        for file in audio_files:
-            audio = AudioSegment.from_file(file)
-            total_duration += len(audio) / 1000.0  # Convert to seconds
-        
+        # Since we can't use pydub/ffprobe on Vercel, return basic info
         # Generate unique voice ID
         voice_id = hashlib.md5(''.join(audio_files).encode()).hexdigest()[:8]
         
         return {
             "voice_id": voice_id,
             "sample_count": len(audio_files),
-            "total_duration": total_duration,
+            "total_duration": 60.0,  # Estimated duration
             "analyzed_at": datetime.now().isoformat()
         }
     
@@ -136,17 +123,15 @@ class CustomVoiceCloner:
         tts = gTTS(text=text, lang=language, slow=False)
         tts.save(output_file)
         
-        # Apply some audio effects to differentiate
-        audio = AudioSegment.from_mp3(output_file)
-        audio = normalize(audio)
-        audio.export(output_file, format="mp3")
+        # Note: Audio effects removed (requires pydub/ffmpeg)
+        # In production with proper infrastructure, add audio processing
         
         return output_file
     
     def test_voice(
         self,
         voice_id: str,
-        test_text: str = "Bonjou! Sa se yon tès pou vwa kòstòm mwen.",
+        test_text: str = "Bonjou! Sa se yon tès pou vwa natirèl mwen.",
         language: str = "fr"
     ) -> str:
         """
@@ -165,14 +150,16 @@ class CustomVoiceCloner:
     
     @staticmethod
     def get_audio_duration(file_path: str) -> float:
-        """Get audio duration in seconds"""
-        if not PYDUB_AVAILABLE:
-            return 0.0
+        """Get audio duration in seconds (estimated without FFmpeg)"""
+        # Without pydub/ffmpeg, return estimated duration
+        # In production, use proper audio libraries with FFmpeg installed
         try:
-            audio = AudioSegment.from_file(file_path)
-            return len(audio) / 1000.0
+            file_size = os.path.getsize(file_path)
+            # Estimate: ~1MB per minute for MP3 at 128kbps
+            estimated_duration = (file_size / 1024 / 1024) * 60
+            return max(estimated_duration, 3.0)  # Minimum 3 seconds
         except:
-            return 0.0
+            return 30.0  # Default estimate
     
     @staticmethod
     def format_duration(seconds: float) -> str:
@@ -189,13 +176,13 @@ if __name__ == "__main__":
     try:
         cloner = CustomVoiceCloner()
         print("✅ Voice cloner initialized")
-        print("📝 Note: This is a basic implementation")
-        print("💡 For real voice cloning, integrate:")
-        print("   - RVC (Retrieval-based Voice Conversion)")
-        print("   - Coqui TTS")
-        print("   - ElevenLabs API")
-        print("   - OpenAI TTS")
+        print("📝 Note: This is a Vercel-compatible implementation (no FFmpeg)")
+        print("💡 For real voice cloning with audio processing:")
+        print("   - Deploy on a VPS with FFmpeg installed")
+        print("   - Or use cloud audio processing services")
+        print("   - Or integrate APIs: ElevenLabs, OpenAI TTS, etc.")
         
     except Exception as e:
         print(f"❌ Error: {e}")
+
 
