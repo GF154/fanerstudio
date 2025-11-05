@@ -11,6 +11,7 @@ python-multipart==0.0.6        # File uploads
 # Core TTS Engines
 gtts==2.5.1                    # Google Text-to-Speech (Free)
 edge-tts==6.1.9                # Microsoft Edge TTS (Free, High Quality)
+TTS==0.22.0                    # Coqui TTS (Advanced, Multilingual)
 
 # Audio Processing (Optional - for advanced features)
 # pydub==0.25.1                # Audio manipulation (requires FFmpeg)
@@ -42,11 +43,13 @@ requests==2.31.0               # HTTP requests
 #
 # - gTTS: Free, works out of the box, 50+ languages
 # - Edge TTS: Free, high quality, 100+ voices, async
+# - Coqui TTS: Free, advanced multilingual, best quality
 # - ElevenLabs: Premium, voice cloning, requires API key
 # - OpenAI TTS: Premium, HD quality, requires API key
 #
 # For Haitian Creole:
 # - Use French (fr) voices as phonetic substitute
+# - Coqui TTS: YourTTS multilingual model
 # - Edge TTS: fr-FR-DeniseNeural (female) or fr-FR-HenriNeural (male)
 # - gTTS: lang='fr'
 #
