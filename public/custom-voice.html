@@ -781,6 +781,17 @@
                     </select>
                 </div>
                 
+                <div class="option-group">
+                    <label>🎵 Fòma Ekspò</label>
+                    <select id="voiceFormat">
+                        <option value="mp3" selected>MP3 - Standard</option>
+                        <option value="wav">WAV - Kalite Siperyè</option>
+                        <option value="opus">Opus - Modern & Konprese</option>
+                        <option value="ogg">OGG - Open Source</option>
+                        <option value="flac">FLAC - Sans Pèt</option>
+                    </select>
+                </div>
+                
                 <button class="generate-btn" id="createVoiceBtn" disabled>
                     🎯 Kreye Vwa Natirèl
                 </button>
@@ -1127,6 +1138,7 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
             const voiceName = document.getElementById('voiceName').value;
             const voiceLanguage = document.getElementById('voiceLanguage')?.value || 'ht';
             const voiceEmotion = document.getElementById('voiceEmotion')?.value || 'neutral';
+            const voiceFormat = document.getElementById('voiceFormat')?.value || 'mp3';
             
             if (!voiceName || uploadedSamples.length < 3) {
                 alert('❌ Tanpri bay yon non ak omwen 3 echantiyon!');
@@ -1143,6 +1155,7 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
                 formData.append('quality', selectedQuality);
                 formData.append('language', voiceLanguage);
                 formData.append('emotion', voiceEmotion);
+                formData.append('format', voiceFormat);
                 
                 // Add audio samples
                 const audioFiles = Array.from(audioInput.files);
