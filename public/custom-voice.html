@@ -1123,34 +1123,77 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
             const progressText = document.getElementById('progressText');
             const resultSection = document.getElementById('resultSection');
             
+            // Get form data
+            const voiceName = document.getElementById('voiceName').value;
+            const voiceLanguage = document.getElementById('voiceLanguage')?.value || 'ht';
+            const voiceEmotion = document.getElementById('voiceEmotion')?.value || 'neutral';
+            
+            if (!voiceName || uploadedSamples.length < 3) {
+                alert('❌ Tanpri bay yon non ak omwen 3 echantiyon!');
+                return;
+            }
+            
             progressSection.classList.add('active');
             resultSection.classList.remove('active');
             
-            await simulateProgress();
-            showResult();
+            try {
+                // Prepare form data
+                const formData = new FormData();
+                formData.append('name', voiceName);
+                formData.append('quality', selectedQuality);
+                formData.append('language', voiceLanguage);
+                formData.append('emotion', voiceEmotion);
+                
+                // Add audio samples
+                const audioFiles = Array.from(audioInput.files);
+                audioFiles.forEach((file, index) => {
+                    formData.append(`sample_${index}`, file);
+                });
+                
+                updateProgress(20, 'Ap voye echantiyon yo...');
+                
+                // Call API
+                const response = await fetch('/api/custom-voice/create', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Erè nan pwosesis la');
+                }
+                
+                updateProgress(50, 'Ap antrene modèl AI...');
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.message || 'Erè nan pwosesis la');
+                }
+                
+                updateProgress(100, 'Fini!');
+                
+                // Show result
+                setTimeout(() => {
+                    showResult(result.data);
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Erè: ' + error.message);
+                progressSection.classList.remove('active');
+            }
         });
         
-        async function simulateProgress() {
-            const stages = [
-                { progress: 20, text: 'Ap analyze echantiyon...' },
-                { progress: 40, text: 'Ap ekstrè karakteristik vwa...' },
-                { progress: 60, text: 'Ap antrene modèl AI...' },
-                { progress: 80, text: 'Ap optimize vwa...' },
-                { progress: 100, text: 'Prèske fini...' }
-            ];
-            
+        function updateProgress(percent, text) {
             const progressFill = document.getElementById('progressFill');
             const progressText = document.getElementById('progressText');
-            
-            for (const stage of stages) {
-                await sleep(1500);
-                progressFill.style.width = stage.progress + '%';
-                progressFill.textContent = stage.progress + '%';
-                progressText.textContent = stage.text;
-            }
+            progressFill.style.width = percent + '%';
+            progressFill.textContent = percent + '%';
+            progressText.textContent = text;
         }
         
-        function showResult() {
+        function showResult(data) {
             const progressSection = document.getElementById('progressSection');
             const resultSection = document.getElementById('resultSection');
             const totalDuration = uploadedSamples.reduce((sum, s) => sum + s.duration, 0);
@@ -1158,23 +1201,65 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
             progressSection.classList.remove('active');
             resultSection.classList.add('active');
             
-            document.getElementById('resultVoiceName').textContent = document.getElementById('voiceName').value;
-            document.getElementById('resultQuality').textContent = selectedQuality.charAt(0).toUpperCase() + selectedQuality.slice(1);
+            // Display voice info
+            document.getElementById('resultVoiceName').textContent = data?.name || document.getElementById('voiceName').value;
+            document.getElementById('resultQuality').textContent = 
+                selectedQuality === 'basic' ? 'Pi Ba' : 
+                selectedQuality === 'medium' ? 'Nan Mitan' : 'Pi Wo';
             document.getElementById('resultSamples').textContent = uploadedSamples.length;
             document.getElementById('resultDuration').textContent = Math.floor(totalDuration / 60) + ' minit ' + (totalDuration % 60) + ' segonn';
+            
+            // Set test audio if available
+            if (data && data.sample_url) {
+                const testAudio = document.getElementById('testAudio');
+                if (testAudio) {
+                    testAudio.src = data.sample_url;
+                    testAudio.dataset.downloadUrl = data.sample_url;
+                    testAudio.dataset.filename = data.filename;
+                }
+            }
         }
         
         // Test voice
         document.getElementById('testVoiceBtn').addEventListener('click', () => {
             const testResult = document.getElementById('testResult');
+            const testAudio = document.getElementById('testAudio');
             testResult.style.display = 'block';
-            alert('🎧 Ap teste vwa... (Demo mode)');
+            
+            if (testAudio && testAudio.src) {
+                testAudio.play();
+            } else {
+                alert('❌ Pa gen echantiyon vwa pou teste');
+            }
         });
         
         // Voice library actions
         document.querySelectorAll('.play-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                alert('▶️ Ap jwe echantiyon vwa... (Demo mode)');
+            btn.addEventListener('click', async () => {
+                try {
+                    // Get voice ID from parent
+                    const voiceCard = btn.closest('.voice-card');
+                    const voiceId = voiceCard?.dataset.voiceId;
+                    
+                    if (!voiceId) {
+                        alert('❌ Pa gen echantiyon pou jwe');
+                        return;
+                    }
+                    
+                    // Call API to get sample
+                    const response = await fetch(`/api/custom-voice/test/${voiceId}`);
+                    const result = await response.json();
+                    
+                    if (result.success && result.data.sample_url) {
+                        const audio = new Audio(result.data.sample_url);
+                        audio.play();
+                    } else {
+                        alert('❌ Erè nan lekti vwa a');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('❌ Erè: ' + error.message);
+                }
             });
         });
         

@@ -223,9 +223,41 @@ async def test_endpoint():
             "/api/video/voiceover",
             "/api/custom-voice/create",
             "/api/projects",
-            "/api/projects/{project_id}"
+            "/api/projects/{project_id}",
+            "/download/{filename}"
         ]
     }
+
+
+@app.get("/download/{filename}")
+async def download_file(filename: str):
+    """
+    📥 Download generated audio/video files
+    Telechaje fichye odyo/videyo ki genere
+    """
+    import os
+    import tempfile
+    
+    # Look for file in temp directory
+    file_path = os.path.join(tempfile.gettempdir(), filename)
+    
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail=f"File not found: {filename}")
+    
+    # Determine media type
+    media_type = "audio/mpeg"
+    if filename.endswith('.wav'):
+        media_type = "audio/wav"
+    elif filename.endswith('.ogg'):
+        media_type = "audio/ogg"
+    elif filename.endswith('.mp4'):
+        media_type = "video/mp4"
+    
+    return FileResponse(
+        path=file_path,
+        media_type=media_type,
+        filename=filename
+    )
 
 
 # ============================================================

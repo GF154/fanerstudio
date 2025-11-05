@@ -875,39 +875,118 @@ Byenvini nan videyo sa a. Jodi a n ap montre w..."></textarea>
         
         generateBtns.forEach(btn => {
             btn.addEventListener('click', async () => {
+                const selectedTool = document.querySelector('.tool-card.selected');
+                if (!selectedTool) {
+                    alert('❌ Tanpri chwazi yon zouti anvan!');
+                    return;
+                }
+                
+                const tool = selectedTool.dataset.tool;
+                
+                // Check if video file is uploaded
+                const videoFile = document.getElementById('videoInput').files[0];
+                if (!videoFile) {
+                    alert('❌ Tanpri upload yon videyo anvan!');
+                    return;
+                }
+                
                 progressSection.classList.add('active');
                 resultSection.classList.remove('active');
                 
-                await simulateProgress();
-                showResult();
+                try {
+                    // Prepare form data
+                    const formData = new FormData();
+                    formData.append('video', videoFile);
+                    formData.append('tool', tool);
+                    
+                    // Add tool-specific parameters
+                    if (tool === 'voiceover') {
+                        const voiceoverScript = document.getElementById('voiceoverScript')?.value;
+                        if (voiceoverScript) {
+                            formData.append('script', voiceoverScript);
+                            formData.append('voice', document.getElementById('voiceoverVoice')?.value || 'natural');
+                        }
+                    } else if (tool === 'captions') {
+                        // Get all captions
+                        const captions = [];
+                        document.querySelectorAll('.caption-item').forEach(item => {
+                            const inputs = item.querySelectorAll('input');
+                            if (inputs.length >= 3) {
+                                captions.push({
+                                    start: inputs[0].value,
+                                    end: inputs[1].value,
+                                    text: inputs[2].value
+                                });
+                            }
+                        });
+                        formData.append('captions', JSON.stringify(captions));
+                    } else if (tool === 'music') {
+                        const audioFile = document.getElementById('audioInput')?.files[0];
+                        if (audioFile) {
+                            formData.append('audio', audioFile);
+                        }
+                    }
+                    
+                    updateProgress(20, 'Ap voye videyo a...');
+                    
+                    // Call API (endpoint depends on tool)
+                    let endpoint = '/api/video/' + tool;
+                    const response = await fetch(endpoint, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'Erè nan pwosesis la');
+                    }
+                    
+                    updateProgress(50, 'Ap pwosese videyo a...');
+                    
+                    const result = await response.json();
+                    
+                    if (!result.success) {
+                        throw new Error(result.message || 'Erè nan pwosesis la');
+                    }
+                    
+                    updateProgress(100, 'Fini!');
+                    
+                    // Show result
+                    setTimeout(() => {
+                        showResult(result.data);
+                    }, 500);
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('❌ Erè: ' + error.message);
+                    progressSection.classList.remove('active');
+                }
             });
         });
         
-        async function simulateProgress() {
-            const stages = [
-                { progress: 20, text: 'Ap analyze videyo...' },
-                { progress: 40, text: 'Ap aplike modifikasyon...' },
-                { progress: 60, text: 'Ap encode videyo...' },
-                { progress: 80, text: 'Ap optimize...' },
-                { progress: 100, text: 'Prèske fini...' }
-            ];
-            
-            for (const stage of stages) {
-                await sleep(1000);
-                progressFill.style.width = stage.progress + '%';
-                progressFill.textContent = stage.progress + '%';
-                progressText.textContent = stage.text;
-            }
+        function updateProgress(percent, text) {
+            progressFill.style.width = percent + '%';
+            progressFill.textContent = percent + '%';
+            progressText.textContent = text;
         }
         
-        function showResult() {
+        function showResult(data) {
             progressSection.classList.remove('active');
             resultSection.classList.add('active');
             
-            document.getElementById('videoDuration').textContent = '03:45';
-            document.getElementById('videoResolution').textContent = '1920x1080';
-            document.getElementById('videoFormat').textContent = 'MP4';
-            document.getElementById('videoSize').textContent = '45.2 MB';
+            // Set real video from API
+            if (data && data.download_url) {
+                const videoPlayer = document.getElementById('videoPlayer');
+                videoPlayer.src = data.download_url;
+                document.getElementById('videoDuration').textContent = data.duration || '--:--';
+                document.getElementById('videoResolution').textContent = data.resolution || '1920x1080';
+                document.getElementById('videoSize').textContent = data.size || '-- MB';
+                document.getElementById('videoFormat').textContent = data.format || 'MP4';
+                
+                // Store download URL for button
+                videoPlayer.dataset.downloadUrl = data.download_url;
+                videoPlayer.dataset.filename = data.filename;
+            }
         }
         
         // New video
@@ -919,7 +998,20 @@ Byenvini nan videyo sa a. Jodi a n ap montre w..."></textarea>
         
         // Download & Share
         document.getElementById('downloadBtn')?.addEventListener('click', () => {
-            alert('⬇️ Telechajman ap kòmanse... (Demo mode)');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const downloadUrl = videoPlayer.dataset.downloadUrl;
+            const filename = videoPlayer.dataset.filename || 'video.mp4';
+            
+            if (downloadUrl) {
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                alert('❌ Erè: Pa gen fichye pou telechaje');
+            }
         });
         
         document.getElementById('shareBtn')?.addEventListener('click', () => {

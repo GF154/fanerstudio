@@ -508,23 +508,28 @@
                 });
                 
                 if (!response.ok) {
-                    throw new Error('Erè nan pwosesis la');
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Erè nan pwosesis la');
                 }
                 
-                updateProgress(50, 'Ap pwosese dokiman an...');
+                updateProgress(50, 'Ap ekstrè tèks la...');
                 
                 const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.message || 'Erè nan pwosesis la');
+                }
                 
                 updateProgress(100, 'Fini!');
                 
                 // Show result
                 setTimeout(() => {
-                    showResult(result);
+                    showResult(result.data);
                 }, 500);
                 
             } catch (error) {
                 console.error('Error:', error);
-                alert('❌ Erè: ' + error.message + '\n\n💡 Backend API pa konekte. Tcheke:\n- Vercel deployment\n- API endpoint\n- Database connection');
+                alert('❌ Erè: ' + error.message);
                 progressSection.classList.remove('active');
                 generateBtn.disabled = false;
             }
@@ -538,28 +543,39 @@
         }
         
         // Show result
-        function showResult(data = null) {
+        function showResult(data) {
             progressSection.classList.remove('active');
             resultSection.classList.add('active');
             generateBtn.disabled = false;
             
-            if (data && data.audio_url) {
-                // Set real audio from API
-                audioPlayer.src = data.audio_url;
+            // Set real audio from API
+            if (data && data.download_url) {
+                audioPlayer.src = data.download_url;
                 document.getElementById('audioDuration').textContent = data.duration || '--:--';
                 document.getElementById('audioSize').textContent = data.size || '-- MB';
-            } else {
-                // Demo mode fallback
-                document.getElementById('audioDuration').textContent = '05:30';
-                document.getElementById('audioSize').textContent = '8.5 MB';
+                document.getElementById('audioFormat').textContent = data.format || 'MP3';
+                
+                // Store download URL for button
+                audioPlayer.dataset.downloadUrl = data.download_url;
+                audioPlayer.dataset.filename = data.filename;
             }
-            
-            document.getElementById('audioFormat').textContent = document.getElementById('formatSelect').value.toUpperCase();
         }
         
-        // Download button
+        // Download button - REAL DOWNLOAD
         document.getElementById('downloadBtn').addEventListener('click', () => {
-            alert('⬇️ Telechajman ap kòmanse... (Demo mode)');
+            const downloadUrl = audioPlayer.dataset.downloadUrl;
+            const filename = audioPlayer.dataset.filename || 'audiobook.mp3';
+            
+            if (downloadUrl) {
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                alert('❌ Erè: Pa gen fichye pou telechaje');
+            }
         });
         
         // New audiobook button

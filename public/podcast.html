@@ -790,39 +790,96 @@
         
         generateBtns.forEach(btn => {
             btn.addEventListener('click', async () => {
+                const mode = document.querySelector('.mode-card.selected')?.dataset.mode || 'basic';
+                
+                // Get script content
+                let script = '';
+                if (mode === 'basic') {
+                    script = document.getElementById('basicScript').value;
+                } else if (mode === 'advanced') {
+                    script = document.getElementById('advancedScript').value;
+                }
+                
+                if (!script || script.trim().length === 0) {
+                    alert('❌ Tanpri ekri yon skrip anvan w jenere podkas la!');
+                    return;
+                }
+                
                 progressSection.classList.add('active');
                 resultSection.classList.remove('active');
                 
-                await simulateProgress();
-                showResult();
+                try {
+                    // Prepare data
+                    const formData = new FormData();
+                    formData.append('script', script);
+                    formData.append('mode', mode);
+                    formData.append('speaker_count', speakerCount);
+                    
+                    // Get music selection if any
+                    const selectedMusic = document.querySelector('.music-card.selected');
+                    if (selectedMusic) {
+                        formData.append('music', selectedMusic.dataset.music);
+                    }
+                    
+                    updateProgress(20, 'Ap voye skrip la...');
+                    
+                    // Call API
+                    const response = await fetch('/api/podcast/generate', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.detail || 'Erè nan pwosesis la');
+                    }
+                    
+                    updateProgress(50, 'Ap jenere vwa yo...');
+                    
+                    const result = await response.json();
+                    
+                    if (!result.success) {
+                        throw new Error(result.message || 'Erè nan pwosesis la');
+                    }
+                    
+                    updateProgress(100, 'Fini!');
+                    
+                    // Show result
+                    setTimeout(() => {
+                        showResult(result.data);
+                    }, 500);
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert('❌ Erè: ' + error.message);
+                    progressSection.classList.remove('active');
+                }
             });
         });
         
-        async function simulateProgress() {
-            const stages = [
-                { progress: 20, text: 'Ap analyze skrip la...' },
-                { progress: 40, text: 'Ap jenere vwa yo...' },
-                { progress: 60, text: 'Ap ajoute mizik...' },
-                { progress: 80, text: 'Ap melanje audio...' },
-                { progress: 100, text: 'Prèske fini...' }
-            ];
-            
-            for (const stage of stages) {
-                await sleep(1000);
-                progressFill.style.width = stage.progress + '%';
-                progressFill.textContent = stage.progress + '%';
-                progressText.textContent = stage.text;
-            }
+        function updateProgress(percent, text) {
+            progressFill.style.width = percent + '%';
+            progressFill.textContent = percent + '%';
+            progressText.textContent = text;
         }
         
-        function showResult() {
+        function showResult(data) {
             progressSection.classList.remove('active');
             resultSection.classList.add('active');
             
-            document.getElementById('audioDuration').textContent = '08:45';
-            document.getElementById('speakerCount').textContent = speakerCount;
-            document.getElementById('audioFormat').textContent = 'MP3';
-            document.getElementById('audioSize').textContent = '12.3 MB';
+            // Set real audio from API
+            if (data && data.download_url) {
+                const audioPlayer = document.getElementById('audioPlayer');
+                audioPlayer.src = data.download_url;
+                document.getElementById('audioDuration').textContent = data.duration || '--:--';
+                document.getElementById('audioSize').textContent = data.size || '-- MB';
+                document.getElementById('audioFormat').textContent = data.format || 'MP3';
+                document.getElementById('speakerCount').textContent = data.speaker_count || speakerCount;
+                
+                // Store download URL for button
+                audioPlayer.dataset.downloadUrl = data.download_url;
+                audioPlayer.dataset.filename = data.filename;
+            }
         }
         
         // New podcast
@@ -834,7 +891,20 @@
         
         // Download & Share
         document.getElementById('downloadBtn').addEventListener('click', () => {
-            alert('⬇️ Telechajman ap kòmanse... (Demo mode)');
+            const audioPlayer = document.getElementById('audioPlayer');
+            const downloadUrl = audioPlayer.dataset.downloadUrl;
+            const filename = audioPlayer.dataset.filename || 'podcast.mp3';
+            
+            if (downloadUrl) {
+                const a = document.createElement('a');
+                a.href = downloadUrl;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            } else {
+                alert('❌ Erè: Pa gen fichye pou telechaje');
+            }
         });
         
         document.getElementById('shareBtn').addEventListener('click', () => {
