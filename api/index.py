@@ -14,6 +14,21 @@ from pydantic import BaseModel
 import tempfile
 import os
 
+# Import PDF and TTS processors
+try:
+    from pdf_processor import DocumentProcessor
+    PDF_PROCESSOR_AVAILABLE = True
+except ImportError:
+    PDF_PROCESSOR_AVAILABLE = False
+    print("⚠️ PDF processor not available")
+
+try:
+    from tts_engine import TTSEngine
+    TTS_ENGINE_AVAILABLE = True
+except ImportError:
+    TTS_ENGINE_AVAILABLE = False
+    print("⚠️ TTS engine not available")
+
 # Import database if available
 try:
     from database import (
@@ -224,6 +239,8 @@ async def generate_audiobook(
     speed: float = Form(1.0),
     pitch: int = Form(0),
     format: str = Form("mp3"),
+    voice_style: Optional[str] = Form(None),
+    custom_instructions: Optional[str] = Form(None),
     user_id: Optional[int] = Form(None)
 ):
     """
@@ -231,9 +248,59 @@ async def generate_audiobook(
     Jenere audiobook soti nan dokiman
     """
     try:
-        # Generate audiobook data
-        filename = f"audiobook_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{format}"
-        download_url = f"/download/{filename}"
+        # Check if processors are available
+        if not PDF_PROCESSOR_AVAILABLE:
+            raise HTTPException(
+                status_code=503,
+                detail="PDF processor not available. Install: pip install PyPDF2 python-docx ebooklib beautifulsoup4"
+            )
+        
+        if not TTS_ENGINE_AVAILABLE:
+            raise HTTPException(
+                status_code=503,
+                detail="TTS engine not available. Install: pip install gtts"
+            )
+        
+        # Read file content
+        file_content = await file.read()
+        
+        # Extract text from document
+        try:
+            text = DocumentProcessor.process_document(file_content, file.filename)
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Error processing document: {str(e)}")
+        
+        # Check if text was extracted
+        if not text or len(text.strip()) == 0:
+            raise HTTPException(status_code=400, detail="No text found in document")
+        
+        # Clean text
+        text = DocumentProcessor.clean_text(text)
+        
+        # Generate audio using TTS
+        try:
+            tts = TTSEngine()
+            
+            # Create output file
+            output_filename = f"audiobook_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{format}"
+            output_path = os.path.join(tempfile.gettempdir(), output_filename)
+            
+            # Generate audio
+            audio_file = tts.generate_audio(
+                text=text[:10000],  # Limit for demo (remove in production)
+                output_file=output_path,
+                voice=voice,
+                speed=speed,
+                format=format,
+                lang="ht" if "kreyol" in voice.lower() or "haitian" in voice.lower() else "en"
+            )
+            
+            # Get file info
+            file_size = os.path.getsize(audio_file)
+            file_size_mb = f"{file_size / (1024 * 1024):.2f} MB"
+            
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error generating audio: {str(e)}")
         
         # Save to database if available and user_id provided
         if DB_AVAILABLE and user_id:
@@ -242,7 +309,10 @@ async def generate_audiobook(
                 "speed": speed,
                 "pitch": pitch,
                 "format": format,
-                "original_file": file.filename
+                "voice_style": voice_style,
+                "custom_instructions": custom_instructions,
+                "original_file": file.filename,
+                "text_length": len(text)
             }
             
             project = ProjectDB.create_project(
@@ -255,20 +325,24 @@ async def generate_audiobook(
             
             # Update with output URL
             if "error" not in project:
-                ProjectDB.update_project_status(project["id"], "completed", download_url)
+                ProjectDB.update_project_status(project["id"], "completed", output_filename)
         
         return {
             "success": True,
             "message": "✅ Audiobook generated successfully!",
             "data": {
-                "filename": filename,
-                "duration": "05:30",
-                "size": "8.5 MB",
+                "filename": output_filename,
+                "audio_url": f"/download/{output_filename}",
+                "duration": "Estimated",
+                "size": file_size_mb,
                 "voice": voice,
                 "format": format.upper(),
-                "download_url": download_url
+                "text_length": len(text),
+                "download_url": f"/download/{output_filename}"
             }
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
