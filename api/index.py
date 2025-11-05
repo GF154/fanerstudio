@@ -790,7 +790,7 @@ async def create_custom_voice_endpoint(
         
         # Generate a test sample
         test_text = "Bonjou! Sa se yon tès pou vwa kòstòm mwen."
-        test_file = cloner.test_voice(voice_id, test_text, language)
+        test_file = cloner.test_voice(voice_id, test_text, tts_language)
         
         # Get test audio info
         duration = cloner.get_audio_duration(test_file)
