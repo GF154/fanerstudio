@@ -18,6 +18,7 @@ class TranslationTester:
     def test_nllb(self, text: str, source: str = "en", target: str = "ht") -> Dict:
         """Test NLLB-200 translation"""
         try:
+            # New Hugging Face Inference API endpoint (2024+)
             url = "https://api-inference.huggingface.co/models/facebook/nllb-200-distilled-600M"
             
             lang_codes = {
