@@ -14,41 +14,42 @@ from pydantic import BaseModel
 import tempfile
 import os
 
-# Import PDF and TTS processors
+# Import processors (with error handling for Vercel)
+PDF_PROCESSOR_AVAILABLE = False
+TTS_ENGINE_AVAILABLE = False
+PODCAST_GENERATOR_AVAILABLE = False
+VIDEO_PROCESSOR_AVAILABLE = False
+VOICE_CLONER_AVAILABLE = False
+
 try:
     from pdf_processor import DocumentProcessor
     PDF_PROCESSOR_AVAILABLE = True
-except ImportError:
-    PDF_PROCESSOR_AVAILABLE = False
-    print("⚠️ PDF processor not available")
+except Exception as e:
+    print(f"⚠️ PDF processor not available: {e}")
 
 try:
     from tts_engine import TTSEngine
     TTS_ENGINE_AVAILABLE = True
-except ImportError:
-    TTS_ENGINE_AVAILABLE = False
-    print("⚠️ TTS engine not available")
+except Exception as e:
+    print(f"⚠️ TTS engine not available: {e}")
 
 try:
     from podcast_generator import PodcastGenerator
     PODCAST_GENERATOR_AVAILABLE = True
-except ImportError:
-    PODCAST_GENERATOR_AVAILABLE = False
-    print("⚠️ Podcast generator not available")
+except Exception as e:
+    print(f"⚠️ Podcast generator not available: {e}")
 
 try:
     from video_processor_simple import VideoProcessor
     VIDEO_PROCESSOR_AVAILABLE = True
-except ImportError:
-    VIDEO_PROCESSOR_AVAILABLE = False
-    print("⚠️ Video processor not available")
+except Exception as e:
+    print(f"⚠️ Video processor not available: {e}")
 
 try:
     from custom_voice_cloner import CustomVoiceCloner
     VOICE_CLONER_AVAILABLE = True
-except ImportError:
-    VOICE_CLONER_AVAILABLE = False
-    print("⚠️ Voice cloner not available")
+except Exception as e:
+    print(f"⚠️ Voice cloner not available: {e}")
 
 # Import database if available
 try:
