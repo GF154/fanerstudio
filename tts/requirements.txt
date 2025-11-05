@@ -1,0 +1,49 @@
+# ============================================================
+# FANER STUDIO - TTS ENGINE REQUIREMENTS
+# Advanced Text-to-Speech Dependencies
+# ============================================================
+
+# Core TTS Engines
+gtts==2.5.1                    # Google Text-to-Speech (Free)
+edge-tts==6.1.9                # Microsoft Edge TTS (Free, High Quality)
+
+# Audio Processing (Optional - for advanced features)
+# pydub==0.25.1                # Audio manipulation (requires FFmpeg)
+# soundfile==0.12.1            # Audio file I/O
+
+# Premium TTS APIs (Optional - require API keys)
+# elevenlabs==0.2.26           # ElevenLabs Voice Cloning
+# openai==1.6.1                # OpenAI TTS HD
+
+# Utilities
+requests==2.31.0               # HTTP requests
+asyncio                        # Async support (built-in for Python 3.7+)
+
+# ============================================================
+# INSTALLATION INSTRUCTIONS
+# ============================================================
+# 
+# Basic installation (Free TTS only):
+#   pip install -r requirements.txt
+#
+# With audio processing (requires FFmpeg):
+#   pip install -r requirements.txt pydub soundfile
+#
+# With premium APIs:
+#   pip install -r requirements.txt elevenlabs openai
+#
+# ============================================================
+# NOTES
+# ============================================================
+#
+# - gTTS: Free, works out of the box, 50+ languages
+# - Edge TTS: Free, high quality, 100+ voices, async
+# - ElevenLabs: Premium, voice cloning, requires API key
+# - OpenAI TTS: Premium, HD quality, requires API key
+#
+# For Haitian Creole:
+# - Use French (fr) voices as phonetic substitute
+# - Edge TTS: fr-FR-DeniseNeural (female) or fr-FR-HenriNeural (male)
+# - gTTS: lang='fr'
+#
+
