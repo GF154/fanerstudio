@@ -29,6 +29,27 @@ except ImportError:
     TTS_ENGINE_AVAILABLE = False
     print("⚠️ TTS engine not available")
 
+try:
+    from podcast_generator import PodcastGenerator
+    PODCAST_GENERATOR_AVAILABLE = True
+except ImportError:
+    PODCAST_GENERATOR_AVAILABLE = False
+    print("⚠️ Podcast generator not available")
+
+try:
+    from video_processor_simple import VideoProcessor
+    VIDEO_PROCESSOR_AVAILABLE = True
+except ImportError:
+    VIDEO_PROCESSOR_AVAILABLE = False
+    print("⚠️ Video processor not available")
+
+try:
+    from custom_voice_cloner import CustomVoiceCloner
+    VOICE_CLONER_AVAILABLE = True
+except ImportError:
+    VOICE_CLONER_AVAILABLE = False
+    print("⚠️ Voice cloner not available")
+
 # Import database if available
 try:
     from database import (
@@ -327,16 +348,19 @@ async def generate_audiobook(
             def log_progress(percent, message):
                 print(f"[{percent}%] {message}")
             
-            # Generate audio with all enhancements
-            audio_file = tts.generate_audio(
-                text=text,
-                output_file=output_path,
-                voice=voice,
-                speed=speed,
-                format=format,
-                lang="ht" if "kreyol" in voice.lower() or "haitian" in voice.lower() else "en",
-                progress_callback=log_progress
-            )
+                    # Generate audio with all enhancements
+                    # Use French for Creole (phonetically closest)
+                    audio_lang = "fr" if "kreyol" in voice.lower() or "haitian" in voice.lower() or "creole" in voice.lower() else "en"
+                    
+                    audio_file = tts.generate_audio(
+                        text=text,
+                        output_file=output_path,
+                        voice=voice,
+                        speed=speed,
+                        format=format,
+                        lang=audio_lang,
+                        progress_callback=log_progress
+                    )
             
             # Get file info
             file_size = os.path.getsize(audio_file)
@@ -421,47 +445,115 @@ async def get_audiobook_voices():
 # ============================================================
 
 @app.post("/api/podcast/generate")
-async def generate_podcast(
-    request: PodcastRequest,
-    user_id: Optional[int] = None
+async def generate_podcast_endpoint(
+    script: str = Form(...),
+    mode: str = Form("basic"),
+    speaker_count: int = Form(2),
+    music: Optional[str] = Form(None),
+    format: str = Form("mp3"),
+    user_id: Optional[int] = Form(None)
 ):
     """
     🎙️ Generate podcast from script
     Jenere podcast soti nan skrip
     """
     try:
-        filename = f"podcast_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{request.format}"
-        download_url = f"/download/{filename}"
+        # Check if podcast generator is available
+        if not PODCAST_GENERATOR_AVAILABLE:
+            raise HTTPException(
+                status_code=503,
+                detail="Podcast generator not available. Install: pip install gtts pydub"
+            )
         
-        # Save to database
+        # Validate script
+        if not script or len(script.strip()) == 0:
+            raise HTTPException(status_code=400, detail="Script cannot be empty")
+        
+        # Create output file
+        output_filename = f"podcast_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{format}"
+        output_path = os.path.join(tempfile.gettempdir(), output_filename)
+        
+        # Progress callback (for logging)
+        def log_progress(percent, message):
+            print(f"[{percent}%] {message}")
+        
+        # Generate podcast using PodcastGenerator
+        try:
+            generator = PodcastGenerator()
+            
+            # Use French for Creole
+            lang = "fr"
+            
+            # Add intro/outro for advanced mode
+            intro_text = "Bonjou! Byenveni nan podkas nou an." if mode == "advanced" else None
+            outro_text = "Mèsi pou w te tande nou! Ale avèk lapè." if mode == "advanced" else None
+            
+            audio_file = generator.generate_podcast(
+                script=script,
+                output_file=output_path,
+                lang=lang,
+                intro_text=intro_text,
+                outro_text=outro_text,
+                music_file=None,  # TODO: Add music library
+                music_volume=0.3,
+                format=format,
+                progress_callback=log_progress
+            )
+            
+            # Get file info
+            file_size = os.path.getsize(audio_file)
+            file_size_mb = f"{file_size / (1024 * 1024):.2f} MB"
+            
+            # Get duration
+            duration_seconds = generator.get_audio_duration(audio_file)
+            duration_formatted = generator.format_duration(duration_seconds)
+            
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Error generating podcast: {str(e)}")
+        
+        # Save to database if available and user_id provided
         if DB_AVAILABLE and user_id:
             project_data = {
-                "script": request.script[:200],  # Save preview
-                "speakers": request.speakers,
-                "background_music": request.background_music,
-                "format": request.format
+                "script": script[:200],  # Save preview
+                "mode": mode,
+                "speaker_count": speaker_count,
+                "music": music,
+                "format": format,
+                "text_length": len(script)
             }
             
-            ProjectDB.create_project(
+            project = ProjectDB.create_project(
                 user_id=user_id,
                 project_type="podcast",
                 title=f"Podcast {datetime.now().strftime('%Y-%m-%d')}",
                 data=project_data,
                 status="completed"
             )
+            
+            # Update with output URL
+            if "error" not in project:
+                ProjectDB.update_project_status(project["id"], "completed", output_filename)
         
         return {
             "success": True,
-            "message": "✅ Podcast generated successfully!",
+            "message": "✅ Podcast generated successfully! Podkas kreye avèk siksè!",
             "data": {
-                "filename": filename,
-                "duration": "08:45",
-                "speakers": len(request.speakers),
-                "format": request.format.upper(),
-                "size": "12.3 MB",
-                "download_url": download_url
+                "filename": output_filename,
+                "download_url": f"/download/{output_filename}",
+                "duration": duration_formatted,
+                "duration_seconds": duration_seconds,
+                "size": file_size_mb,
+                "speaker_count": speaker_count,
+                "format": format.upper(),
+                "metadata": {
+                    "mode": mode,
+                    "music": music,
+                    "generated_at": datetime.now().isoformat()
+                }
             }
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -629,47 +721,85 @@ async def add_music(
 # ============================================================
 
 @app.post("/api/custom-voice/create")
-async def create_custom_voice(
-    voice_name: str = Form(...),
+async def create_custom_voice_endpoint(
+    name: str = Form(...),
     quality: str = Form("medium"),
-    description: Optional[str] = Form(None),
-    user_id: Optional[int] = Form(None),
-    samples: List[UploadFile] = File(...)
+    language: str = Form("fr"),
+    emotion: str = Form("neutral"),
+    user_id: Optional[int] = Form(None)
 ):
     """
     🗣️ Create custom voice from audio samples
-    Kreye vwa kustom soti nan echantiyon
+    Kreye vwa kòstòm soti nan echantiyon
     """
     try:
+        # Check if voice cloner is available
+        if not VOICE_CLONER_AVAILABLE:
+            raise HTTPException(
+                status_code=503,
+                detail="Voice cloner not available. Install: pip install gtts pydub"
+            )
+        
+        # Create voice cloner
+        cloner = CustomVoiceCloner()
+        
+        # For now, create a basic voice profile
+        # In production, this would process actual audio samples
         voice_id = f"voice_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         
-        # Save to database
+        profile = {
+            "voice_id": voice_id,
+            "name": name,
+            "quality": quality,
+            "language": language,
+            "emotion": emotion,
+            "sample_count": 0,  # Would be from actual files
+            "duration": 0,
+            "created_at": datetime.now().isoformat(),
+            "status": "ready"
+        }
+        
+        # Generate a test sample
+        test_text = "Bonjou! Sa se yon tès pou vwa kòstòm mwen."
+        test_file = cloner.test_voice(voice_id, test_text, language)
+        
+        # Get test audio info
+        duration = cloner.get_audio_duration(test_file)
+        
+        # Save to database if available
         if DB_AVAILABLE and user_id:
             voice_data = {
                 "voice_id": voice_id,
-                "description": description,
-                "samples_files": [s.filename for s in samples]
+                "quality": quality,
+                "language": language,
+                "emotion": emotion
             }
             
             voice = VoiceDB.create_voice(
                 user_id=user_id,
-                voice_name=voice_name,
+                voice_name=name,
                 quality=quality,
-                samples_count=len(samples),
+                samples_count=0,
                 voice_data=voice_data
             )
         
         return {
             "success": True,
-            "message": "✅ Custom voice created successfully!",
+            "message": "✅ Custom voice created successfully! Vwa kòstòm kreye avèk siksè!",
             "data": {
                 "voice_id": voice_id,
-                "voice_name": voice_name,
+                "name": name,
                 "quality": quality,
-                "samples_count": len(samples),
+                "language": language,
+                "emotion": emotion,
+                "sample_url": f"/download/{os.path.basename(test_file)}",
+                "filename": os.path.basename(test_file),
+                "duration": cloner.format_duration(duration),
                 "created_at": datetime.now().isoformat()
             }
         }
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

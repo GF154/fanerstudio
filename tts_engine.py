@@ -75,6 +75,11 @@ class TTSEngine:
             Path to generated audio file
         """
         try:
+            # Since gTTS doesn't support 'ht' (Haitian Creole) directly,
+            # use French ('fr') which is phonetically closest
+            if lang == "ht":
+                lang = "fr"  # French pronunciation is closest to Haitian Creole
+            
             tts = gTTS(text=text, lang=lang, slow=slow)
             tts.save(output_file)
             return output_file
