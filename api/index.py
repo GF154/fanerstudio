@@ -277,6 +277,12 @@ async def generate_audiobook(
         # Clean text
         text = DocumentProcessor.clean_text(text)
         
+        # Limit text length for demo (remove in production with payment)
+        MAX_LENGTH = 50000  # ~50k characters = ~10k words = ~1 hour audio
+        if len(text) > MAX_LENGTH:
+            text = text[:MAX_LENGTH]
+            text += "\n\n[Tèks limite pou vèsyon demo. Upgrade pou tèks konplè.]"
+        
         # Generate audio using TTS
         try:
             tts = TTSEngine()
@@ -285,19 +291,28 @@ async def generate_audiobook(
             output_filename = f"audiobook_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{format}"
             output_path = os.path.join(tempfile.gettempdir(), output_filename)
             
-            # Generate audio
+            # Progress callback (for logging)
+            def log_progress(percent, message):
+                print(f"[{percent}%] {message}")
+            
+            # Generate audio with all enhancements
             audio_file = tts.generate_audio(
-                text=text[:10000],  # Limit for demo (remove in production)
+                text=text,
                 output_file=output_path,
                 voice=voice,
                 speed=speed,
                 format=format,
-                lang="ht" if "kreyol" in voice.lower() or "haitian" in voice.lower() else "en"
+                lang="ht" if "kreyol" in voice.lower() or "haitian" in voice.lower() else "en",
+                progress_callback=log_progress
             )
             
             # Get file info
             file_size = os.path.getsize(audio_file)
             file_size_mb = f"{file_size / (1024 * 1024):.2f} MB"
+            
+            # Get duration
+            duration_seconds = tts.get_audio_duration(audio_file)
+            duration_formatted = tts.format_duration(duration_seconds)
             
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error generating audio: {str(e)}")
@@ -329,16 +344,25 @@ async def generate_audiobook(
         
         return {
             "success": True,
-            "message": "✅ Audiobook generated successfully!",
+            "message": "✅ Audiobook generated successfully! Audiobook kreye avèk siksè!",
             "data": {
                 "filename": output_filename,
                 "audio_url": f"/download/{output_filename}",
-                "duration": "Estimated",
+                "duration": duration_formatted,
+                "duration_seconds": duration_seconds,
                 "size": file_size_mb,
                 "voice": voice,
                 "format": format.upper(),
                 "text_length": len(text),
-                "download_url": f"/download/{output_filename}"
+                "word_count": len(text.split()),
+                "download_url": f"/download/{output_filename}",
+                "metadata": {
+                    "original_file": file.filename,
+                    "speed": speed,
+                    "pitch": pitch,
+                    "voice_style": voice_style,
+                    "generated_at": datetime.now().isoformat()
+                }
             }
         }
     except HTTPException:

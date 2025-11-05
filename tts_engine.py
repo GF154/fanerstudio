@@ -8,7 +8,7 @@ Motè TTS pou jenere audiobook
 import io
 import os
 import tempfile
-from typing import Optional, Literal
+from typing import Optional, Literal, List
 from pathlib import Path
 
 # gTTS - Google Text-to-Speech (Simple & Free)
@@ -26,6 +26,15 @@ try:
 except ImportError:
     PYTTSX3_AVAILABLE = False
     print("⚠️ pyttsx3 not available - install with: pip install pyttsx3")
+
+# pydub - Audio processing
+try:
+    from pydub import AudioSegment
+    from pydub.effects import speedup, normalize
+    PYDUB_AVAILABLE = True
+except ImportError:
+    PYDUB_AVAILABLE = False
+    print("⚠️ pydub not available - install with: pip install pydub")
 
 
 class TTSEngine:
@@ -126,10 +135,11 @@ class TTSEngine:
         speed: float = 1.0,
         pitch: int = 0,
         format: str = "mp3",
-        lang: str = "en"
+        lang: str = "en",
+        progress_callback: Optional[callable] = None
     ) -> str:
         """
-        Generate audio from text
+        Generate audio from text with advanced processing
         
         Args:
             text: Text to convert
@@ -139,6 +149,7 @@ class TTSEngine:
             pitch: Pitch adjustment (-2 to +2)
             format: Output format ('mp3', 'wav')
             lang: Language code
+            progress_callback: Function to call with progress updates
             
         Returns:
             Path to generated audio file
@@ -148,40 +159,89 @@ class TTSEngine:
             with tempfile.NamedTemporaryFile(delete=False, suffix=f'.{format}') as tmp:
                 output_file = tmp.name
         
-        # Use gTTS by default (simple and reliable)
-        if self.engine == "gtts" or GTTS_AVAILABLE:
-            # Map speed to slow parameter
-            slow = speed < 1.0
+        if progress_callback:
+            progress_callback(10, "Initializing TTS...")
+        
+        # Split text into manageable chunks
+        chunks = self.chunk_text(text, max_length=4900)  # gTTS limit is 5000
+        
+        if progress_callback:
+            progress_callback(20, f"Processing {len(chunks)} text chunks...")
+        
+        # Generate audio for each chunk
+        temp_files = []
+        for i, chunk in enumerate(chunks):
+            if progress_callback:
+                progress = 20 + (60 * (i + 1) / len(chunks))
+                progress_callback(int(progress), f"Generating audio chunk {i+1}/{len(chunks)}...")
+            
+            # Create temp file for this chunk
+            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.mp3')
+            temp_file.close()
             
             # Generate audio
-            return self.generate_audio_gtts(
-                text=text,
-                output_file=output_file,
-                lang=lang,
-                slow=slow
-            )
+            if self.engine == "gtts" or GTTS_AVAILABLE:
+                slow = speed < 1.0
+                self.generate_audio_gtts(chunk, temp_file.name, lang, slow)
+            elif self.engine == "pyttsx3" or PYTTSX3_AVAILABLE:
+                rate = int(150 * speed)
+                voice_gender = None
+                if voice == "male":
+                    voice_gender = "male"
+                elif voice == "female":
+                    voice_gender = "female"
+                self.generate_audio_pyttsx3(chunk, temp_file.name, rate, 1.0, voice_gender)
+            
+            temp_files.append(temp_file.name)
         
-        # Fallback to pyttsx3
-        elif self.engine == "pyttsx3" or PYTTSX3_AVAILABLE:
-            # Map speed to rate
-            rate = int(150 * speed)
+        if progress_callback:
+            progress_callback(85, "Combining audio chunks...")
+        
+        # Combine all chunks if more than one
+        if len(temp_files) > 1 and PYDUB_AVAILABLE:
+            combined = self.combine_audio_files(temp_files)
             
-            # Map voice to gender
-            voice_gender = None
-            if voice == "male":
-                voice_gender = "male"
-            elif voice == "female":
-                voice_gender = "female"
+            # Apply speed adjustment if needed and different from gTTS slow
+            if speed != 1.0 and PYDUB_AVAILABLE:
+                if progress_callback:
+                    progress_callback(90, "Adjusting speed...")
+                combined = self.adjust_speed(combined, speed)
             
-            return self.generate_audio_pyttsx3(
-                text=text,
-                output_file=output_file,
-                rate=rate,
-                voice_gender=voice_gender
-            )
+            # Normalize audio
+            if progress_callback:
+                progress_callback(95, "Normalizing audio...")
+            combined = normalize(combined)
+            
+            # Export
+            combined.export(output_file, format=format)
+            
+            # Clean up temp files
+            for temp_file in temp_files:
+                try:
+                    os.unlink(temp_file)
+                except:
+                    pass
+        
+        elif len(temp_files) == 1:
+            # Just one file, copy it
+            import shutil
+            shutil.copy(temp_files[0], output_file)
+            os.unlink(temp_files[0])
         
         else:
-            raise ImportError("No TTS engine available. Install gTTS or pyttsx3")
+            # No pydub, just use first file (or combine manually)
+            import shutil
+            shutil.copy(temp_files[0], output_file)
+            for temp_file in temp_files:
+                try:
+                    os.unlink(temp_file)
+                except:
+                    pass
+        
+        if progress_callback:
+            progress_callback(100, "Complete!")
+        
+        return output_file
     
     @staticmethod
     def get_available_engines():
@@ -193,13 +253,13 @@ class TTSEngine:
         return engines
     
     @staticmethod
-    def chunk_text(text: str, max_length: int = 5000) -> list:
+    def chunk_text(text: str, max_length: int = 4900) -> List[str]:
         """
         Split text into chunks for processing
         
         Args:
             text: Full text
-            max_length: Maximum characters per chunk
+            max_length: Maximum characters per chunk (gTTS limit is 5000)
             
         Returns:
             List of text chunks
@@ -222,7 +282,106 @@ class TTSEngine:
         if current_chunk:
             chunks.append(current_chunk.strip())
         
-        return chunks
+        # If still too long, split by sentences
+        final_chunks = []
+        for chunk in chunks:
+            if len(chunk) > max_length:
+                sentences = chunk.replace('! ', '!|').replace('? ', '?|').replace('. ', '.|').split('|')
+                sub_chunk = ""
+                for sentence in sentences:
+                    if len(sub_chunk) + len(sentence) > max_length and sub_chunk:
+                        final_chunks.append(sub_chunk.strip())
+                        sub_chunk = sentence
+                    else:
+                        sub_chunk += " " + sentence if sub_chunk else sentence
+                if sub_chunk:
+                    final_chunks.append(sub_chunk.strip())
+            else:
+                final_chunks.append(chunk)
+        
+        return final_chunks if final_chunks else [text[:max_length]]
+    
+    @staticmethod
+    def combine_audio_files(file_paths: List[str]) -> AudioSegment:
+        """
+        Combine multiple audio files into one
+        
+        Args:
+            file_paths: List of audio file paths
+            
+        Returns:
+            Combined AudioSegment
+        """
+        if not PYDUB_AVAILABLE:
+            raise ImportError("pydub not installed. Install with: pip install pydub")
+        
+        combined = AudioSegment.empty()
+        
+        for file_path in file_paths:
+            audio = AudioSegment.from_mp3(file_path)
+            # Add small pause between chunks (200ms)
+            combined += audio + AudioSegment.silent(duration=200)
+        
+        return combined
+    
+    @staticmethod
+    def adjust_speed(audio: AudioSegment, speed: float) -> AudioSegment:
+        """
+        Adjust audio playback speed
+        
+        Args:
+            audio: AudioSegment to adjust
+            speed: Speed multiplier (0.5 to 2.0)
+            
+        Returns:
+            Speed-adjusted AudioSegment
+        """
+        if not PYDUB_AVAILABLE:
+            raise ImportError("pydub not installed. Install with: pip install pydub")
+        
+        # Change frame rate to adjust speed
+        # Higher frame rate = faster playback
+        adjusted = audio._spawn(audio.raw_data, overrides={
+            "frame_rate": int(audio.frame_rate * speed)
+        })
+        
+        # Convert back to original frame rate to maintain compatibility
+        return adjusted.set_frame_rate(audio.frame_rate)
+    
+    @staticmethod
+    def get_audio_duration(file_path: str) -> float:
+        """
+        Get duration of audio file in seconds
+        
+        Args:
+            file_path: Path to audio file
+            
+        Returns:
+            Duration in seconds
+        """
+        if not PYDUB_AVAILABLE:
+            return 0.0
+        
+        try:
+            audio = AudioSegment.from_file(file_path)
+            return len(audio) / 1000.0  # Convert ms to seconds
+        except:
+            return 0.0
+    
+    @staticmethod
+    def format_duration(seconds: float) -> str:
+        """
+        Format duration as MM:SS
+        
+        Args:
+            seconds: Duration in seconds
+            
+        Returns:
+            Formatted duration string
+        """
+        minutes = int(seconds // 60)
+        secs = int(seconds % 60)
+        return f"{minutes:02d}:{secs:02d}"
 
 
 # Quick test function
