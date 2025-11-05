@@ -1254,15 +1254,42 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
         }
         
         // Test voice
-        document.getElementById('testVoiceBtn').addEventListener('click', () => {
+        document.getElementById('testVoiceBtn').addEventListener('click', async () => {
             const testResult = document.getElementById('testResult');
-            const testAudio = document.getElementById('testAudio');
-            testResult.style.display = 'block';
+            const testText = document.getElementById('testText').value;
+            const testVoiceSelect = document.getElementById('testVoiceSelect').value;
             
-            if (testAudio && testAudio.src) {
-                testAudio.play();
-            } else {
-                alert('❌ Pa gen echantiyon vwa pou teste');
+            if (!testText || testText.trim().length === 0) {
+                alert('❌ Tanpri ekri yon tèks pou teste!');
+                return;
+            }
+            
+            // Show loading
+            const testVoiceBtn = document.getElementById('testVoiceBtn');
+            testVoiceBtn.disabled = true;
+            testVoiceBtn.textContent = '⏳ Ap jenere...';
+            
+            try {
+                // For now, use gTTS to generate test audio
+                // In production, this would use the actual custom voice
+                const formData = new FormData();
+                formData.append('text', testText);
+                formData.append('voice', testVoiceSelect);
+                formData.append('language', 'ht');
+                
+                // Call a test endpoint (we'll create a simple one)
+                // For demo, just show success message
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                testResult.style.display = 'block';
+                alert('✅ Fonksyon test vwa ap vini byento! Pou kounye a, ou ka kreye vwa epi koute echantiyon an.');
+                
+            } catch (error) {
+                console.error('Error:', error);
+                alert('❌ Erè: ' + error.message);
+            } finally {
+                testVoiceBtn.disabled = false;
+                testVoiceBtn.textContent = '🎧 Teste Vwa';
             }
         });
         
