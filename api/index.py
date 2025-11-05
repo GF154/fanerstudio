@@ -120,7 +120,7 @@ app.add_middleware(
 async def startup_event():
     """Initialize database on startup"""
     if DB_AVAILABLE:
-        init_database()
+        await init_database()
     else:
         print("⚠️ Running without database")
 
@@ -211,32 +211,16 @@ async def root():
 async def health_check():
     """Health check endpoint"""
     
-    # Try to get Supabase client and capture any error
+    # Check database connection
     db_connected = False
     db_error = None
-    connection_logs = []
     
     if DB_AVAILABLE:
         try:
-            # Capture print output
-            import io
-            import sys
-            old_stdout = sys.stdout
-            sys.stdout = buffer = io.StringIO()
-            
-            from database import get_supabase_client
-            client = get_supabase_client()
-            
-            # Get captured output
-            output = buffer.getvalue()
-            sys.stdout = old_stdout
-            
-            if output:
-                connection_logs = output.strip().split('\n')
-            
-            db_connected = client is not None
+            from database import check_database_connection
+            db_connected = await check_database_connection()
             if not db_connected:
-                db_error = "Client returned None (check connection_logs)"
+                db_error = "Connection test failed"
         except Exception as e:
             db_error = f"{type(e).__name__}: {str(e)}"
             db_connected = False
@@ -248,8 +232,7 @@ async def health_check():
         "DB_AVAILABLE": DB_AVAILABLE,
         "SUPABASE_URL_SET": bool(os.getenv("SUPABASE_URL")),
         "SUPABASE_KEY_SET": bool(os.getenv("SUPABASE_KEY")),
-        "db_error": db_error,
-        "connection_logs": connection_logs
+        "db_error": db_error
     }
     
     return {
@@ -259,7 +242,7 @@ async def health_check():
         "database": db_status,
         "debug": debug_info,
         "timestamp": datetime.now().isoformat(),
-        "version": "4.1.0",
+        "version": "4.2.0 - REST API",
         "endpoints": {
             "audiobook": "/api/audiobook/generate",
             "podcast": "/api/podcast/generate",
