@@ -214,16 +214,31 @@ async def health_check():
     # Try to get Supabase client and capture any error
     db_connected = False
     db_error = None
+    connection_logs = []
     
     if DB_AVAILABLE:
         try:
+            # Capture print output
+            import io
+            import sys
+            old_stdout = sys.stdout
+            sys.stdout = buffer = io.StringIO()
+            
             from database import get_supabase_client
             client = get_supabase_client()
+            
+            # Get captured output
+            output = buffer.getvalue()
+            sys.stdout = old_stdout
+            
+            if output:
+                connection_logs = output.strip().split('\n')
+            
             db_connected = client is not None
             if not db_connected:
-                db_error = "Client returned None"
+                db_error = "Client returned None (check connection_logs)"
         except Exception as e:
-            db_error = str(e)
+            db_error = f"{type(e).__name__}: {str(e)}"
             db_connected = False
     
     db_status = "connected" if db_connected else "disconnected"
@@ -233,7 +248,8 @@ async def health_check():
         "DB_AVAILABLE": DB_AVAILABLE,
         "SUPABASE_URL_SET": bool(os.getenv("SUPABASE_URL")),
         "SUPABASE_KEY_SET": bool(os.getenv("SUPABASE_KEY")),
-        "db_error": db_error
+        "db_error": db_error,
+        "connection_logs": connection_logs
     }
     
     return {

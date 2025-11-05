@@ -38,16 +38,30 @@ def get_supabase_client() -> Optional[Client]:
     
     _connection_attempted = True
     
+    # Check credentials
     if not SUPABASE_URL or not SUPABASE_KEY:
-        print("⚠️ Supabase credentials not set in environment")
+        error_msg = f"⚠️ Supabase credentials not set. URL: {bool(SUPABASE_URL)}, KEY: {bool(SUPABASE_KEY)}"
+        print(error_msg)
         return None
+    
+    print(f"🔄 Attempting Supabase connection to: {SUPABASE_URL[:30]}...")
     
     try:
         _supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
         print(f"✅ Supabase connected! URL: {SUPABASE_URL[:30]}...")
+        
+        # Test connection by making a simple query
+        try:
+            _supabase_client.table("users").select("id", count="exact").limit(0).execute()
+            print("✅ Supabase connection test passed!")
+        except Exception as test_error:
+            print(f"⚠️ Supabase connection test failed: {test_error}")
+            # Keep client anyway, table might not exist yet
+        
         return _supabase_client
     except Exception as e:
-        print(f"❌ Supabase connection failed: {e}")
+        error_msg = f"❌ Supabase connection failed: {type(e).__name__}: {str(e)}"
+        print(error_msg)
         return None
 
 
