@@ -1069,7 +1069,7 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
         
         function checkCanCreate() {
             const hasName = document.getElementById('voiceName').value.trim() !== '';
-            const hasSamples = uploadedSamples.length >= 3;
+            const hasSamples = uploadedSamples.length >= 1;
             const canCreate = hasName && hasSamples;
             
             createVoiceBtn.disabled = !canCreate;
