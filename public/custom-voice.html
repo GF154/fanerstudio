@@ -1070,7 +1070,27 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
         function checkCanCreate() {
             const hasName = document.getElementById('voiceName').value.trim() !== '';
             const hasSamples = uploadedSamples.length >= 3;
-            createVoiceBtn.disabled = !(hasName && hasSamples);
+            const canCreate = hasName && hasSamples;
+            
+            createVoiceBtn.disabled = !canCreate;
+            
+            // Update hint visibility
+            const buttonHint = document.getElementById('buttonHint');
+            if (buttonHint) {
+                if (canCreate) {
+                    buttonHint.style.display = 'none';
+                } else {
+                    buttonHint.style.display = 'block';
+                    // Show specific hint
+                    if (!hasName && !hasSamples) {
+                        buttonHint.textContent = '💡 Pou aktive bouton an: Bay yon non epi upload omwen 3 echantiyon odyo';
+                    } else if (!hasName) {
+                        buttonHint.textContent = '💡 Pou aktive bouton an: Bay yon non pou vwa a';
+                    } else if (!hasSamples) {
+                        buttonHint.textContent = `💡 Pou aktive bouton an: Upload ${3 - uploadedSamples.length} echantiyon ankò`;
+                    }
+                }
+            }
         }
         
         document.getElementById('voiceName').addEventListener('input', checkCanCreate);
