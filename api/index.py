@@ -345,23 +345,23 @@ async def generate_audiobook(
             output_filename = f"audiobook_{datetime.now().strftime('%Y%m%d_%H%M%S')}.{format}"
             output_path = os.path.join(tempfile.gettempdir(), output_filename)
             
-                # Progress callback (for logging)
-                def log_progress(percent, message):
-                    print(f"[{percent}%] {message}")
-                
-                # Generate audio with all enhancements
-                # Use French for Creole (phonetically closest)
-                audio_lang = "fr" if "kreyol" in voice.lower() or "haitian" in voice.lower() or "creole" in voice.lower() else "en"
-                
-                audio_file = tts.generate_audio(
-                    text=text,
-                    output_file=output_path,
-                    voice=voice,
-                    speed=speed,
-                    format=format,
-                    lang=audio_lang,
-                    progress_callback=log_progress
-                )
+            # Progress callback (for logging)
+            def log_progress(percent, message):
+                print(f"[{percent}%] {message}")
+            
+            # Generate audio with all enhancements
+            # Use French for Creole (phonetically closest)
+            audio_lang = "fr" if "kreyol" in voice.lower() or "haitian" in voice.lower() or "creole" in voice.lower() else "en"
+            
+            audio_file = tts.generate_audio(
+                text=text,
+                output_file=output_path,
+                voice=voice,
+                speed=speed,
+                format=format,
+                lang=audio_lang,
+                progress_callback=log_progress
+            )
             
             # Get file info
             file_size = os.path.getsize(audio_file)
