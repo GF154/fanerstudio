@@ -191,7 +191,7 @@ class TTSEngine:
             
             # Select voice
             if not voice:
-                voice = self.CREOLE_VOICES.get("edge", "fr-FR-DeniseNeural")
+                voice = self.CREOLE_VOICES.get("edge", "fr-FR-HenriNeural")
             
             # Create TTS
             communicate = edge_tts.Communicate(
