@@ -69,7 +69,7 @@ except Exception as e:
 
 class AudiobookRequest(BaseModel):
     text: Optional[str] = None
-    voice: str = "natural"
+    voice: str = "creole-native"  # Native Haitian Creole voice by default
     speed: float = 1.0
     pitch: int = 0
     format: str = "mp3"
