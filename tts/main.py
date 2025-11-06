@@ -42,8 +42,8 @@ class TTSEngine:
     
     CREOLE_VOICES = {
         "gtts": "fr",  # French is phonetically closest to Haitian Creole
-        "edge": "fr-FR-DeniseNeural",  # Female French voice
-        "edge_male": "fr-FR-HenriNeural"  # Male French voice
+        "edge": "fr-FR-HenriNeural",  # Male French voice (default)
+        "edge_female": "fr-FR-DeniseNeural"  # Female French voice
     }
     
     def __init__(self, engine: str = "gtts", api_key: Optional[str] = None):
