@@ -314,7 +314,7 @@ async def download_file(filename: str):
 @app.post("/api/audiobook/generate")
 async def generate_audiobook(
     file: UploadFile = File(...),
-    voice: str = Form("natural"),
+    voice: str = Form("creole-native"),  # Native Haitian Creole voice by default
     speed: float = Form(1.0),
     pitch: int = Form(0),
     format: str = Form("mp3"),
@@ -458,10 +458,12 @@ async def get_audiobook_voices():
     """Get available voices for audiobook"""
     return {
         "voices": [
-            {"id": "natural", "name": "Natural Voice", "language": "ht", "gender": "neutral"},
+            {"id": "creole-native", "name": "🇭🇹 Kreyòl Natif (Male)", "language": "ht", "gender": "male", "default": True},
             {"id": "male", "name": "Vwa Gason", "language": "ht", "gender": "male"},
             {"id": "female", "name": "Vwa Fanm", "language": "ht", "gender": "female"},
-            {"id": "custom", "name": "Vwa Kustom", "language": "ht", "gender": "custom"}
+            {"id": "openai-echo", "name": "OpenAI Echo (Premium)", "language": "en", "gender": "male"},
+            {"id": "openai-nova", "name": "OpenAI Nova (Premium)", "language": "en", "gender": "female"},
+            {"id": "elevenlabs-custom", "name": "ElevenLabs Custom (Premium)", "language": "multi", "gender": "custom"}
         ]
     }
 
