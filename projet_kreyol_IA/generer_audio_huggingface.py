@@ -3,15 +3,24 @@
 """
 Générateur d'Audiobook avec Hugging Face TTS - Pwojè Kreyòl IA
 Utilise facebook/mms-tts-hat pour une vraie voix créole haïtienne
+OPTIMIZED: Model caching & batch processing
 """
 
 import sys
 from pathlib import Path
-import torch
-from transformers import VitsModel, AutoTokenizer
 import numpy as np
 from tqdm import tqdm
 import scipy.io.wavfile as wavfile
+
+# Import optimized TTS Manager
+try:
+    from app.services.tts_manager import get_tts_manager
+    USE_MANAGER = True
+except ImportError:
+    # Fallback to legacy implementation
+    import torch
+    from transformers import VitsModel, AutoTokenizer
+    USE_MANAGER = False
 
 def generer_audio_creole(texte, chemin_sortie, model_name="facebook/mms-tts-hat"):
     """
