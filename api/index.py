@@ -942,10 +942,6 @@ async def test_custom_voice(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-            }
-        }
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
 
 
 # ============================================================
