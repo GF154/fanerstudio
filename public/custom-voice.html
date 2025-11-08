@@ -1464,8 +1464,16 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
                 });
                 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail || 'Erè nan pwosesis la');
+                    let errorMessage = `Erè HTTP ${response.status}: ${response.statusText}`;
+                    try {
+                        const errorData = await response.json();
+                        errorMessage = errorData.detail || errorData.message || errorMessage;
+                    } catch (e) {
+                        // Si pa ka parse JSON, itilize HTTP error
+                        const errorText = await response.text();
+                        errorMessage = errorText || errorMessage;
+                    }
+                    throw new Error(errorMessage);
                 }
                 
                 const result = await response.json();
@@ -1478,14 +1486,15 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
                 testResult.style.display = 'block';
                 
                 const audioPlayer = testResult.querySelector('audio');
-                if (audioPlayer && result.data.audio_url) {
+                if (audioPlayer && result.data && result.data.audio_url) {
                     audioPlayer.src = result.data.audio_url;
                     audioPlayer.play();
                 }
                 
             } catch (error) {
-                console.error('Error:', error);
-                alert('❌ Erè: ' + error.message);
+                console.error('Full error:', error);
+                const errorMessage = error.message || String(error) || 'Erè enkoni';
+                alert(`❌ Erè: ${errorMessage}\n\n💡 Eseye:\n- Verifye w kreye yon vwa anvan\n- Rechaje paj la\n- Kontakte sipò`);
             } finally {
                 testVoiceBtn.disabled = false;
                 testVoiceBtn.textContent = '🎧 Teste Vwa';
