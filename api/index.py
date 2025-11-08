@@ -890,20 +890,58 @@ async def test_custom_voice(
     voice_id: str = Form(...),
     text: str = Form(...),
     speed: float = Form(1.0),
-    pitch: int = Form(0)
+    pitch: int = Form(0),
+    language: str = Form("ht")
 ):
     """
     🧪 Test custom voice with text
-    Teste vwa kustom ak tèks
+    Teste vwa kistom ak tèks
     """
     try:
+        if not VOICE_CLONER_AVAILABLE:
+            raise HTTPException(
+                status_code=503,
+                detail="Voice cloner not available"
+            )
+        
+        # Get voice data from database
+        voice_data = None
+        if DB_AVAILABLE:
+            # Try to get voice from database
+            # voice_data = VoiceDB.get_voice_by_id(voice_id)
+            pass
+        
+        # Convert Haitian Creole to French for gTTS
+        tts_language = "fr" if language in ["ht", "Kreyòl Ayisyen"] else language
+        
+        # Create voice cloner
+        cloner = CustomVoiceCloner()
+        
+        # Generate test audio with custom voice characteristics
+        test_file = cloner.generate_sample(
+            voice_id=voice_id,
+            text=text,
+            language=tts_language
+        )
+        
+        # Get duration
+        duration = cloner.get_audio_duration(test_file)
+        
         return {
             "success": True,
-            "message": "✅ Voice test generated!",
+            "message": "✅ Tès vwa jenere avèk siksè!",
             "data": {
-                "audio_url": f"/download/test_{voice_id}_{datetime.now().strftime('%Y%m%d')}.mp3",
-                "duration": "00:15",
-                "voice_id": voice_id
+                "audio_url": f"/download/{os.path.basename(test_file)}",
+                "filename": os.path.basename(test_file),
+                "duration": cloner.format_duration(duration),
+                "voice_id": voice_id,
+                "text": text
+            }
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
             }
         }
     except Exception as e:
