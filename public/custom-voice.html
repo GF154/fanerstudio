@@ -1533,8 +1533,11 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
         }
         
         // Initialize on page load
-        updateTestVoiceDropdown();
-        updateVoiceLibrary();
+        document.addEventListener('DOMContentLoaded', () => {
+            loadVoicesFromAPI();
+            updateTestVoiceDropdown();
+            updateVoiceLibrary();
+        });
     </script>
 </body>
 </html>
