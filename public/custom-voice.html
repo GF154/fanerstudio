@@ -1034,17 +1034,25 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
         const createVoiceBtn = document.getElementById('createVoiceBtn');
         
         audioInput.addEventListener('change', (e) => {
-            const files = Array.from(e.target.files);
-            files.forEach(file => {
-                uploadedSamples.push({
-                    name: file.name,
-                    size: file.size,
-                    duration: Math.floor(Math.random() * 60) + 30 // Demo duration
+            const file = e.target.files[0]; // Only 1 file
+            if (file) {
+                // Clear previous samples (only 1 allowed)
+                uploadedSamples = [];
+                
+                // Get actual audio duration
+                const audio = new Audio(URL.createObjectURL(file));
+                audio.addEventListener('loadedmetadata', () => {
+                    uploadedSamples.push({
+                        name: file.name,
+                        size: file.size,
+                        duration: Math.floor(audio.duration),
+                        file: file // Store actual file for upload
+                    });
+                    
+                    updateSamplesList();
+                    checkCanCreate();
                 });
-            });
-            
-            updateSamplesList();
-            checkCanCreate();
+            }
         });
         
         function updateSamplesList() {
