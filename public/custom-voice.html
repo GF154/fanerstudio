@@ -1244,8 +1244,32 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
             progressText.textContent = text;
         }
         
-        // Voice storage (local for now, will sync with database)
+        // Voice storage (load from API)
         let createdVoices = [];
+        
+        // Load voices from API on page load
+        async function loadVoicesFromAPI() {
+            try {
+                const response = await fetch('/api/custom-voice/list');
+                const result = await response.json();
+                
+                if (result.voices && result.voices.length > 0) {
+                    createdVoices = result.voices.map(v => ({
+                        id: v.voice_id || v.id,
+                        name: v.voice_name || v.name,
+                        quality: v.quality,
+                        sample_url: v.voice_data?.test_audio || '',
+                        filename: v.voice_data?.test_audio || '',
+                        created_at: v.created_at
+                    }));
+                    
+                    updateTestVoiceDropdown();
+                    updateVoiceLibrary();
+                }
+            } catch (error) {
+                console.error('Error loading voices:', error);
+            }
+        }
         
         function showResult(data) {
             const progressSection = document.getElementById('progressSection');
