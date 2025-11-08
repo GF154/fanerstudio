@@ -30,14 +30,25 @@ except ImportError:
 
 class CustomVoiceCloner:
     """
-    Basic custom voice cloning using gTTS
-    Note: This is a simplified version for serverless deployment.
-    Real voice cloning requires AI models and FFmpeg.
+    Custom Voice Cloner with ElevenLabs + gTTS fallback
+    Real voice cloning using ElevenLabs API, falls back to gTTS
     """
     
-    def __init__(self):
-        if not GTTS_AVAILABLE:
-            raise ImportError("gTTS required. Install: pip install gtts")
+    def __init__(self, api_key: Optional[str] = None):
+        # Try to use ElevenLabs if API key available
+        self.use_elevenlabs = False
+        
+        if api_key and ELEVENLABS_AVAILABLE:
+            try:
+                set_api_key(api_key)
+                self.use_elevenlabs = True
+                print("✅ ElevenLabs initialized - Real voice cloning enabled!")
+            except Exception as e:
+                print(f"⚠️ ElevenLabs init failed: {e}. Falling back to gTTS")
+        
+        # Check gTTS availability as fallback
+        if not self.use_elevenlabs and not GTTS_AVAILABLE:
+            raise ImportError("Neither ElevenLabs nor gTTS available. Install: pip install elevenlabs gtts")
     
     def extract_voice_features(self, audio_path: str) -> Dict:
         """
