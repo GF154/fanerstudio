@@ -121,21 +121,38 @@ class CustomVoiceCloner:
         """
         output_file = tempfile.NamedTemporaryFile(delete=False, suffix='.mp3').name
         
-        # Generate using gTTS (basic implementation)
-        # In production with proper infrastructure:
-        # - Use RVC (Retrieval-based Voice Conversion)
-        # - Use OpenVoice or similar AI voice cloning
-        # - Use ElevenLabs API for high-quality cloning
+        if self.use_elevenlabs:
+            try:
+                # 🎯 REAL VOICE CLONING with ElevenLabs
+                print("🎙️ Using ElevenLabs for REAL voice cloning...")
+                
+                # Clone the voice from sample
+                voice = clone(
+                    name=voice_id,
+                    description=f"Custom voice cloned from sample ({language})",
+                    files=[audio_path]
+                )
+                
+                # Generate audio with cloned voice
+                audio = generate(
+                    text=text,
+                    voice=voice,
+                    model="eleven_multilingual_v2"  # Supports 29 languages including French/Creole
+                )
+                
+                # Save audio
+                save(audio, output_file)
+                
+                print("✅ Voice cloned successfully with ElevenLabs!")
+                return output_file
+                
+            except Exception as e:
+                print(f"⚠️ ElevenLabs failed: {e}. Falling back to gTTS...")
         
+        # Fallback to gTTS (basic TTS, no real cloning)
+        print("🔄 Using gTTS fallback (no voice cloning)...")
         tts = gTTS(text=text, lang=language, slow=False)
         tts.save(output_file)
-        
-        # Note: Voice characteristics would be applied here with audio processing
-        # Requires: librosa, pydub, soundfile, pyrubberband
-        # Example transformations (if libraries available):
-        # - Pitch shift using characteristics["pitch"]
-        # - Speed adjustment using characteristics["speed"]
-        # - Tone/timbre modifications
         
         return output_file
     
