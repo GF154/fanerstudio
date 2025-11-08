@@ -761,13 +761,14 @@ async def create_custom_voice_endpoint(
     """
     🗣️ Create custom voice from audio sample
     Ekstrè vwa kòstòm soti nan 1 echantiyon odyo
+    REAL VOICE CLONING with ElevenLabs!
     """
     try:
         # Check if voice cloner is available
         if not VOICE_CLONER_AVAILABLE:
             raise HTTPException(
                 status_code=503,
-                detail="Voice cloner not available. Install: pip install gtts pydub"
+                detail="Voice cloner not available. Install: pip install gtts elevenlabs"
             )
         
         # Save uploaded audio file
@@ -777,8 +778,11 @@ async def create_custom_voice_endpoint(
             tmp.write(content)
             audio_path = tmp.name
         
-        # Create voice cloner
-        cloner = CustomVoiceCloner()
+        # Get ElevenLabs API key from environment
+        elevenlabs_key = os.getenv("ELEVENLABS_API_KEY")
+        
+        # Create voice cloner (with ElevenLabs if key available)
+        cloner = CustomVoiceCloner(api_key=elevenlabs_key)
         
         # Extract voice characteristics (pitch, speed, timbre)
         voice_characteristics = cloner.extract_voice_features(audio_path)
@@ -819,7 +823,8 @@ async def create_custom_voice_endpoint(
             "speed": voice_characteristics.get("speed", 1.0),
             "tone": voice_characteristics.get("tone", "neutral"),
             "sample_duration": duration,
-            "test_audio": os.path.basename(test_file)
+            "test_audio": os.path.basename(test_file),
+            "engine": "elevenlabs" if cloner.use_elevenlabs else "gtts"
         }
         
         # Save to database if available
@@ -834,7 +839,7 @@ async def create_custom_voice_endpoint(
         
         return {
             "success": True,
-            "message": "✅ Vwa natirèl ou a kreye avèk siksè! Tonalite ak karakteristik ekstrè otomatikman.",
+            "message": f"✅ Vwa natirèl ou a kreye avèk siksè! {'🎯 REAL voice cloning ak ElevenLabs!' if cloner.use_elevenlabs else 'Itilize gTTS fallback.'}",
             "data": {
                 "voice_id": voice_id,
                 "name": name,
@@ -845,6 +850,7 @@ async def create_custom_voice_endpoint(
                 "filename": os.path.basename(test_file),
                 "duration": cloner.format_duration(duration),
                 "characteristics": voice_characteristics,
+                "engine": voice_data["engine"],
                 "created_at": datetime.now().isoformat()
             }
         }
