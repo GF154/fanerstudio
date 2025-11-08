@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-🗣️ Custom Voice Cloner - Vercel Compatible (No FFmpeg)
-Klonè Vwa Kòstòm - Konpatib ak Vercel (San FFmpeg)
+🗣️ Custom Voice Cloner - ElevenLabs + gTTS Fallback
+Klonè Vwa Kòstòm - ElevenLabs + gTTS Fallback
 """
 
 import os
@@ -11,6 +11,15 @@ from typing import List, Dict, Optional
 from datetime import datetime
 import hashlib
 
+# ElevenLabs import
+ELEVENLABS_AVAILABLE = False
+try:
+    from elevenlabs import clone, generate, save, set_api_key, Voice
+    ELEVENLABS_AVAILABLE = True
+except ImportError:
+    print("⚠️ ElevenLabs not available. Install: pip install elevenlabs")
+
+# gTTS fallback
 try:
     from gtts import gTTS
     GTTS_AVAILABLE = True
