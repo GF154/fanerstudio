@@ -1428,6 +1428,8 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
             const testText = document.getElementById('testText').value;
             const testVoiceSelect = document.getElementById('testVoiceSelect');
             const selectedVoiceId = testVoiceSelect.value;
+            const testSpeed = document.getElementById('testSpeed').value;
+            const testPitch = document.getElementById('testPitch').value;
             
             if (!testText || testText.trim().length === 0) {
                 alert('❌ Tanpri ekri yon tèks pou teste!');
@@ -1437,7 +1439,7 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
             // Find selected voice
             const selectedVoice = createdVoices.find(v => v.id === selectedVoiceId);
             
-            if (!selectedVoice || !selectedVoice.sample_url) {
+            if (!selectedVoice) {
                 alert('❌ Tanpri kreye yon vwa anvan w teste!');
                 return;
             }
@@ -1448,20 +1450,38 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
             testVoiceBtn.textContent = '⏳ Ap jenere...';
             
             try {
-                // For now, play the existing sample audio
-                // In production, this would generate new audio with the test text
+                // Call API to generate test audio
+                const formData = new FormData();
+                formData.append('voice_id', selectedVoiceId);
+                formData.append('text', testText);
+                formData.append('speed', testSpeed.replace('x', '').replace('(', '').replace(')', '').split(' ')[0]);
+                formData.append('pitch', testPitch.match(/[-+]?\d+/)[0]);
+                formData.append('language', 'ht');
+                
+                const response = await fetch('/api/custom-voice/test', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.detail || 'Erè nan pwosesis la');
+                }
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.message || 'Erè nan pwosesis la');
+                }
+                
+                // Show result
                 testResult.style.display = 'block';
                 
                 const audioPlayer = testResult.querySelector('audio');
-                if (audioPlayer) {
-                    audioPlayer.src = selectedVoice.sample_url;
+                if (audioPlayer && result.data.audio_url) {
+                    audioPlayer.src = result.data.audio_url;
                     audioPlayer.play();
                 }
-                
-                // Show info message
-                setTimeout(() => {
-                    alert(`🎧 Kounye a w ap koute echantiyon vwa "${selectedVoice.name}".\n\n💡 Pou jenere nouvo odyo ak tèks ou ekri a, sa mande yon sistèm TTS avanse. Pou kounye a, w ka koute echantiyon vwa a.`);
-                }, 500);
                 
             } catch (error) {
                 console.error('Error:', error);
