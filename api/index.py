@@ -750,15 +750,17 @@ async def add_music(
 
 @app.post("/api/custom-voice/create")
 async def create_custom_voice_endpoint(
+    sample_0: UploadFile = File(...),
     name: str = Form(...),
     quality: str = Form("medium"),
-    language: str = Form("fr"),
+    language: str = Form("ht"),
     emotion: str = Form("neutral"),
+    format: str = Form("mp3"),
     user_id: Optional[int] = Form(None)
 ):
     """
-    🗣️ Create custom voice from audio samples
-    Kreye vwa kòstòm soti nan echantiyon
+    🗣️ Create custom voice from audio sample
+    Ekstrè vwa kòstòm soti nan 1 echantiyon odyo
     """
     try:
         # Check if voice cloner is available
@@ -768,55 +770,71 @@ async def create_custom_voice_endpoint(
                 detail="Voice cloner not available. Install: pip install gtts pydub"
             )
         
-        # Convert Haitian Creole to French for gTTS compatibility
-        tts_language = "fr" if language in ["ht", "Kreyòl Ayisyen", "Haitian Creole"] else language
+        # Save uploaded audio file
+        audio_ext = os.path.splitext(sample_0.filename)[1]
+        with tempfile.NamedTemporaryFile(delete=False, suffix=audio_ext) as tmp:
+            content = await sample_0.read()
+            tmp.write(content)
+            audio_path = tmp.name
         
         # Create voice cloner
         cloner = CustomVoiceCloner()
         
-        # For now, create a basic voice profile
-        # In production, this would process actual audio samples
+        # Extract voice characteristics (pitch, speed, timbre)
+        voice_characteristics = cloner.extract_voice_features(audio_path)
+        
+        # Generate voice ID
         voice_id = f"voice_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         
-        profile = {
+        # Get audio duration
+        duration = cloner.get_audio_duration(audio_path)
+        
+        # Convert Haitian Creole to French for gTTS compatibility
+        tts_language = "fr" if language in ["ht", "Kreyòl Ayisyen", "Haitian Creole"] else language
+        
+        # Generate a test sample with the extracted voice
+        test_text = "Bonjou! Sa se yon tès pou vwa kòstòm mwen an."
+        test_file = cloner.clone_voice_from_sample(
+            audio_path=audio_path,
+            text=test_text,
+            voice_id=voice_id,
+            language=tts_language,
+            characteristics=voice_characteristics
+        )
+        
+        # Clean up temp file
+        try:
+            os.unlink(audio_path)
+        except:
+            pass
+        
+        # Prepare voice data
+        voice_data = {
             "voice_id": voice_id,
-            "name": name,
             "quality": quality,
             "language": language,
             "emotion": emotion,
-            "sample_count": 0,  # Would be from actual files
-            "duration": 0,
-            "created_at": datetime.now().isoformat(),
-            "status": "ready"
+            "format": format,
+            "pitch": voice_characteristics.get("pitch", 0),
+            "speed": voice_characteristics.get("speed", 1.0),
+            "tone": voice_characteristics.get("tone", "neutral"),
+            "sample_duration": duration,
+            "test_audio": os.path.basename(test_file)
         }
-        
-        # Generate a test sample
-        test_text = "Bonjou! Sa se yon tès pou vwa kòstòm mwen."
-        test_file = cloner.test_voice(voice_id, test_text, tts_language)
-        
-        # Get test audio info
-        duration = cloner.get_audio_duration(test_file)
         
         # Save to database if available
         if DB_AVAILABLE and user_id:
-            voice_data = {
-                "voice_id": voice_id,
-                "quality": quality,
-                "language": language,
-                "emotion": emotion
-            }
-            
             voice = VoiceDB.create_voice(
                 user_id=user_id,
                 voice_name=name,
                 quality=quality,
-                samples_count=0,
+                samples_count=1,
                 voice_data=voice_data
             )
         
         return {
             "success": True,
-            "message": "✅ Custom voice created successfully! Vwa kòstòm kreye avèk siksè!",
+            "message": "✅ Vwa natirèl ou a kreye avèk siksè! Tonalite ak karakteristik ekstrè otomatikman.",
             "data": {
                 "voice_id": voice_id,
                 "name": name,
@@ -826,6 +844,7 @@ async def create_custom_voice_endpoint(
                 "sample_url": f"/download/{os.path.basename(test_file)}",
                 "filename": os.path.basename(test_file),
                 "duration": cloner.format_duration(duration),
+                "characteristics": voice_characteristics,
                 "created_at": datetime.now().isoformat()
             }
         }
