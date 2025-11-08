@@ -30,6 +30,95 @@ class CustomVoiceCloner:
         if not GTTS_AVAILABLE:
             raise ImportError("gTTS required. Install: pip install gtts")
     
+    def extract_voice_features(self, audio_path: str) -> Dict:
+        """
+        Extract voice characteristics from audio sample
+        Ekstrè karakteristik vwa soti nan echantiyon odyo
+        
+        Args:
+            audio_path: Path to audio file
+            
+        Returns:
+            Dict with voice characteristics (pitch, speed, tone)
+        """
+        # Since we can't use librosa/pydub on basic Vercel without custom build,
+        # we'll return estimated values based on file analysis
+        # In production with proper audio libraries, this would analyze:
+        # - Pitch (fundamental frequency)
+        # - Speed (words per minute)
+        # - Timbre (spectral characteristics)
+        # - Tone (emotional characteristics)
+        
+        try:
+            file_size = os.path.getsize(audio_path)
+            
+            # Estimate characteristics based on file properties
+            # These are placeholders for real audio analysis
+            characteristics = {
+                "pitch": 0,  # 0 = neutral, -2 to +2 range
+                "speed": 1.0,  # 1.0 = normal, 0.5 to 2.0 range
+                "tone": "neutral",  # neutral, warm, cool, energetic
+                "timbre": "natural",  # natural, soft, strong
+                "quality": "good" if file_size > 500000 else "basic",
+                "file_size": file_size,
+                "analyzed_at": datetime.now().isoformat()
+            }
+            
+            return characteristics
+            
+        except Exception as e:
+            print(f"⚠️ Error extracting features: {e}")
+            # Return default values
+            return {
+                "pitch": 0,
+                "speed": 1.0,
+                "tone": "neutral",
+                "timbre": "natural",
+                "quality": "basic"
+            }
+    
+    def clone_voice_from_sample(
+        self,
+        audio_path: str,
+        text: str,
+        voice_id: str,
+        language: str = "fr",
+        characteristics: Optional[Dict] = None
+    ) -> str:
+        """
+        Clone voice using audio sample and generate new speech
+        Klone vwa avèk echantiyon epi jenere nouvo diskou
+        
+        Args:
+            audio_path: Path to original audio sample
+            text: Text to generate
+            voice_id: Voice ID
+            language: Language code
+            characteristics: Extracted voice characteristics
+            
+        Returns:
+            Path to generated audio file
+        """
+        output_file = tempfile.NamedTemporaryFile(delete=False, suffix='.mp3').name
+        
+        # Generate using gTTS (basic implementation)
+        # In production with proper infrastructure:
+        # - Use RVC (Retrieval-based Voice Conversion)
+        # - Use OpenVoice or similar AI voice cloning
+        # - Use ElevenLabs API for high-quality cloning
+        
+        tts = gTTS(text=text, lang=language, slow=False)
+        tts.save(output_file)
+        
+        # Note: Voice characteristics would be applied here with audio processing
+        # Requires: librosa, pydub, soundfile, pyrubberband
+        # Example transformations (if libraries available):
+        # - Pitch shift using characteristics["pitch"]
+        # - Speed adjustment using characteristics["speed"]
+        # - Tone/timbre modifications
+        
+        return output_file
+    
     def analyze_voice_samples(self, audio_files: List[str]) -> Dict:
         """
         Analyze voice samples to extract characteristics
