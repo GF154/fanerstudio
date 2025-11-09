@@ -1436,11 +1436,17 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
                 return;
             }
             
+            // Check if there are any voices
+            if (!createdVoices || createdVoices.length === 0) {
+                alert('❌ Pa gen vwa ankò!\n\n💡 Tanpri:\n1. Ale nan tab "🎤 Kreye Vwa"\n2. Upload 1 fichye odyo\n3. Bay yon non\n4. Klike "Kreye Vwa Natirèl"\n5. Apre sa, tounen teste l!');
+                return;
+            }
+            
             // Find selected voice
             const selectedVoice = createdVoices.find(v => v.id === selectedVoiceId);
             
             if (!selectedVoice) {
-                alert('❌ Tanpri kreye yon vwa anvan w teste!');
+                alert('❌ Vwa sa a pa jwenn!\n\n💡 Tanpri:\n- Chwazi yon vwa nan lis la\n- Oswa kreye yon nouvo vwa');
                 return;
             }
             
