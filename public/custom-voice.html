@@ -1493,7 +1493,15 @@ Bonjou! Mwen se yon vwa natirèl ki kreye espesyalman pou ou. Mwen ka li nenpòt
                 
             } catch (error) {
                 console.error('Full error:', error);
-                const errorMessage = error.message || String(error) || 'Erè enkoni';
+                // Convert error to readable message
+                let errorMessage = 'Erè enkoni';
+                if (error && error.message && typeof error.message === 'string') {
+                    errorMessage = error.message;
+                } else if (typeof error === 'string') {
+                    errorMessage = error;
+                } else if (error && typeof error === 'object') {
+                    errorMessage = JSON.stringify(error, null, 2);
+                }
                 alert(`❌ Erè: ${errorMessage}\n\n💡 Eseye:\n- Verifye w kreye yon vwa anvan\n- Rechaje paj la\n- Kontakte sipò`);
             } finally {
                 testVoiceBtn.disabled = false;
